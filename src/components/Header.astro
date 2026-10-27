@@ -1,0 +1,89 @@
+---
+import { site } from '../../site.config';
+import ThemeToggle from './ThemeToggle.astro';
+
+const links = [
+  { href: '/', label: 'Textos' },
+  { href: '/sobre', label: 'Sobre' },
+];
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const atual = (href: string) => (href === '/' ? path === '/' || path.startsWith('/posts') : path === href);
+---
+
+<header class="cabecalho nao-imprimir">
+  <div class="cabecalho-interno">
+    <a class="marca" href="/">{site.name}</a>
+    <nav aria-label="Principal">
+      <ul>
+        {
+          links.map(({ href, label }) => (
+            <li>
+              <a href={href} aria-current={atual(href) ? 'page' : undefined}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <ThemeToggle />
+  </div>
+</header>
+
+<style>
+  .cabecalho {
+    border-block-end: 1px solid var(--color-border);
+    font-family: var(--font-heading);
+  }
+
+  .cabecalho-interno {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    max-width: calc(var(--measure) + 2 * var(--space-3));
+    margin-inline: auto;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    margin-inline-end: auto;
+    color: var(--color-text);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  ul {
+    display: flex;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li + li {
+    margin: 0;
+  }
+
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding-inline: var(--space-2);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  nav a:hover {
+    text-decoration: underline;
+  }
+
+  nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+  }
+</style>

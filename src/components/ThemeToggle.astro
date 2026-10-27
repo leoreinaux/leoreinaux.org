@@ -1,0 +1,72 @@
+---
+/**
+ * Botão de tema claro/escuro. Sem JavaScript ele fica oculto e o site segue o sistema.
+ * O tema salvo é aplicado antes da pintura por um script no <head> (BaseLayout).
+ */
+---
+
+<button type="button" class="alternar-tema" data-alternar-tema aria-pressed="false" hidden>
+  <svg class="icone-lua" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+    <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+  </svg>
+  <svg class="icone-sol" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"></circle>
+    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+  </svg>
+  <span class="visualmente-oculto">Tema escuro</span>
+</button>
+
+<script is:inline>
+  (() => {
+    const botao = document.querySelector('[data-alternar-tema]');
+    if (!botao) return;
+    const raiz = document.documentElement;
+    const sistema = matchMedia('(prefers-color-scheme: dark)');
+    const atual = () => raiz.dataset.theme || (sistema.matches ? 'dark' : 'light');
+    const atualizar = () => botao.setAttribute('aria-pressed', String(atual() === 'dark'));
+    botao.addEventListener('click', () => {
+      const novo = atual() === 'dark' ? 'light' : 'dark';
+      raiz.dataset.theme = novo;
+      try {
+        localStorage.setItem('tema', novo);
+      } catch {}
+      atualizar();
+    });
+    sistema.addEventListener('change', atualizar);
+    atualizar();
+    botao.hidden = false;
+  })();
+</script>
+
+<style>
+  .alternar-tema {
+    display: inline-grid;
+    place-items: center;
+    min-width: var(--tap-target);
+    min-height: var(--tap-target);
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .alternar-tema[hidden] {
+    display: none;
+  }
+
+  .alternar-tema:hover {
+    background: var(--color-surface);
+  }
+
+  .alternar-tema svg {
+    grid-area: 1 / 1;
+  }
+
+  /* Mostra o tema para o qual o botão leva. */
+  .alternar-tema[aria-pressed='false'] .icone-sol,
+  .alternar-tema[aria-pressed='true'] .icone-lua {
+    display: none;
+  }
+</style>

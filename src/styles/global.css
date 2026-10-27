@@ -116,3 +116,8 @@ video {
     break-inside: avoid;
   }
 }
+
+/* O <main> recebe foco pelo link "pular para o conteúdo"; o contorno é desnecessário ali. */
+main:focus {
+  outline: none;
+}

@@ -1,0 +1,122 @@
+---
+import { Image } from 'astro:assets';
+import { site } from '../../site.config';
+import BaseLayout from './BaseLayout.astro';
+import { formatDate, type Post } from '../lib/posts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, description, summary, pubDate, updatedDate, cover, tags } = post.data;
+---
+
+<BaseLayout title={title} description={description}>
+  <slot name="head" slot="head" />
+  <article class="post coluna">
+    <header class="post-cabecalho">
+      <h1>{title}</h1>
+      <p class="post-datas texto-secundario">
+        Publicado em <time datetime={pubDate.toISOString()}>{formatDate(pubDate, site.locale)}</time>
+        {
+          updatedDate && (
+            <>
+              {' · '}Atualizado em <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate, site.locale)}</time>
+            </>
+          )
+        }
+      </p>
+      <section class="resumo" aria-labelledby="resumo-titulo">
+        <h2 id="resumo-titulo" class="resumo-titulo">Resumo</h2>
+        <p>{summary}</p>
+      </section>
+    </header>
+
+    <figure class="capa">
+      <Image
+        src={cover.src}
+        alt={cover.alt}
+        widths={[640, 960, 1360]}
+        sizes="(min-width: 48em) 44rem, 100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </figure>
+
+    <div class="post-conteudo">
+      <slot />
+    </div>
+
+    <footer class="post-rodape">
+      {
+        tags && tags.length > 0 && (
+          <p class="texto-secundario">
+            Temas: {tags.join(', ')}
+          </p>
+        )
+      }
+      <section class="sobre-autor" aria-labelledby="autor-titulo">
+        <h2 id="autor-titulo">Sobre o autor</h2>
+        <p>
+          <a href="/sobre">{site.author.name}</a>. {site.author.bio}
+        </p>
+      </section>
+      <p class="licenca texto-secundario">
+        Este texto está sob a licença{' '}
+        <a href={site.contentLicense.url} rel="license">Creative Commons Atribuição 4.0 Internacional ({site.contentLicense.name})</a>. Você pode
+        copiar, adaptar e republicar, inclusive para fins comerciais, desde que dê crédito a {site.author.name} e inclua um link para esta página.
+      </p>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .post {
+    padding-block-start: var(--space-5);
+  }
+
+  .post-datas {
+    font-family: var(--font-heading);
+    margin-block-end: var(--space-4);
+  }
+
+  .resumo {
+    background: var(--color-surface);
+    border-inline-start: 4px solid var(--color-accent);
+    border-radius: var(--radius);
+    padding: var(--space-3) var(--space-4);
+    margin-block-end: var(--space-4);
+  }
+
+  .resumo-titulo {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-block: 0 var(--space-2);
+  }
+
+  .resumo p {
+    margin: 0;
+  }
+
+  .capa {
+    margin: 0 0 var(--space-5);
+  }
+
+  .capa :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+  }
+
+  .post-rodape {
+    margin-block-start: var(--space-5);
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .sobre-autor h2 {
+    font-size: 1.1em;
+    margin-block-start: 0;
+  }
+</style>

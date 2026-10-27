@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../../site.config';
+---
+
+<BaseLayout title="Sobre" description={`Quem é ${site.author.name} e o que você encontra neste site.`}>
+  <div class="coluna sobre">
+    <h1>Sobre</h1>
+    <p><strong>{site.author.name}</strong> · {site.author.jobTitle}</p>
+    <p>{site.author.bio}</p>
+
+    <h2>Sobre o site</h2>
+    <p>
+      Textos longos e aprofundados, em português. Os textos estão sob a licença{' '}
+      <a href={site.contentLicense.url} rel="license">{site.contentLicense.name}</a>: podem ser copiados e republicados com crédito. O código do
+      site é aberto, sob licença MIT.
+    </p>
+
+    {
+      site.social.length > 0 && (
+        <>
+          <h2>Onde me encontrar</h2>
+          <ul>
+            {site.social.map(({ label, url }) => (
+              <li>
+                <a href={url} rel="me">
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .sobre {
+    padding-block-start: var(--space-5);
+  }
+</style>
