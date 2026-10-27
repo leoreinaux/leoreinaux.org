@@ -1,0 +1,118 @@
+@import './tokens.css';
+@import './tipografia.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Coluna de leitura. */
+.coluna {
+  width: 100%;
+  max-width: calc(var(--measure) + 2 * var(--space-3));
+  margin-inline: auto;
+  padding-inline: var(--space-3);
+}
+
+/* Foco visível em todos os elementos interativos. */
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Link "pular para o conteúdo": visível só ao receber foco. */
+.pular-conteudo {
+  position: absolute;
+  inset-inline-start: var(--space-3);
+  inset-block-start: -100px;
+  z-index: 10;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg);
+  color: var(--color-accent);
+  font-family: var(--font-heading);
+  border: 2px solid var(--color-focus);
+  border-radius: var(--radius);
+}
+
+.pular-conteudo:focus {
+  inset-block-start: var(--space-2);
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  :root {
+    --color-bg: #fff;
+    --color-text: #000;
+    --color-muted: #333;
+    --color-accent: #000;
+  }
+
+  body {
+    font-size: 12pt;
+  }
+
+  .nao-imprimir,
+  .pular-conteudo {
+    display: none !important;
+  }
+
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  img {
+    break-inside: avoid;
+  }
+}
