@@ -40,7 +40,7 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 
 | Camada | Escolha | Licença | Por quê | Alternativa |
 | --- | --- | --- | --- | --- |
-| Gerador do site | [Astro 6](https://astro.build/blog/astro-6-beta/) | MIT | HTML estático com zero JavaScript por padrão; coleções de conteúdo validam o frontmatter de cada post | Eleventy, Hugo |
+| Gerador do site | [Astro 7](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md) | MIT | HTML estático com zero JavaScript por padrão; coleções de conteúdo validam o frontmatter de cada post | Eleventy, Hugo |
 | Hospedagem do site | [Cloudflare Workers com static assets](https://flaviocopes.com/cloudflare-pages-vs-workers/) | Serviço gratuito | Arquivos estáticos servidos sem custo e sem limite de banda; CDN global | GitHub Pages, Netlify |
 | DNS | Cloudflare | Serviço gratuito | Mesmo painel do site; proteção contra abuso no subdomínio da newsletter | Registrador atual |
 | Newsletter | [Listmonk v6](https://github.com/knadh/listmonk) | AGPL-3.0 | Binário único em Go + PostgreSQL; double opt-in por lista, API e templates | Ghost (mais pesado) |
@@ -52,6 +52,8 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 | Vídeo | YouTube + embed leve (lite-youtube) | Apache-2.0 (embed) | Alcance do YouTube sem pesar a página | PeerTube |
 
 **Sobre o Astro.** Em janeiro de 2026 a Cloudflare comprou a empresa que mantém o Astro, que segue [MIT, com governança aberta e suporte a vários hosts](https://www.heise.de/en/news/Web-Development-Cloudflare-Acquires-Astro-Technology-Company-11145912.html?view=print). O risco é baixo: como o site é estático, trocar de host é trocar o comando de deploy.
+
+**Versão do Astro.** O projeto começou na 7.4.2 (out/2026), a estável mais recente; a 7.0 saiu em junho de 2026 e a linha 6 parou na 6.4.8. A 7 exige Node 22.23.4 ou mais novo; o CI usa o Node 24 LTS. Mudanças da 7 que afetam o site: o Markdown passa a ser processado pelo Sätteri (pipeline nativo, no lugar de remark/rehype) e o HTML é compactado com regras de JSX por padrão.
 
 **Workers em vez de Pages.** A própria Cloudflare orienta novos projetos a usar Workers com static assets, onde chegam os recursos novos. Para um site estático o custo é o mesmo: zero.
 
@@ -148,7 +150,7 @@ A meta é WCAG 2.2 nível AA em todo o site e leitura confortável de textos lon
 
 - Corpo de texto em 18 px no mobile e 20 px no desktop, entrelinha 1,6 a 1,7
 - Largura da coluna limitada a cerca de 68 caracteres (`max-width: 68ch`)
-- No máximo duas famílias de fonte com licença aberta (SIL OFL), servidas pelo próprio site em woff2 pelo Fonts API do Astro 6, sem Google Fonts
+- No máximo duas famílias de fonte com licença aberta (SIL OFL), servidas pelo próprio site em woff2 pelo Fonts API do Astro (estável desde a versão 6), sem Google Fonts
 - Hierarquia clara de títulos, citações e notas de rodapé estilizadas, folha de estilo para impressão
 
 **Conforto em textos longos**
@@ -254,7 +256,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 
 **Etapa 1 — Fundação do site**
 
-- [ ] Repositório público com Astro 6, licenças, README e `CLAUDE.md`
+- [ ] Repositório público com Astro 7, licenças, README e `CLAUDE.md`
 - [ ] Layout base, tipografia, temas claro e escuro
 - [ ] Coleção de posts com o schema do frontmatter
 - [ ] Deploy na Cloudflare pelo GitHub Actions e domínio apontado
@@ -296,9 +298,9 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 
 ## Fontes
 
-Consultadas em 26/10/2026.
+Consultadas em 26/10/2026; changelog do Astro consultado em 27/10/2026.
 
-- [Astro 6 Beta](https://astro.build/blog/astro-6-beta/) — astro.build
+- [Changelog do Astro](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md) — GitHub (versões 7.0.0 a 7.4.2)
 - [Cloudflare Acquires Astro Technology Company](https://www.heise.de/en/news/Web-Development-Cloudflare-Acquires-Astro-Technology-Company-11145912.html?view=print) — heise
 - [Cloudflare Pages vs Workers](https://flaviocopes.com/cloudflare-pages-vs-workers/) — flaviocopes.com
 - [knadh/listmonk](https://github.com/knadh/listmonk) — GitHub
