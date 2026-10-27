@@ -1,0 +1,19 @@
+// Cloudflare Workers com static assets: só arquivos estáticos, sem script.
+// Referência: https://developers.cloudflare.com/workers/static-assets/
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "leoreinaux-org",
+  "compatibility_date": "2026-10-23",
+  "assets": {
+    "directory": "./dist",
+    // Serve /posts/slug a partir de dist/posts/slug.html e redireciona /posts/slug/ e /posts/slug.html.
+    "html_handling": "auto-trailing-slash",
+    // Endereços inexistentes recebem dist/404.html com status 404.
+    "not_found_handling": "404-page"
+  },
+  // Domínio próprio: o deploy cria o registro DNS e o certificado na zona leoreinaux.org.
+  "routes": [{ "pattern": "leoreinaux.org", "custom_domain": true }],
+  // Desliga o endereço *.workers.dev para o site existir só no domínio canônico.
+  "workers_dev": false,
+  "preview_urls": false
+}
