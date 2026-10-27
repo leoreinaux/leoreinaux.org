@@ -1,0 +1,18 @@
+# build
+dist/
+.astro/
+.wrangler/
+
+# dependências
+node_modules/
+
+# logs
+npm-debug.log*
+
+# ambiente
+.env
+.env.*
+!.env.example
+
+# sistema
+.DS_Store
