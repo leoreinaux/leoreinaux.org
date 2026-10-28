@@ -24,8 +24,10 @@ export interface SiteConfig {
     name: string;
     /** Cargo ou ocupação, usado na página Sobre e, mais tarde, no JSON-LD. */
     jobTitle: string;
-    /** Uma ou duas frases. */
+    /** Uma ou duas frases; aparece na página Sobre e no fim de cada post. */
     bio: string;
+    /** Parágrafos da página Sobre que explicam por que o site existe. */
+    about: string[];
   };
   /** Redes do autor; também alimentarão o sameAs do JSON-LD (Etapa 2). */
   social: SocialLink[];
@@ -48,8 +50,13 @@ export const site: SiteConfig = {
   locale: 'pt-BR',
   author: {
     name: 'Leandro Reinaux',
-    jobTitle: 'TODO: cargo',
-    bio: 'TODO: bio curta, em uma ou duas frases.',
+    jobTitle: 'Cofundador da Even3',
+    bio: 'Católico, marido de Jamilly, bacharel em Ciência da Computação e cofundador da Even3.',
+    about: [
+      'Acredito que conhecimento e experiências, quando compartilhados, agregam muito valor à vida das pessoas.',
+      'Criei este site para registrar esses conhecimentos e experiências, para que qualquer pessoa possa acessá-los de forma livre e aberta e compartilhá-los também.',
+      'Aqui não há nenhum interesse comercial nem de ganhar dinheiro. É apenas uma forma de registrar e compartilhar experiências e conhecimentos, de graça e com liberdade.',
+    ],
   },
   social: [
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/TODO' },

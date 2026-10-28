@@ -9,9 +9,10 @@ import { site } from '../../site.config';
     <p><strong>{site.author.name}</strong> · {site.author.jobTitle}</p>
     <p>{site.author.bio}</p>
 
-    <h2>Sobre o site</h2>
+    <h2>Por que este site</h2>
+    {site.author.about.map((paragrafo) => <p>{paragrafo}</p>)}
     <p>
-      Textos longos e aprofundados, em português. Os textos estão sob a licença{' '}
+      Por isso os textos estão sob a licença{' '}
       <a href={site.contentLicense.url} rel="license">{site.contentLicense.name}</a>: podem ser copiados e republicados com crédito. O código do
       site é aberto, sob licença MIT.
     </p>
