@@ -13,7 +13,7 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `npm install`: instala as dependências.
 - `npm run dev`: servidor local em http://localhost:4321, com rascunhos visíveis.
 - `npm run check`: `astro check` (tipos e frontmatter).
-- `npm run build`: `astro check` + `astro build` + `pagefind`, gera `dist/` sem rascunhos e com o índice da busca. Rode antes de cada commit.
+- `npm run build`: `astro check` + `astro build`, gera `dist/` sem rascunhos e, ao final, o índice da busca (`src/integrations/pagefind.ts`). Rode antes de cada commit.
 - `npm run preview`: serve `dist/`. A busca só funciona aqui (ou no `wrangler dev`), porque o índice nasce no build; no `npm run dev` ela avisa que não está disponível.
 - `npx wrangler dev`: serve `dist/` como na Cloudflare (URLs sem barra, 404).
 
