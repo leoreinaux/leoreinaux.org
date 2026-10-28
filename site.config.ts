@@ -59,8 +59,8 @@ export const site: SiteConfig = {
     ],
   },
   social: [
-    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/TODO' },
-    { label: 'Instagram', url: 'https://www.instagram.com/TODO' },
+    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/leandroreinaux' },
+    { label: 'Instagram', url: 'https://www.instagram.com/leoreinaux' },
   ],
   newsletter: {
     listmonkUrl: 'https://newsletter.leoreinaux.org',
