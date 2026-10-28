@@ -1,5 +1,5 @@
 import { site } from '../../site.config';
-import { imageUrl } from './images';
+import { authorPhoto, imageUrl } from './images';
 import { postUrl, type Post } from './posts';
 
 /**
@@ -17,7 +17,8 @@ const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 
 export type JsonLdNode = Record<string, unknown>;
 
-export function personNode(): JsonLdNode {
+export async function personNode(): Promise<JsonLdNode> {
+  const photo = authorPhoto();
   return {
     '@type': 'Person',
     '@id': ids.person,
@@ -26,6 +27,7 @@ export function personNode(): JsonLdNode {
     description: site.author.bio,
     url: abs('/sobre'),
     sameAs: site.social.map(({ url }) => url),
+    ...(photo ? { image: await imageUrl(photo.src) } : {}),
   };
 }
 
@@ -43,10 +45,10 @@ export function websiteNode(): JsonLdNode {
 }
 
 /** Página Sobre: um ProfilePage cuja entidade principal é o autor. */
-export function profilePageNodes(): JsonLdNode[] {
+export async function profilePageNodes(): Promise<JsonLdNode[]> {
   return [
     { '@type': 'ProfilePage', url: abs('/sobre'), inLanguage: site.lang, mainEntity: { '@id': ids.person }, isPartOf: { '@id': ids.website } },
-    personNode(),
+    await personNode(),
     websiteNode(),
   ];
 }
@@ -80,7 +82,7 @@ export async function postNodes(post: Post, ogImage: string): Promise<JsonLdNode
         { '@type': 'ListItem', position: 2, name: title, item: url },
       ],
     },
-    personNode(),
+    await personNode(),
     websiteNode(),
   ];
 }

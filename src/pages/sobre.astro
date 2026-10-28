@@ -1,12 +1,29 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../../site.config';
+import { Picture } from 'astro:assets';
 import { profilePageNodes } from '../lib/jsonld';
+import { authorPhoto } from '../lib/images';
+
+const photo = authorPhoto();
 ---
 
-<BaseLayout title="Sobre" description={`Quem é ${site.author.name} e o que você encontra neste site.`} jsonLd={profilePageNodes()}>
+<BaseLayout title="Sobre" description={`Quem é ${site.author.name} e o que você encontra neste site.`} jsonLd={await profilePageNodes()}>
   <div class="coluna sobre">
     <h1>Sobre</h1>
+    {
+      photo && (
+        <Picture
+          class="foto-autor"
+          src={photo.src}
+          formats={['avif', 'webp']}
+          alt={photo.alt}
+          widths={[192, 384]}
+          sizes="12rem"
+          loading="eager"
+        />
+      )
+    }
     <p><strong>{site.author.name}</strong> · {site.author.jobTitle}</p>
     <p>{site.author.bio}</p>
 
@@ -43,5 +60,14 @@ import { profilePageNodes } from '../lib/jsonld';
 <style>
   .sobre {
     padding-block-start: var(--space-5);
+  }
+
+  .foto-autor {
+    display: block;
+    inline-size: 12rem;
+    block-size: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    margin-block-end: var(--space-4);
   }
 </style>

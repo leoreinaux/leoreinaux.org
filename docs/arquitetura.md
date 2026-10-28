@@ -121,7 +121,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 
 | Tipo | Onde | Campos que importam |
 | --- | --- | --- |
-| `Person` | Página Sobre (dentro de um `ProfilePage`), home e como autor de cada post | Nome, cargo, foto (quando houver), `sameAs` com LinkedIn e Instagram |
+| `Person` | Página Sobre (dentro de um `ProfilePage`), home e como autor de cada post | Nome, cargo, foto, `sameAs` com LinkedIn e Instagram |
 | `WebSite` | Home | Nome, URL, busca interna (quando o Pagefind entrar) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
 | `VideoObject` | Posts com vídeo (entra com o componente de vídeo) | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
