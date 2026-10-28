@@ -292,7 +292,7 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 - [x] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual? **Decidido:** envio automático às 7h (horário de Brasília) do dia seguinte à publicação, quando é mais provável ler com calma, em vez de 2 horas depois do deploy; o painel do Listmonk continua permitindo revisar ou cancelar até lá.
 - [x] Fontes tipográficas: par serifada no texto + sem serifa nos títulos, ou uma família só? **Decidido:** Literata no corpo (desenhada para leitura longa em tela) e Source Sans 3 nos títulos e na interface, ambas OFL.
 - [x] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear? **Decidido:** liberar; o `robots.txt` libera pelo nome os crawlers de busca e de treinamento de IA.
-- [x] Provedor e região da VPS. **Decidido:** Hetzner CX23 (2 vCPU, 4 GB), na Alemanha ou na Finlândia.
+- [x] Provedor e região da VPS. **Decidido:** Hetzner CX23 (2 vCPU, 4 GB) em Helsinque, na Finlândia, a única região com o CX23 disponível na contratação (a política de privacidade diz onde fica o servidor).
 - [x] Domínio de envio: `leoreinaux.org` ou um subdomínio dedicado? **Decidido:** subdomínio dedicado, para separar a reputação de envio do domínio principal.
 - [ ] Identidade visual: cores, logotipo e favicon
 
