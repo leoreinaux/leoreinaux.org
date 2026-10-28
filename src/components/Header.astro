@@ -33,6 +33,11 @@ const atual = (href: string) => (href === '/' ? path === '/' || path.startsWith(
 <style>
   .cabecalho {
     border-block-end: 1px solid var(--color-border);
+  }
+
+  /* A largura usa a fonte do corpo, para alinhar com a coluna de leitura (68ch). */
+  .marca,
+  nav {
     font-family: var(--font-heading);
   }
 
