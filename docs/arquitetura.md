@@ -256,10 +256,10 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 
 **Etapa 1 — Fundação do site**
 
-- [ ] Repositório público com Astro 7, licenças, README e `CLAUDE.md`
-- [ ] Layout base, tipografia, temas claro e escuro
-- [ ] Coleção de posts com o schema do frontmatter
-- [ ] Deploy na Cloudflare pelo GitHub Actions e domínio apontado
+- [x] Repositório público com Astro 7, licenças, README e `CLAUDE.md`
+- [x] Layout base, tipografia, temas claro e escuro
+- [x] Coleção de posts com o schema do frontmatter
+- [x] Deploy na Cloudflare pelo GitHub Actions e domínio apontado
 
 **Etapa 2 — Descoberta**
 
