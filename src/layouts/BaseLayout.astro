@@ -20,6 +20,8 @@ interface Props {
   ogType?: 'website' | 'article';
   /** Nós de dados estruturados da página (schema.org). */
   jsonLd?: JsonLdNode[];
+  /** Pede aos buscadores para não indexar a página (por exemplo, a busca). */
+  noindex?: boolean;
 }
 
 const {
@@ -29,6 +31,7 @@ const {
   ogImage = { path: '/og.png', alt: `${site.name}: ${site.description}` },
   ogType = 'website',
   jsonLd,
+  noindex = false,
 } = Astro.props;
 const fullTitle = title === site.name ? title : `${title} · ${site.name}`;
 const path = canonicalPath ?? Astro.url.pathname.replace(/(\/index)?\.html$/, '').replace(/(.)\/$/, '$1');
@@ -43,6 +46,7 @@ const ogImageUrl = new URL(ogImage.path, site.url).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

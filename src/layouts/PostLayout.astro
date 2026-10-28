@@ -24,7 +24,8 @@ const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
     <link rel="alternate" type="text/markdown" title="Versão em Markdown" href={`${postUrl(post)}.md`} />
     <slot name="head" />
   </Fragment>
-  <article class="post coluna">
+  <!-- Só o texto dos posts entra no índice da busca (Pagefind). -->
+  <article class="post coluna" data-pagefind-body>
     <header class="post-cabecalho">
       <h1>{title}</h1>
       <p class="post-datas texto-secundario">
@@ -59,7 +60,7 @@ const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
       <slot />
     </div>
 
-    <footer class="post-rodape">
+    <footer class="post-rodape" data-pagefind-ignore>
       {
         tags && tags.length > 0 && (
           <p class="texto-secundario">

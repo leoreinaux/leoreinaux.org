@@ -35,9 +35,9 @@ export default defineConfig({
     format: 'file',
   },
   integrations: [
-    // Gera sitemap-index.xml e sitemap-0.xml no build; a página 404 fica de fora.
+    // Gera sitemap-index.xml e sitemap-0.xml no build; a 404 e a busca ficam de fora.
     sitemap({
-      filter: (page) => !/\/404$/.test(page),
+      filter: (page) => !/\/(404|busca)$/.test(page),
     }),
   ],
   // Fontes OFL servidas pelo próprio site (ver src/assets/fonts/README.md).

@@ -41,6 +41,11 @@ export function websiteNode(): JsonLdNode {
     inLanguage: site.lang,
     author: { '@id': ids.person },
     publisher: { '@id': ids.person },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: `${abs('/busca')}?q={search_term_string}` },
+      'query-input': 'required name=search_term_string',
+    },
   };
 }
 

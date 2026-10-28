@@ -45,7 +45,7 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 | DNS | Cloudflare | Serviço gratuito | Mesmo painel do site; proteção contra abuso no subdomínio da newsletter | Registrador atual |
 | Newsletter | [Listmonk v6](https://github.com/knadh/listmonk) | AGPL-3.0 | Binário único em Go + PostgreSQL; double opt-in por lista, API e templates | Ghost (mais pesado) |
 | Envio de e-mail | [Amazon SES, plano Essentials](https://dev.to/mr_manushukla/amazon-ses-pricing-plans-in-2026-essentials-vs-pro-vs-enterprise-and-when-a-la-carte-still-wins-1ohg) | Serviço pago por uso | US$ 0,16 por mil e-mails, sem taxa fixa | Brevo, Resend |
-| Busca | [Pagefind 1.5](https://github.com/Pagefind/pagefind) | MIT | Índice gerado no build e consultado no navegador, sem servidor | — |
+| Busca | [Pagefind 1.5](https://github.com/Pagefind/pagefind) | MIT | Índice gerado no build e consultado no navegador, sem servidor; interface própria (~1,4 KB) sobre a API, em vez da UI pronta (~43 KB) | — |
 | Analytics | [Umami v3](https://heise.de/-11069615) | MIT | Sem cookies; usa o mesmo PostgreSQL do Listmonk | Plausible CE |
 | Servidor | VPS + Docker Compose + Caddy | Apache-2.0 (Caddy) | HTTPS automático para os dois serviços | — |
 | CI/CD | GitHub Actions | Gratuito em repositório público | Build, testes, deploy e disparo da newsletter | Forgejo Actions (Codeberg) |
@@ -122,7 +122,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 | Tipo | Onde | Campos que importam |
 | --- | --- | --- |
 | `Person` | Página Sobre (dentro de um `ProfilePage`), home e como autor de cada post | Nome, cargo, foto, `sameAs` com LinkedIn e Instagram |
-| `WebSite` | Home | Nome, URL, busca interna (quando o Pagefind entrar) |
+| `WebSite` | Home | Nome, URL, busca interna (`SearchAction` para `/busca?q=`) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
 | `VideoObject` | Posts com vídeo (entra com o componente de vídeo) | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
 | `BreadcrumbList` | Posts | Início › título, enquanto não houver uma página que liste os posts |
@@ -265,7 +265,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 
 - [x] Sitemap, RSS, `robots.txt`, `llms.txt` e versão Markdown dos posts
 - [x] JSON-LD e Open Graph com imagens geradas no build
-- [ ] Busca com Pagefind
+- [x] Busca com Pagefind
 - [ ] Lighthouse CI e axe-core no workflow de qualidade
 - [ ] Search Console, Bing Webmaster Tools e IndexNow
 

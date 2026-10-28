@@ -13,8 +13,8 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `npm install`: instala as dependências.
 - `npm run dev`: servidor local em http://localhost:4321, com rascunhos visíveis.
 - `npm run check`: `astro check` (tipos e frontmatter).
-- `npm run build`: `astro check` + `astro build`, gera `dist/` sem rascunhos. Rode antes de cada commit.
-- `npm run preview`: serve `dist/`.
+- `npm run build`: `astro check` + `astro build` + `pagefind`, gera `dist/` sem rascunhos e com o índice da busca. Rode antes de cada commit.
+- `npm run preview`: serve `dist/`. A busca só funciona aqui (ou no `wrangler dev`), porque o índice nasce no build; no `npm run dev` ela avisa que não está disponível.
 - `npx wrangler dev`: serve `dist/` como na Cloudflare (URLs sem barra, 404).
 
 ## Estrutura
@@ -26,7 +26,7 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `src/lib/jsonld.ts` (dados estruturados), `src/lib/og.ts` (cards sociais com Satori e resvg), `src/lib/markdown.ts` (versão Markdown dos posts) e `src/lib/images.ts` (URL absoluta de uma imagem processada).
 - `src/layouts/`: `BaseLayout` (HTML base, `<head>` com canonical, Open Graph e JSON-LD, cabeçalho e rodapé) e `PostLayout`.
 - `src/components/`: `Header`, `Footer`, `ThemeToggle`. Próximas etapas: `NewsletterForm`, `VideoEmbed`, `Toc`.
-- `src/pages/`: `index`, `sobre`, `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `robots.txt`, `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post), `og.png` e `og/[slug].png` (cards sociais). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
+- `src/pages/`: `index`, `sobre`, `busca` (interface própria sobre a API do Pagefind; só o `<article>` dos posts é indexado, via `data-pagefind-body`), `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `robots.txt`, `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post), `og.png` e `og/[slug].png` (cards sociais). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
 - `src/styles/`: `tokens.css` (cores e espaçamentos dos dois temas), `tipografia.css`, `global.css`.
 - `src/assets/fonts/`: arquivos woff2 e licença OFL das fontes; os woff estáticos da Source Sans 3 servem só para desenhar os cards sociais.
 - `wrangler.jsonc` e `.github/workflows/deploy.yml`: publicação na Cloudflare a cada push na `main`.
@@ -67,7 +67,7 @@ WCAG 2.2 nível AA em todo o site.
 
 - Corpo de 18px no mobile e 20px a partir de 48em, entrelinha 1,65 e cerca de 68 caracteres por linha (`--measure: 58ch` com a Literata). Ao trocar de fonte, meça de novo e ajuste o `--measure`.
 - No máximo duas famílias de fonte OFL, servidas localmente pelo Fonts API do Astro. Nada de Google Fonts ou CDN de terceiros.
-- Zero JavaScript por padrão. A exceção atual é o script do tema (inline no `<head>` e no `ThemeToggle`). Todo script novo precisa ser discutido antes; a meta é menos de 30 KB por página.
+- Zero JavaScript por padrão. As exceções atuais são o script do tema (inline no `<head>` e no `ThemeToggle`) e o da página `/busca`, que carrega o Pagefind só nela (o índice baixa na primeira busca). Todo script novo precisa ser discutido antes; a meta é menos de 30 KB por página.
 - LCP < 2,0 s, CLS < 0,05, INP < 200 ms e post sem vídeo com menos de 300 KB no total.
 - Imagens sempre por `astro:assets` (`<Picture>`/`<Image>`), com largura e altura fixas.
 
