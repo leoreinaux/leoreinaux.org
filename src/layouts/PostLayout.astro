@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets';
 import { site } from '../../site.config';
 import BaseLayout from './BaseLayout.astro';
-import { formatDate, type Post } from '../lib/posts';
+import { formatDate, postUrl, type Post } from '../lib/posts';
 
 interface Props {
   post: Post;
@@ -13,7 +13,10 @@ const { title, description, summary, pubDate, updatedDate, cover, tags } = post.
 ---
 
 <BaseLayout title={title} description={description}>
-  <slot name="head" slot="head" />
+  <Fragment slot="head">
+    <link rel="alternate" type="text/markdown" title="Versão em Markdown" href={`${postUrl(post)}.md`} />
+    <slot name="head" />
+  </Fragment>
   <article class="post coluna">
     <header class="post-cabecalho">
       <h1>{title}</h1>

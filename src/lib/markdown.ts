@@ -1,0 +1,61 @@
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { site } from '../../site.config';
+import { formatDate, postUrl, type Post } from './posts';
+
+/** Imagens que ficam nas pastas dos posts, indexadas pelo caminho a partir da raiz do projeto. */
+const postImages = import.meta.glob<ImageMetadata>('/src/content/posts/*/**/*.{jpg,jpeg,png,webp,avif,gif}', {
+  eager: true,
+  import: 'default',
+});
+
+/** Gera a imagem em WebP e devolve a URL absoluta, que funciona fora do site. */
+async function imageUrl(src: ImageMetadata): Promise<string> {
+  const image = await getImage({ src, format: 'webp', width: Math.min(src.width, 1360) });
+  return new URL(image.src, site.url).href;
+}
+
+/** Troca imagens com caminho relativo (./foto.jpg) pela URL da imagem processada. */
+async function resolveImages(markdown: string, post: Post): Promise<string> {
+  const refs = [...markdown.matchAll(/!\[([^\]]*)\]\(\.\/([^)\s]+)\)/g)];
+  let result = markdown;
+  for (const [match, alt = '', path = ''] of refs) {
+    const src = postImages[`/src/content/posts/${post.id}/${path}`];
+    if (src) result = result.replace(match, `![${alt}](${await imageUrl(src)})`);
+  }
+  return result;
+}
+
+/** Troca links relativos à raiz (/sobre) por URLs absolutas. */
+function absolutizeLinks(markdown: string): string {
+  return markdown.replace(/\]\(\/(?!\/)/g, `](${site.url}/`);
+}
+
+/**
+ * Versão em Markdown puro de um post, para leitura por modelos de linguagem:
+ * título, autoria, datas, licença, resumo, capa e o texto original.
+ */
+export async function postToMarkdown(post: Post): Promise<string> {
+  const { title, summary, pubDate, updatedDate, cover } = post.data;
+  const datas = [`Publicado em ${formatDate(pubDate, site.locale)}`];
+  if (updatedDate) datas.push(`atualizado em ${formatDate(updatedDate, site.locale)}`);
+  const body = absolutizeLinks(await resolveImages(post.body ?? '', post));
+
+  return [
+    `# ${title}`,
+    [
+      `- Autor: ${site.author.name}, ${site.author.jobTitle}`,
+      `- ${datas.join(', ')}`,
+      `- Original: ${new URL(postUrl(post), site.url).href}`,
+      `- Licença: [${site.contentLicense.name}](${site.contentLicense.url}), pode ser reproduzido com crédito`,
+    ].join('\n'),
+    `> **Resumo:** ${summary}`,
+    `![${cover.alt}](${await imageUrl(cover.src)})`,
+    body.trim(),
+  ].join('\n\n') + '\n';
+}
+
+/** Resposta HTTP com texto em UTF-8. */
+export function textResponse(body: string, type: 'text/markdown' | 'text/plain'): Response {
+  return new Response(body, { headers: { 'Content-Type': `${type}; charset=utf-8` } });
+}
