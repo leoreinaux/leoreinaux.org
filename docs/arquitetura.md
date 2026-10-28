@@ -290,7 +290,7 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 ## Decisões em aberto
 
 - [ ] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual?
-- [ ] Fontes tipográficas: par serifada no texto + sem serifa nos títulos, ou uma família só?
+- [x] Fontes tipográficas: par serifada no texto + sem serifa nos títulos, ou uma família só? **Decidido:** Literata no corpo (desenhada para leitura longa em tela) e Source Sans 3 nos títulos e na interface, ambas OFL.
 - [ ] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear?
 - [ ] Provedor e região da VPS
 - [ ] Domínio de envio: `leoreinaux.org` ou um subdomínio dedicado
