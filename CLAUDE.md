@@ -32,6 +32,7 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `src/assets/fonts/`: arquivos woff2 e licença OFL das fontes; os woff estáticos da Source Sans 3 servem só para desenhar os cards sociais.
 - `scripts/qualidade.ts`: verificação de acessibilidade e desempenho do `dist/`.
 - `scripts/indexnow.ts`: depois do deploy, avisa os buscadores pelo IndexNow dos posts que mudaram (chave pública em `site.config.ts`, servida em `/indexnow.txt`). `BASE_SHA=<commit> INDEXNOW_SIMULAR=1 node scripts/indexnow.ts` mostra o que seria enviado.
+- `infra/`: VPS da newsletter e do analytics (Docker Compose com Caddy, Listmonk, Umami e PostgreSQL, mais `backup.sh` com restic). Versões exatas das imagens; passo a passo e manutenção em `infra/README.md`.
 - `wrangler.jsonc` e `.github/workflows/deploy.yml`: publicação na Cloudflare a cada push na `main`, depois do `qualidade.yml`.
 
 ## Frontmatter dos posts
