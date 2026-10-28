@@ -1,0 +1,45 @@
+name: Qualidade
+
+# Roda em cada PR e antes de cada deploy (chamado pelo deploy.yml, que só publica se passar).
+on:
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: qualidade-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  qualidade:
+    name: Acessibilidade e desempenho
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      # Inclui os rascunhos para testar a página de post mesmo antes do primeiro post publicado.
+      # Este build só serve para o teste; o deploy gera o seu sem rascunhos.
+      - name: Build com rascunhos
+        run: npm run build
+        env:
+          INCLUIR_RASCUNHOS: '1'
+
+      # axe-core nos dois temas e Lighthouse com as metas de docs/arquitetura.md.
+      # O resultado aparece no resumo da execução.
+      - name: Verificar metas
+        run: |
+          export CHROME_PATH="$(command -v google-chrome)"
+          npm run qualidade

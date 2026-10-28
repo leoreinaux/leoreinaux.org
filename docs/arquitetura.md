@@ -177,7 +177,7 @@ A meta é WCAG 2.2 nível AA em todo o site e leitura confortável de textos lon
 | JavaScript por página | < 30 KB; a busca carrega só quando aberta |
 | Peso total de um post sem vídeo | < 300 KB |
 
-Imagens passam pelo `astro:assets` (AVIF/WebP, tamanhos responsivos, largura e altura fixas). O workflow de qualidade roda Lighthouse CI e axe-core, ambos open source, e bloqueia o deploy se alguma meta cair.
+Imagens passam pelo `astro:assets` (AVIF/WebP, tamanhos responsivos, largura e altura fixas). O workflow de qualidade (`scripts/qualidade.ts`) roda o axe-core e o Lighthouse, ambos open source, e bloqueia o deploy se alguma meta cair. O axe-core testa cada página nos temas claro e escuro, no celular e no desktop; o Lighthouse mede a mediana de três execuções no celular em 4G simulado, com o TBT no lugar do INP, que não se mede em laboratório. O Lighthouse é usado direto pela API Node em vez do Lighthouse CI, parado desde junho de 2025 na versão 12 do Lighthouse e com dependências vulneráveis. O build do teste inclui os rascunhos, para que a página de post seja testada desde o início.
 
 ## Newsletter
 
@@ -266,7 +266,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 - [x] Sitemap, RSS, `robots.txt`, `llms.txt` e versão Markdown dos posts
 - [x] JSON-LD e Open Graph com imagens geradas no build
 - [x] Busca com Pagefind
-- [ ] Lighthouse CI e axe-core no workflow de qualidade
+- [x] Lighthouse e axe-core no workflow de qualidade
 - [ ] Search Console, Bing Webmaster Tools e IndexNow
 
 **Etapa 3 — Newsletter e analytics**

@@ -16,6 +16,7 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `npm run build`: `astro check` + `astro build`, gera `dist/` sem rascunhos e, ao final, o índice da busca (`src/integrations/pagefind.ts`). Rode antes de cada commit.
 - `npm run preview`: serve `dist/`. A busca só funciona aqui (ou no `wrangler dev`), porque o índice nasce no build; no `npm run dev` ela avisa que não está disponível.
 - `npx wrangler dev`: serve `dist/` como na Cloudflare (URLs sem barra, 404).
+- `INCLUIR_RASCUNHOS=1 npm run build` seguido de `CHROME_PATH=<caminho do Chrome> npm run qualidade`: axe-core (temas claro e escuro, celular e desktop) e Lighthouse com as metas abaixo. É o que o workflow `qualidade.yml` roda em cada PR e antes de cada deploy; uma meta que cai bloqueia o deploy. `LIGHTHOUSE_EXECUCOES=1` acelera o teste local.
 
 ## Estrutura
 
@@ -29,7 +30,8 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `src/pages/`: `index`, `sobre`, `busca` (interface própria sobre a API do Pagefind; só o `<article>` dos posts é indexado, via `data-pagefind-body`), `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `robots.txt`, `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post), `og.png` e `og/[slug].png` (cards sociais). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
 - `src/styles/`: `tokens.css` (cores e espaçamentos dos dois temas), `tipografia.css`, `global.css`.
 - `src/assets/fonts/`: arquivos woff2 e licença OFL das fontes; os woff estáticos da Source Sans 3 servem só para desenhar os cards sociais.
-- `wrangler.jsonc` e `.github/workflows/deploy.yml`: publicação na Cloudflare a cada push na `main`.
+- `scripts/qualidade.ts`: verificação de acessibilidade e desempenho do `dist/`.
+- `wrangler.jsonc` e `.github/workflows/deploy.yml`: publicação na Cloudflare a cada push na `main`, depois do `qualidade.yml`.
 
 ## Frontmatter dos posts
 
