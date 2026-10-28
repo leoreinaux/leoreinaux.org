@@ -10,6 +10,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 | `postgres/init-umami.sh` | Cria o banco e o usuário do Umami na primeira subida |
 | `backup.sh` | Backup diário cifrado com restic, restauração e lista de backups |
 | `.env.example` | Modelo das variáveis e segredos; a cópia preenchida (`.env`) nunca vai para o repositório |
+| `listmonk/publico.css` | Visual do site nas páginas públicas do Listmonk |
 | `ses.md` | Roteiro do Amazon SES: domínio de envio, DKIM, SPF, DMARC, bounces e saída do sandbox |
 
 ## Subir a VPS
@@ -35,7 +36,8 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
      - *Individual subscriber tracking*: **desligado** (aberturas e cliques contados só no total);
      - *Record opt-in IP*: **ligado** (prova do consentimento);
      - *Allow unsubscribe*, *Allow exporting* e *Allow wiping*: **ligados** (a pessoa cancela, baixa e apaga os próprios dados pela página da inscrição).
-   - Crie a lista pública da newsletter com *Opt-in* = **Double** e copie o UUID dela para `newsletter.listUuid` no `site.config.ts`: só então o formulário de inscrição aparece no site.
+   - *Appearance → Public*: cole o conteúdo de [`listmonk/publico.css`](listmonk/publico.css), para as páginas de inscrição, confirmação e descadastro terem o visual do site. Em *General*, use `Leandro Reinaux` como *Site name* e `https://leoreinaux.org/favicon.svg` como *Favicon URL*.
+   - Crie a lista pública da newsletter, chamada **Novos textos** (é o nome que o leitor vê ao confirmar e ao cancelar), com *Opt-in* = **Double**, e copie o UUID dela para `newsletter.listUuid` no `site.config.ts`: só então o formulário de inscrição aparece no site.
    - Em *Settings → General*, escolha o idioma **Português (Brasil)**: é nele que aparecem a página de "confira o seu e-mail" e o e-mail de confirmação.
 7. **Umami.** Entre em `https://analytics.leoreinaux.org` com `admin` / `umami`, **troque a senha na hora** e cadastre o site `leoreinaux.org`.
 8. **Backup.** Crie um bucket no Cloudflare R2 (10 GB grátis) e um token de API com permissão de leitura e escrita só nele. Preencha as variáveis `RESTIC_*` e `AWS_*` do `.env` e rode `./backup.sh` uma vez para criar o repositório e o primeiro backup. Depois agende com `crontab -e`:
