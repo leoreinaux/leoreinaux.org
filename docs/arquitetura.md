@@ -267,7 +267,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 - [x] JSON-LD e Open Graph com imagens geradas no build
 - [x] Busca com Pagefind
 - [x] Lighthouse e axe-core no workflow de qualidade
-- [ ] Search Console, Bing Webmaster Tools e IndexNow
+- [x] Search Console, Bing Webmaster Tools e IndexNow
 
 **Etapa 3 — Newsletter e analytics**
 
