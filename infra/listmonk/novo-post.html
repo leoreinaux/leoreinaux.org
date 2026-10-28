@@ -1,0 +1,66 @@
+<!doctype html>
+<!--
+  Modelo "Novo post" das campanhas da newsletter. O scripts/newsletter.ts cria ou atualiza este modelo
+  no Listmonk a cada deploy, então mudanças aqui chegam ao Listmonk sozinhas.
+  O conteúdo de cada post (capa, título, resumo e botão) é o corpo da campanha, montado pelo script.
+  E-mail usa tabelas e estilos embutidos: muitos programas ignoram <style> e CSS moderno.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light only" />
+    <title>{{ .Campaign.Subject }}</title>
+  </head>
+  <body style="margin: 0; padding: 0; background: #faf8f3">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background: #faf8f3">
+      <tr>
+        <td align="center" style="padding: 24px 16px">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px">
+            <tr>
+              <td
+                style="
+                  padding: 0 0 16px;
+                  border-bottom: 1px solid #8a8378;
+                  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+                  font-size: 18px;
+                  font-weight: 700;
+                  color: #1c1b19;
+                "
+              >
+                <a href="https://leoreinaux.org" style="color: #1c1b19; text-decoration: none">Leandro Reinaux</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 24px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 18px; line-height: 1.65; color: #1c1b19">
+                {{ template "content" . }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  padding: 16px 0 0;
+                  border-top: 1px solid #8a8378;
+                  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+                  font-size: 14px;
+                  line-height: 1.5;
+                  color: #4f4b44;
+                "
+              >
+                <p style="margin: 0 0 8px">
+                  Você recebe este e-mail porque assinou os novos textos de leoreinaux.org. Para não receber mais,
+                  <a href="{{ UnsubscribeURL }}" style="color: #4f4b44">cancele a inscrição</a>.
+                </p>
+                <p style="margin: 0">
+                  <a href="{{ MessageURL }}" style="color: #4f4b44">Ver no navegador</a> ·
+                  <a href="https://leoreinaux.org/privacidade" style="color: #4f4b44">Política de privacidade</a>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    {{ TrackView }}
+  </body>
+</html>

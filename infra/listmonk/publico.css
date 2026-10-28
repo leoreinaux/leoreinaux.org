@@ -1,0 +1,177 @@
+/*
+ * Aparência das páginas públicas do Listmonk (inscrição, confirmação, descadastro, preferências),
+ * para parecerem uma continuação do site. Cole em Settings → Appearance → Public → CSS.
+ *
+ * Cores copiadas de src/styles/tokens.css: ao mudar uma cor lá, mude aqui também.
+ * As fontes são as de fallback do site (Georgia e a fonte do sistema), para não depender
+ * de servir os arquivos da Literata e da Source Sans 3 a outro domínio.
+ */
+
+:root {
+  color-scheme: light dark;
+  --fundo: #faf8f3;
+  --superficie: #f1ede4;
+  --texto: #1c1b19;
+  --secundario: #4f4b44;
+  --destaque: #1d4f7d;
+  --destaque-hover: #123a5e;
+  --borda: #8a8378;
+  --corpo: Georgia, 'Times New Roman', serif;
+  --titulos: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #161513;
+    --superficie: #211f1c;
+    --texto: #ece8df;
+    --secundario: #bdb6aa;
+    --destaque: #9ccaf2;
+    --destaque-hover: #c3e0f8;
+    --borda: #7d776d;
+  }
+}
+
+html,
+body {
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--corpo);
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
+.container,
+.wrap {
+  max-width: 36rem;
+  margin-inline: auto;
+  padding: 1.5rem 1rem;
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+}
+
+/* No lugar do logotipo do Listmonk, o nome do site, como no cabeçalho de leoreinaux.org. */
+.header {
+  margin-block-end: 2.5rem;
+  padding-block-end: 0.5rem;
+  border-block-end: 1px solid var(--borda);
+  text-align: start;
+}
+
+.header .logo img {
+  display: none;
+}
+
+.header .logo a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--texto);
+  font-family: var(--titulos);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.header .logo a::after {
+  content: 'Leandro Reinaux';
+}
+
+h2,
+h3,
+h4,
+label {
+  font-family: var(--titulos);
+  color: var(--texto);
+}
+
+h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* Caixas de seleção grandes o bastante para o dedo. */
+input[type='checkbox'] {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-inline-end: 0.5rem;
+  vertical-align: middle;
+  accent-color: var(--destaque);
+}
+
+a {
+  color: var(--destaque);
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  color: var(--destaque-hover);
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+select {
+  min-height: 44px;
+  padding-inline: 1rem;
+  border: 1px solid var(--borda);
+  border-radius: 0.375rem;
+  background: var(--fundo);
+  color: var(--texto);
+  font: inherit;
+  box-shadow: none;
+}
+
+input:focus,
+select:focus,
+a:focus-visible,
+.button:focus-visible {
+  outline: 3px solid var(--destaque);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.button {
+  min-height: 44px;
+  padding-inline: 1rem;
+  border: 1px solid var(--destaque);
+  border-radius: 0.375rem;
+  background: var(--destaque);
+  color: var(--fundo);
+  font-family: var(--titulos);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.button:hover {
+  background: var(--destaque-hover);
+  border-color: var(--destaque-hover);
+  color: var(--fundo);
+}
+
+.button.button-outline {
+  background: transparent;
+  color: var(--destaque);
+}
+
+.lists .description,
+.small,
+footer.container {
+  color: var(--secundario);
+}
+
+footer.container {
+  font-family: var(--titulos);
+  font-size: 0.875rem;
+}
+
+footer a {
+  color: var(--secundario);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

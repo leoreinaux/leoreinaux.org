@@ -47,7 +47,7 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 | Envio de e-mail | [Amazon SES, plano Essentials](https://dev.to/mr_manushukla/amazon-ses-pricing-plans-in-2026-essentials-vs-pro-vs-enterprise-and-when-a-la-carte-still-wins-1ohg) | Serviço pago por uso | US$ 0,16 por mil e-mails, sem taxa fixa | Brevo, Resend |
 | Busca | [Pagefind 1.5](https://github.com/Pagefind/pagefind) | MIT | Índice gerado no build e consultado no navegador, sem servidor; interface própria (~1,4 KB) sobre a API, em vez da UI pronta (~43 KB) | — |
 | Analytics | [Umami v3](https://heise.de/-11069615) | MIT | Sem cookies; usa o mesmo PostgreSQL do Listmonk | Plausible CE |
-| Servidor | VPS + Docker Compose + Caddy | Apache-2.0 (Caddy) | HTTPS automático para os dois serviços | — |
+| Servidor | VPS + Docker Compose + Caddy | Apache-2.0 (Caddy) | HTTPS automático para os dois serviços (`newsletter.leoreinaux.org` e `analytics.leoreinaux.org`); passo a passo em `infra/README.md` | — |
 | CI/CD | GitHub Actions | Gratuito em repositório público | Build, testes, deploy e disparo da newsletter | Forgejo Actions (Codeberg) |
 | Vídeo | YouTube + embed leve (lite-youtube) | Apache-2.0 (embed) | Alcance do YouTube sem pesar a página | PeerTube |
 
@@ -194,21 +194,21 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 1. Um commit adiciona um post com `newsletter: true` na branch principal.
 2. O workflow de deploy gera e publica o site.
-3. Com o deploy concluído, `scripts/newsletter.ts` pergunta à API do Listmonk se já existe campanha com o slug do post; o script é idempotente e não guarda estado no repositório.
-4. Se não existe, cria a campanha com o template "novo post": título, capa, `summary` e um botão "Ler no site".
-5. A campanha é agendada para 2 horas depois, janela para revisar ou cancelar no painel.
+3. Com o deploy concluído, `scripts/newsletter.ts` lê o `/newsletter.json` gerado no build e pergunta à API do Listmonk se já existe campanha com a tag `post:<slug>`; o script é idempotente, não guarda estado no repositório e só considera posts publicados nos últimos 7 dias.
+4. Se não existe, cria a campanha com o template "novo post" (`infra/listmonk/novo-post.html`, que o script mantém sincronizado): título, capa em JPEG, `summary` e um botão "Ler no site", com versão em texto puro.
+5. A campanha é agendada para as 7h (horário de Brasília) do dia seguinte, janela para revisar ou cancelar no painel.
 6. O Listmonk envia pelo SES em ritmo controlado, com cabeçalho de descadastro em um clique.
 
 **Entregabilidade**
 
-- SPF, DKIM e DMARC configurados para o domínio de envio, com MAIL FROM próprio no SES
+- SPF, DKIM e DMARC configurados para o domínio de envio (`news.leoreinaux.org`, no SES da região de São Paulo), com MAIL FROM próprio no SES; passo a passo em `infra/ses.md`
 - Bounces e reclamações voltam do SES para o Listmonk, que remove endereços problemáticos sozinho
 - Contas novas do SES começam em sandbox; é preciso pedir acesso de produção antes do lançamento
 - E-mail com versão em texto puro e HTML simples, sem imagens pesadas
 
 **LGPD**
 
-- Finalidade clara no formulário e política de privacidade publicada
+- Finalidade clara no formulário e política de privacidade publicada em `/privacidade`, com o contato `privacyEmail` do `site.config.ts`
 - Data e origem da confirmação registradas pelo Listmonk
 - Descadastro em todo e-mail; exportação e exclusão dos dados de um inscrito pelo painel
 - O Umami não usa cookies, então o site dispensa banner de consentimento
@@ -233,7 +233,7 @@ O custo total fica em torno de R$ 45 a R$ 60 por mês, quase todo na VPS. Tráfe
 | Envio de e-mail | SES Essentials, \~4 mil e-mails/mês | < US$ 1 (≈ R$ 5) | ≈ R$ 60 |
 | Site, CDN e DNS | Cloudflare | R$ 0 | R$ 0 |
 | Repositório e CI | GitHub, repositório público | R$ 0 | R$ 0 |
-| Backups | restic (open source) para armazenamento de objetos no plano gratuito | R$ 0 | R$ 0 |
+| Backups | restic (open source) para o Cloudflare R2, no plano gratuito (10 GB) | R$ 0 | R$ 0 |
 | Domínio | leoreinaux.org | — | Renovação anual, já registrado |
 | **Total** |  | **≈ R$ 45 a 60** | **≈ R$ 540 a 720** |
 
@@ -274,8 +274,8 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 - [ ] VPS com Docker Compose: Caddy, Listmonk, Umami, PostgreSQL e backup com restic
 - [ ] Conta SES com SPF, DKIM e DMARC; pedido de saída do sandbox
 - [ ] Formulário, lista double opt-in e template "novo post"
-- [ ] `scripts/newsletter.ts` ligado ao deploy
-- [ ] Política de privacidade
+- [x] `scripts/newsletter.ts` ligado ao deploy
+- [x] Política de privacidade
 
 **Etapa 4 — Lançamento**
 
@@ -289,11 +289,11 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 
 ## Decisões em aberto
 
-- [ ] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual?
+- [x] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual? **Decidido:** envio automático às 7h (horário de Brasília) do dia seguinte à publicação, quando é mais provável ler com calma, em vez de 2 horas depois do deploy; o painel do Listmonk continua permitindo revisar ou cancelar até lá.
 - [x] Fontes tipográficas: par serifada no texto + sem serifa nos títulos, ou uma família só? **Decidido:** Literata no corpo (desenhada para leitura longa em tela) e Source Sans 3 nos títulos e na interface, ambas OFL.
 - [x] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear? **Decidido:** liberar; o `robots.txt` libera pelo nome os crawlers de busca e de treinamento de IA.
-- [ ] Provedor e região da VPS
-- [ ] Domínio de envio: `leoreinaux.org` ou um subdomínio dedicado
+- [x] Provedor e região da VPS. **Decidido:** Hetzner CX23 (2 vCPU, 4 GB), na Alemanha ou na Finlândia.
+- [x] Domínio de envio: `leoreinaux.org` ou um subdomínio dedicado? **Decidido:** subdomínio dedicado, para separar a reputação de envio do domínio principal.
 - [ ] Identidade visual: cores, logotipo e favicon
 
 ## Fontes

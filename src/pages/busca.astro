@@ -7,10 +7,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <h1>Busca</h1>
     <!-- Sem JavaScript, o formulário só recarrega a página; a mensagem abaixo explica o motivo. -->
     <form role="search" action="/busca" method="get" id="busca-form">
-      <label for="busca-termo">Buscar nos textos</label>
+      <label class="rotulo" for="busca-termo">Buscar nos textos</label>
       <div class="busca-campo">
-        <input id="busca-termo" name="q" type="search" autocomplete="off" spellcheck="false" />
-        <button type="submit">Buscar</button>
+        <input class="campo-texto" id="busca-termo" name="q" type="search" autocomplete="off" spellcheck="false" />
+        <button class="botao" type="submit">Buscar</button>
       </div>
     </form>
     <noscript>
@@ -108,46 +108,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     padding-block-start: var(--space-5);
   }
 
-  label {
-    display: block;
-    margin-block-end: var(--space-2);
-    font-family: var(--font-heading);
-    font-weight: 600;
-  }
-
   .busca-campo {
     display: flex;
     gap: var(--space-2);
   }
 
-  input,
-  button {
-    min-height: var(--tap-target);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    font: inherit;
-  }
-
-  input {
+  .busca-campo .campo-texto {
     flex: 1;
-    min-width: 0;
-    padding-inline: var(--space-3);
-    background: var(--color-bg);
-    color: var(--color-text);
-  }
-
-  button {
-    padding-inline: var(--space-3);
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: var(--color-bg);
-    font-family: var(--font-heading);
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background: var(--color-accent-hover);
   }
 
   #busca-status {

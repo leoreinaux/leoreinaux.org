@@ -39,7 +39,18 @@ export interface SiteConfig {
   newsletter: {
     /** URL do Listmonk (Etapa 3). */
     listmonkUrl: string;
+    /**
+     * UUID da lista pública (double opt-in) no Listmonk, em Lists → a lista → UUID.
+     * Enquanto estiver vazio, o formulário de inscrição não aparece no site.
+     */
+    listUuid: string;
+    /** Horário de envio das campanhas, no fuso de sendTimeZone: o dia seguinte à publicação, nessa hora. */
+    sendTime: string;
+    /** Fuso do horário de envio (nome IANA). */
+    sendTimeZone: string;
   };
+  /** E-mail para pedidos sobre dados pessoais (LGPD), publicado na política de privacidade. */
+  privacyEmail: string;
   /** Repositório público com o código do site (licença MIT). */
   sourceCode: string;
   /** Licença dos textos de src/content/. */
@@ -80,7 +91,11 @@ export const site: SiteConfig = {
   ],
   newsletter: {
     listmonkUrl: 'https://newsletter.leoreinaux.org',
+    listUuid: '',
+    sendTime: '07:00',
+    sendTimeZone: 'America/Sao_Paulo',
   },
+  privacyEmail: 'privacidade@leoreinaux.org',
   sourceCode: 'https://github.com/leoreinaux/leoreinaux.org',
   contentLicense: {
     name: 'CC BY 4.0',

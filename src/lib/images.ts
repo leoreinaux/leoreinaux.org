@@ -14,8 +14,11 @@ export function authorPhoto(): { src: ImageMetadata; alt: string } | undefined {
   return { src, alt: photo.alt };
 }
 
-/** Gera a imagem em WebP (até 1360px de largura) e devolve a URL absoluta, que funciona fora do site. */
-export async function imageUrl(src: ImageMetadata): Promise<string> {
-  const image = await getImage({ src, format: 'webp', width: Math.min(src.width, 1360) });
+/**
+ * Gera a imagem (WebP por padrão, até 1360px de largura) e devolve a URL absoluta, que funciona fora do site.
+ * Para e-mail, use JPEG: nem todo programa de e-mail mostra WebP.
+ */
+export async function imageUrl(src: ImageMetadata, format: 'webp' | 'jpeg' = 'webp', maxWidth = 1360): Promise<string> {
+  const image = await getImage({ src, format, width: Math.min(src.width, maxWidth) });
   return new URL(image.src, site.url).href;
 }

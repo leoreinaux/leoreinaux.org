@@ -16,3 +16,6 @@ npm-debug.log*
 
 # sistema
 .DS_Store
+
+# restauração de backup da VPS (infra/backup.sh)
+infra/restauracao/

@@ -54,3 +54,10 @@ jobs:
         run: node scripts/indexnow.ts
         env:
           BASE_SHA: ${{ github.event.before }}
+
+      # Cria e agenda a campanha de cada post novo com newsletter: true; uma falha só gera aviso.
+      - name: Agendar newsletter
+        run: node scripts/newsletter.ts
+        env:
+          LISTMONK_API_USER: ${{ secrets.LISTMONK_API_USER }}
+          LISTMONK_API_TOKEN: ${{ secrets.LISTMONK_API_TOKEN }}

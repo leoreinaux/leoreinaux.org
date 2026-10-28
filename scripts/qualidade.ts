@@ -7,7 +7,7 @@
  * Uso: npm run qualidade (depois de um build). O Chrome vem da variável CHROME_PATH.
  * Sai com código 1 se alguma meta cair.
  */
-import { spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { appendFileSync, readdirSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import lighthouse, { type RunnerResult } from 'lighthouse';
@@ -49,6 +49,7 @@ const posts = readdirSync('dist/posts')
 const paginas: Pagina[] = [
   { caminho: '/' },
   { caminho: '/sobre' },
+  { caminho: '/privacidade' },
   { caminho: '/busca', semSeo: true },
   { caminho: '/pagina-que-nao-existe', semSeo: true, semLighthouse: true },
   ...posts.map((caminho) => ({ caminho, post: true })),
@@ -58,14 +59,17 @@ const falhas: string[] = [];
 const linhas: string[] = [];
 
 function servidor(): Promise<() => void> {
-  const processo = spawn('npx', ['astro', 'preview', '--port', String(PORTA)], { stdio: 'ignore', detached: true });
+  // O astro preview pode seguir em segundo plano depois que o processo que o chamou sai;
+  // por isso ele é parado pelo próprio comando, antes (sobra de outra execução) e depois do teste.
   const parar = () => {
     try {
-      process.kill(-processo.pid!);
+      execFileSync('npx', ['astro', 'preview', 'stop'], { stdio: 'ignore' });
     } catch {
-      // O servidor já tinha saído.
+      // Nenhum servidor rodando.
     }
   };
+  parar();
+  spawn('npx', ['astro', 'preview', '--port', String(PORTA)], { stdio: 'ignore', detached: true }).unref();
   return new Promise((resolve, reject) => {
     const inicio = Date.now();
     const tentar = async () => {
