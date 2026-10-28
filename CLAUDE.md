@@ -64,7 +64,7 @@ WCAG 2.2 nível AA em todo o site.
 
 ## Metas de legibilidade e performance
 
-- Corpo de 18px no mobile e 20px a partir de 48em, entrelinha 1,65 e coluna de 68ch.
+- Corpo de 18px no mobile e 20px a partir de 48em, entrelinha 1,65 e cerca de 68 caracteres por linha (`--measure: 58ch` com a Literata). Ao trocar de fonte, meça de novo e ajuste o `--measure`.
 - No máximo duas famílias de fonte OFL, servidas localmente pelo Fonts API do Astro. Nada de Google Fonts ou CDN de terceiros.
 - Zero JavaScript por padrão. A exceção atual é o script do tema (inline no `<head>` e no `ThemeToggle`). Todo script novo precisa ser discutido antes; a meta é menos de 30 KB por página.
 - LCP < 2,0 s, CLS < 0,05, INP < 200 ms e post sem vídeo com menos de 300 KB no total.

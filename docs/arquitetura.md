@@ -149,7 +149,7 @@ A meta é WCAG 2.2 nível AA em todo o site e leitura confortável de textos lon
 **Tipografia de leitura**
 
 - Corpo de texto em 18 px no mobile e 20 px no desktop, entrelinha 1,6 a 1,7
-- Largura da coluna limitada a cerca de 68 caracteres (`max-width: 68ch`)
+- Largura da coluna limitada a cerca de 68 caracteres por linha (`max-width: 58ch` com a Literata; o valor em `ch` depende da fonte, porque mede a largura do "0")
 - No máximo duas famílias de fonte com licença aberta (SIL OFL), servidas pelo próprio site em woff2 pelo Fonts API do Astro (estável desde a versão 6), sem Google Fonts
 - Hierarquia clara de títulos, citações e notas de rodapé estilizadas, folha de estilo para impressão
 
