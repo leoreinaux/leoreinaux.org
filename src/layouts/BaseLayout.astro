@@ -1,4 +1,5 @@
 ---
+import { Font } from 'astro:assets';
 import '../styles/global.css';
 import { site } from '../../site.config';
 import Header from '../components/Header.astro';
@@ -30,6 +31,9 @@ const canonical = new URL(path, site.url).href;
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="generator" content={Astro.generator} />
+    <!-- Pré-carrega só os estilos normais; os itálicos baixam quando usados. -->
+    <Font cssVariable="--font-body" preload={[{ style: 'normal' }]} />
+    <Font cssVariable="--font-heading" preload={[{ style: 'normal' }]} />
     <script is:inline>
       // Aplica o tema salvo antes da primeira pintura, para não piscar.
       try {
