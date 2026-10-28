@@ -47,7 +47,7 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 | Envio de e-mail | [Amazon SES, plano Essentials](https://dev.to/mr_manushukla/amazon-ses-pricing-plans-in-2026-essentials-vs-pro-vs-enterprise-and-when-a-la-carte-still-wins-1ohg) | Serviço pago por uso | US$ 0,16 por mil e-mails, sem taxa fixa | Brevo, Resend |
 | Busca | [Pagefind 1.5](https://github.com/Pagefind/pagefind) | MIT | Índice gerado no build e consultado no navegador, sem servidor; interface própria (~1,4 KB) sobre a API, em vez da UI pronta (~43 KB) | — |
 | Analytics | [Umami v3](https://heise.de/-11069615) | MIT | Sem cookies; usa o mesmo PostgreSQL do Listmonk | Plausible CE |
-| Servidor | VPS + Docker Compose + Caddy | Apache-2.0 (Caddy) | HTTPS automático para os dois serviços | — |
+| Servidor | VPS + Docker Compose + Caddy | Apache-2.0 (Caddy) | HTTPS automático para os dois serviços (`newsletter.leoreinaux.org` e `analytics.leoreinaux.org`); passo a passo em `infra/README.md` | — |
 | CI/CD | GitHub Actions | Gratuito em repositório público | Build, testes, deploy e disparo da newsletter | Forgejo Actions (Codeberg) |
 | Vídeo | YouTube + embed leve (lite-youtube) | Apache-2.0 (embed) | Alcance do YouTube sem pesar a página | PeerTube |
 
@@ -233,7 +233,7 @@ O custo total fica em torno de R$ 45 a R$ 60 por mês, quase todo na VPS. Tráfe
 | Envio de e-mail | SES Essentials, \~4 mil e-mails/mês | < US$ 1 (≈ R$ 5) | ≈ R$ 60 |
 | Site, CDN e DNS | Cloudflare | R$ 0 | R$ 0 |
 | Repositório e CI | GitHub, repositório público | R$ 0 | R$ 0 |
-| Backups | restic (open source) para armazenamento de objetos no plano gratuito | R$ 0 | R$ 0 |
+| Backups | restic (open source) para o Cloudflare R2, no plano gratuito (10 GB) | R$ 0 | R$ 0 |
 | Domínio | leoreinaux.org | — | Renovação anual, já registrado |
 | **Total** |  | **≈ R$ 45 a 60** | **≈ R$ 540 a 720** |
 
@@ -289,11 +289,11 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 
 ## Decisões em aberto
 
-- [ ] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual?
+- [x] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual? **Decidido:** envio automático, agendado para o próximo horário do Brasil com mais chance de leitura com calma, e não para 2 horas depois; o horário exato é definido no `scripts/newsletter.ts`.
 - [x] Fontes tipográficas: par serifada no texto + sem serifa nos títulos, ou uma família só? **Decidido:** Literata no corpo (desenhada para leitura longa em tela) e Source Sans 3 nos títulos e na interface, ambas OFL.
 - [x] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear? **Decidido:** liberar; o `robots.txt` libera pelo nome os crawlers de busca e de treinamento de IA.
-- [ ] Provedor e região da VPS
-- [ ] Domínio de envio: `leoreinaux.org` ou um subdomínio dedicado
+- [x] Provedor e região da VPS. **Decidido:** Hetzner CX23 (2 vCPU, 4 GB), na Alemanha ou na Finlândia.
+- [x] Domínio de envio: `leoreinaux.org` ou um subdomínio dedicado? **Decidido:** subdomínio dedicado, para separar a reputação de envio do domínio principal.
 - [ ] Identidade visual: cores, logotipo e favicon
 
 ## Fontes
