@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Página não encontrada" description="O endereço acessado não existe neste site." canonicalPath="/404">
+  <div class="coluna erro">
+    <h1>Página não encontrada</h1>
+    <p>O endereço que você acessou não existe ou mudou de lugar.</p>
+    <p><a href="/">Voltar para a página inicial</a></p>
+  </div>
+</BaseLayout>
+
+<style>
+  .erro {
+    padding-block-start: var(--space-5);
+  }
+</style>

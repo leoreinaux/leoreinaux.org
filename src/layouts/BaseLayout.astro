@@ -1,0 +1,55 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import { site } from '../../site.config';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  /** Título da página; o nome do site é acrescentado, exceto na home. */
+  title: string;
+  /** Meta description, até 160 caracteres. */
+  description: string;
+  /** Caminho canônico; por padrão, o da própria página. */
+  canonicalPath?: string;
+}
+
+const { title, description, canonicalPath } = Astro.props;
+const fullTitle = title === site.name ? title : `${title} · ${site.name}`;
+const path = canonicalPath ?? Astro.url.pathname.replace(/(\/index)?\.html$/, '').replace(/(.)\/$/, '$1');
+const canonical = new URL(path, site.url).href;
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="generator" content={Astro.generator} />
+    <!-- Pré-carrega só os estilos normais; os itálicos baixam quando usados. -->
+    <Font cssVariable="--font-body" preload={[{ style: 'normal' }]} />
+    <Font cssVariable="--font-heading" preload={[{ style: 'normal' }]} />
+    <script is:inline>
+      // Aplica o tema salvo antes da primeira pintura, para não piscar.
+      try {
+        const tema = localStorage.getItem('tema');
+        if (tema === 'light' || tema === 'dark') document.documentElement.dataset.theme = tema;
+      } catch {}
+    </script>
+    <!-- Espaço para Open Graph, JSON-LD e feeds (Etapa 2). -->
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+    <Header />
+    <main id="conteudo" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

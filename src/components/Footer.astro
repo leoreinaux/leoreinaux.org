@@ -1,0 +1,66 @@
+---
+import { site } from '../../site.config';
+
+const ano = new Date().getFullYear();
+---
+
+<footer class="rodape nao-imprimir">
+  <div class="coluna">
+    <p>
+      © {ano} {site.author.name}. Textos sob licença{' '}
+      <a href={site.contentLicense.url} rel="license">{site.contentLicense.name}</a>; código sob licença MIT.
+    </p>
+    {
+      site.social.length > 0 && (
+        <ul class="redes" aria-label="Redes sociais">
+          {site.social.map(({ label, url }) => (
+            <li>
+              <a href={url} rel="me">
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    margin-block-start: var(--space-6);
+    padding-block: var(--space-4);
+    border-block-start: 1px solid var(--color-border);
+    color: var(--color-muted);
+  }
+
+  /* A coluna mantém a fonte do corpo para ter a mesma largura do texto (--measure). */
+  .rodape p,
+  .redes {
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+  }
+
+  .rodape p {
+    margin-block-end: var(--space-2);
+  }
+
+  .redes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .redes li {
+    margin: 0;
+  }
+
+  .redes a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+  }
+</style>
