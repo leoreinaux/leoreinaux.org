@@ -25,7 +25,7 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `src/lib/posts.ts`: `getPublishedPosts()` (já filtra rascunhos em produção e ordena por data). Use sempre ele em vez de `getCollection('posts')`.
 - `src/layouts/`: `BaseLayout` (HTML base, `<head>`, cabeçalho e rodapé) e `PostLayout`.
 - `src/components/`: `Header`, `Footer`, `ThemeToggle`. Próximas etapas: `NewsletterForm`, `VideoEmbed`, `Toc`.
-- `src/pages/`: `index`, `sobre`, `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post, montada por `src/lib/markdown.ts`). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
+- `src/pages/`: `index`, `sobre`, `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `robots.txt`, `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post, montada por `src/lib/markdown.ts`). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
 - `src/styles/`: `tokens.css` (cores e espaçamentos dos dois temas), `tipografia.css`, `global.css`.
 - `src/assets/fonts/`: arquivos woff2 e licença OFL das fontes.
 - `wrangler.jsonc` e `.github/workflows/deploy.yml`: publicação na Cloudflare a cada push na `main`.

@@ -75,9 +75,9 @@ leoreinaux.org/
 │   │       └── transcricao.md    # opcional
 │   ├── components/   # Header, NewsletterForm, VideoEmbed, Toc...
 │   ├── layouts/      # BaseLayout, PostLayout
-│   ├── pages/        # index, sobre, posts/[slug], busca, rss.xml, llms.txt
+│   ├── pages/        # index, sobre, posts/[slug], busca, rss.xml, llms.txt, robots.txt
 │   └── styles/       # tokens, tipografia, temas claro/escuro
-├── public/           # robots.txt, favicon
+├── public/           # favicon
 ├── scripts/          # newsletter.ts, indexnow.ts
 ├── infra/            # docker-compose.yml, Caddyfile, backup.sh
 ├── .github/workflows/  # deploy.yml, qualidade.yml
@@ -135,7 +135,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 
 **Leitura por IAs (GEO)**
 
-- `robots.txt` liberando explicitamente os crawlers de busca de IA (OAI-SearchBot, Claude-SearchBot, PerplexityBot)
+- `robots.txt` gerado no build, liberando explicitamente os crawlers de busca de IA (OAI-SearchBot, Claude-SearchBot, PerplexityBot) e os de treinamento (GPTBot, ClaudeBot, CCBot, Google-Extended, Applebot-Extended)
 - `/llms.txt` gerado no build com a descrição do site e a lista de posts, e `/llms-full.txt` com o texto completo; [Anthropic e Perplexity declaram suporte](https://seocom.agency/en/resources/seo-dictionary/llms-txt/), os demais ainda não. Custo de implementação é quase zero
 - Cada post também disponível em Markdown puro (`/posts/tecnologia-brasileira.md`), mais fácil de ler por modelos
 - A licença CC BY 4.0 declarada no JSON-LD deixa explícito que citar e reproduzir com crédito é permitido
@@ -263,7 +263,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 
 **Etapa 2 — Descoberta**
 
-- [ ] Sitemap, RSS, `robots.txt`, `llms.txt` e versão Markdown dos posts
+- [x] Sitemap, RSS, `robots.txt`, `llms.txt` e versão Markdown dos posts
 - [ ] JSON-LD e Open Graph com imagens geradas no build
 - [ ] Busca com Pagefind
 - [ ] Lighthouse CI e axe-core no workflow de qualidade
@@ -291,7 +291,7 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 
 - [ ] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual?
 - [x] Fontes tipográficas: par serifada no texto + sem serifa nos títulos, ou uma família só? **Decidido:** Literata no corpo (desenhada para leitura longa em tela) e Source Sans 3 nos títulos e na interface, ambas OFL.
-- [ ] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear?
+- [x] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear? **Decidido:** liberar; o `robots.txt` libera pelo nome os crawlers de busca e de treinamento de IA.
 - [ ] Provedor e região da VPS
 - [ ] Domínio de envio: `leoreinaux.org` ou um subdomínio dedicado
 - [ ] Identidade visual: cores, logotipo e favicon
