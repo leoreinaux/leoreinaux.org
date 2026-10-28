@@ -2,11 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../../site.config';
 import { formatDate, getPublishedPosts, postUrl } from '../lib/posts';
+import { personNode, websiteNode } from '../lib/jsonld';
 
 const posts = await getPublishedPosts();
 ---
 
-<BaseLayout title={site.name} description={site.description}>
+<BaseLayout title={site.name} description={site.description} jsonLd={[websiteNode(), await personNode()]}>
   <div class="coluna">
     <h1 class="visualmente-oculto">{site.name}</h1>
     <p class="apresentacao">{site.description}</p>

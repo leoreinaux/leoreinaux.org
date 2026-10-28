@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Busca" description="Busque palavras e assuntos em todos os textos do site." noindex>
+  <div class="coluna busca">
+    <h1>Busca</h1>
+    <!-- Sem JavaScript, o formulário só recarrega a página; a mensagem abaixo explica o motivo. -->
+    <form role="search" action="/busca" method="get" id="busca-form">
+      <label for="busca-termo">Buscar nos textos</label>
+      <div class="busca-campo">
+        <input id="busca-termo" name="q" type="search" autocomplete="off" spellcheck="false" />
+        <button type="submit">Buscar</button>
+      </div>
+    </form>
+    <noscript>
+      <p>A busca precisa de JavaScript. Sem ele, veja a <a href="/">lista de todos os textos</a>.</p>
+    </noscript>
+    <p id="busca-status" class="texto-secundario" role="status"></p>
+    <ol id="busca-resultados" class="busca-resultados" role="list"></ol>
+  </div>
+</BaseLayout>
+
+<script>
+  // Busca com o Pagefind: o índice é gerado depois do astro build (ver npm run build).
+  // Só esta página carrega o script; o índice em si baixa na primeira busca.
+  interface PagefindResult {
+    data(): Promise<{ url: string; excerpt: string; meta: { title?: string } }>;
+  }
+  interface Pagefind {
+    options(opcoes: { excerptLength: number }): Promise<void>;
+    debouncedSearch(termo: string, opcoes?: object, espera?: number): Promise<{ results: PagefindResult[] } | null>;
+  }
+
+  const LIMITE = 20;
+  const form = document.querySelector<HTMLFormElement>('#busca-form')!;
+  const campo = document.querySelector<HTMLInputElement>('#busca-termo')!;
+  const status = document.querySelector<HTMLElement>('#busca-status')!;
+  const lista = document.querySelector<HTMLOListElement>('#busca-resultados')!;
+
+  let pagefind: Promise<Pagefind> | undefined;
+  function carregar(): Promise<Pagefind> {
+    // Caminho em variável para o Vite não tentar empacotar um arquivo que só existe depois do build.
+    const caminho = '/pagefind/pagefind.js';
+    pagefind ??= import(/* @vite-ignore */ caminho).then(async (pf: Pagefind) => {
+      await pf.options({ excerptLength: 30 });
+      return pf;
+    });
+    return pagefind;
+  }
+
+  function item({ url, excerpt, meta }: Awaited<ReturnType<PagefindResult['data']>>): HTMLLIElement {
+    const li = document.createElement('li');
+    const titulo = document.createElement('h2');
+    const link = document.createElement('a');
+    // O Pagefind indexa os arquivos .html; o site usa URLs sem extensão.
+    link.href = url.replace(/\.html$/, '');
+    link.textContent = meta.title ?? link.href;
+    titulo.append(link);
+    const trecho = document.createElement('p');
+    // O trecho vem do índice dos nossos próprios textos, com <mark> nos termos encontrados.
+    trecho.innerHTML = excerpt;
+    li.append(titulo, trecho);
+    return li;
+  }
+
+  async function buscar(termo: string) {
+    const url = new URL(location.href);
+    if (termo) url.searchParams.set('q', termo);
+    else url.searchParams.delete('q');
+    history.replaceState(null, '', url);
+
+    if (!termo) {
+      lista.replaceChildren();
+      status.textContent = '';
+      return;
+    }
+    try {
+      const busca = await (await carregar()).debouncedSearch(termo, {}, 300);
+      if (!busca) return; // Substituída por uma busca mais nova.
+      const dados = await Promise.all(busca.results.slice(0, LIMITE).map((r) => r.data()));
+      lista.replaceChildren(...dados.map(item));
+      const total = busca.results.length;
+      status.textContent =
+        total === 0
+          ? `Nenhum resultado para “${termo}”.`
+          : `${total} ${total === 1 ? 'resultado' : 'resultados'} para “${termo}”${total > LIMITE ? `; mostrando os ${LIMITE} primeiros` : ''}.`;
+    } catch {
+      status.textContent = 'A busca não está disponível agora. Veja a lista de textos na página inicial.';
+    }
+  }
+
+  form.addEventListener('submit', (evento) => {
+    evento.preventDefault();
+    buscar(campo.value.trim());
+  });
+  campo.addEventListener('input', () => buscar(campo.value.trim()));
+
+  const inicial = new URLSearchParams(location.search).get('q')?.trim();
+  if (inicial) {
+    campo.value = inicial;
+    buscar(inicial);
+  }
+</script>
+
+<style>
+  .busca {
+    padding-block-start: var(--space-5);
+  }
+
+  label {
+    display: block;
+    margin-block-end: var(--space-2);
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+
+  .busca-campo {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  input,
+  button {
+    min-height: var(--tap-target);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font: inherit;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding-inline: var(--space-3);
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  button {
+    padding-inline: var(--space-3);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-bg);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: var(--color-accent-hover);
+  }
+
+  #busca-status {
+    margin-block-start: var(--space-3);
+  }
+
+  .busca-resultados {
+    padding: 0;
+    list-style: none;
+  }
+
+  .busca-resultados :global(h2) {
+    margin-block-end: var(--space-1);
+    font-size: 1.25em;
+  }
+
+  .busca-resultados :global(mark) {
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-weight: 700;
+  }
+</style>

@@ -45,7 +45,7 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 | DNS | Cloudflare | Serviço gratuito | Mesmo painel do site; proteção contra abuso no subdomínio da newsletter | Registrador atual |
 | Newsletter | [Listmonk v6](https://github.com/knadh/listmonk) | AGPL-3.0 | Binário único em Go + PostgreSQL; double opt-in por lista, API e templates | Ghost (mais pesado) |
 | Envio de e-mail | [Amazon SES, plano Essentials](https://dev.to/mr_manushukla/amazon-ses-pricing-plans-in-2026-essentials-vs-pro-vs-enterprise-and-when-a-la-carte-still-wins-1ohg) | Serviço pago por uso | US$ 0,16 por mil e-mails, sem taxa fixa | Brevo, Resend |
-| Busca | [Pagefind 1.5](https://github.com/Pagefind/pagefind) | MIT | Índice gerado no build e consultado no navegador, sem servidor | — |
+| Busca | [Pagefind 1.5](https://github.com/Pagefind/pagefind) | MIT | Índice gerado no build e consultado no navegador, sem servidor; interface própria (~1,4 KB) sobre a API, em vez da UI pronta (~43 KB) | — |
 | Analytics | [Umami v3](https://heise.de/-11069615) | MIT | Sem cookies; usa o mesmo PostgreSQL do Listmonk | Plausible CE |
 | Servidor | VPS + Docker Compose + Caddy | Apache-2.0 (Caddy) | HTTPS automático para os dois serviços | — |
 | CI/CD | GitHub Actions | Gratuito em repositório público | Build, testes, deploy e disparo da newsletter | Forgejo Actions (Codeberg) |
@@ -75,9 +75,9 @@ leoreinaux.org/
 │   │       └── transcricao.md    # opcional
 │   ├── components/   # Header, NewsletterForm, VideoEmbed, Toc...
 │   ├── layouts/      # BaseLayout, PostLayout
-│   ├── pages/        # index, sobre, posts/[slug], busca, rss.xml, llms.txt
+│   ├── pages/        # index, sobre, posts/[slug], busca, rss.xml, llms.txt, robots.txt
 │   └── styles/       # tokens, tipografia, temas claro/escuro
-├── public/           # robots.txt, favicon
+├── public/           # favicon
 ├── scripts/          # newsletter.ts, indexnow.ts
 ├── infra/            # docker-compose.yml, Caddyfile, backup.sh
 ├── .github/workflows/  # deploy.yml, qualidade.yml
@@ -113,7 +113,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 - URLs curtas em português, sem data: `/posts/tecnologia-brasileira`
 - `<html lang="pt-BR">`, `<link rel="canonical">` em todas as páginas e título único por página
 - Sitemap gerado no build (`@astrojs/sitemap`) e feed RSS completo (`@astrojs/rss`)
-- Open Graph e cards sociais com imagem gerada no build para cada post
+- Open Graph e cards sociais com imagem gerada no build para cada post: um PNG de 1200×630 com o título sobre o fundo do site, desenhado pelo [Satori](https://github.com/vercel/satori) e convertido pelo [resvg-js](https://github.com/thx/resvg-js) (ambos MPL-2.0), com a Source Sans 3 em woff estático (o Satori não lê woff2). As páginas que não são posts usam um card padrão
 - Ping via IndexNow a cada deploy, para Bing e outros buscadores indexarem em minutos
 - Cadastro no Google Search Console e no Bing Webmaster Tools; o índice do Bing alimenta respostas de vários assistentes
 
@@ -121,11 +121,11 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 
 | Tipo | Onde | Campos que importam |
 | --- | --- | --- |
-| `Person` | Página Sobre e como autor de cada post | Nome, cargo, foto, `sameAs` com LinkedIn e Instagram |
-| `WebSite` | Home | Nome, URL, busca interna |
+| `Person` | Página Sobre (dentro de um `ProfilePage`), home e como autor de cada post | Nome, cargo, foto, `sameAs` com LinkedIn e Instagram |
+| `WebSite` | Home | Nome, URL, busca interna (`SearchAction` para `/busca?q=`) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
-| `VideoObject` | Posts com vídeo | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
-| `BreadcrumbList` | Posts | Home › Posts › título |
+| `VideoObject` | Posts com vídeo (entra com o componente de vídeo) | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
+| `BreadcrumbList` | Posts | Início › título, enquanto não houver uma página que liste os posts |
 
 **Escrita que vira resposta (AEO)**
 
@@ -135,7 +135,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 
 **Leitura por IAs (GEO)**
 
-- `robots.txt` liberando explicitamente os crawlers de busca de IA (OAI-SearchBot, Claude-SearchBot, PerplexityBot)
+- `robots.txt` gerado no build, liberando explicitamente os crawlers de busca de IA (OAI-SearchBot, Claude-SearchBot, PerplexityBot) e os de treinamento (GPTBot, ClaudeBot, CCBot, Google-Extended, Applebot-Extended)
 - `/llms.txt` gerado no build com a descrição do site e a lista de posts, e `/llms-full.txt` com o texto completo; [Anthropic e Perplexity declaram suporte](https://seocom.agency/en/resources/seo-dictionary/llms-txt/), os demais ainda não. Custo de implementação é quase zero
 - Cada post também disponível em Markdown puro (`/posts/tecnologia-brasileira.md`), mais fácil de ler por modelos
 - A licença CC BY 4.0 declarada no JSON-LD deixa explícito que citar e reproduzir com crédito é permitido
@@ -177,7 +177,7 @@ A meta é WCAG 2.2 nível AA em todo o site e leitura confortável de textos lon
 | JavaScript por página | < 30 KB; a busca carrega só quando aberta |
 | Peso total de um post sem vídeo | < 300 KB |
 
-Imagens passam pelo `astro:assets` (AVIF/WebP, tamanhos responsivos, largura e altura fixas). O workflow de qualidade roda Lighthouse CI e axe-core, ambos open source, e bloqueia o deploy se alguma meta cair.
+Imagens passam pelo `astro:assets` (AVIF/WebP, tamanhos responsivos, largura e altura fixas). O workflow de qualidade (`scripts/qualidade.ts`) roda o axe-core e o Lighthouse, ambos open source, e bloqueia o deploy se alguma meta cair. O axe-core testa cada página nos temas claro e escuro, no celular e no desktop; o Lighthouse mede a mediana de três execuções no celular em 4G simulado, com o TBT no lugar do INP, que não se mede em laboratório. O Lighthouse é usado direto pela API Node em vez do Lighthouse CI, parado desde junho de 2025 na versão 12 do Lighthouse e com dependências vulneráveis. O build do teste inclui os rascunhos, para que a página de post seja testada desde o início.
 
 ## Newsletter
 
@@ -256,17 +256,17 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 
 **Etapa 1 — Fundação do site**
 
-- [ ] Repositório público com Astro 7, licenças, README e `CLAUDE.md`
-- [ ] Layout base, tipografia, temas claro e escuro
-- [ ] Coleção de posts com o schema do frontmatter
-- [ ] Deploy na Cloudflare pelo GitHub Actions e domínio apontado
+- [x] Repositório público com Astro 7, licenças, README e `CLAUDE.md`
+- [x] Layout base, tipografia, temas claro e escuro
+- [x] Coleção de posts com o schema do frontmatter
+- [x] Deploy na Cloudflare pelo GitHub Actions e domínio apontado
 
 **Etapa 2 — Descoberta**
 
-- [ ] Sitemap, RSS, `robots.txt`, `llms.txt` e versão Markdown dos posts
-- [ ] JSON-LD e Open Graph com imagens geradas no build
-- [ ] Busca com Pagefind
-- [ ] Lighthouse CI e axe-core no workflow de qualidade
+- [x] Sitemap, RSS, `robots.txt`, `llms.txt` e versão Markdown dos posts
+- [x] JSON-LD e Open Graph com imagens geradas no build
+- [x] Busca com Pagefind
+- [x] Lighthouse e axe-core no workflow de qualidade
 - [ ] Search Console, Bing Webmaster Tools e IndexNow
 
 **Etapa 3 — Newsletter e analytics**
@@ -291,7 +291,7 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 
 - [ ] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual?
 - [x] Fontes tipográficas: par serifada no texto + sem serifa nos títulos, ou uma família só? **Decidido:** Literata no corpo (desenhada para leitura longa em tela) e Source Sans 3 nos títulos e na interface, ambas OFL.
-- [ ] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear?
+- [x] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear? **Decidido:** liberar; o `robots.txt` libera pelo nome os crawlers de busca e de treinamento de IA.
 - [ ] Provedor e região da VPS
 - [ ] Domínio de envio: `leoreinaux.org` ou um subdomínio dedicado
 - [ ] Identidade visual: cores, logotipo e favicon

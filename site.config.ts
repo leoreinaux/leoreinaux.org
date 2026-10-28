@@ -28,6 +28,11 @@ export interface SiteConfig {
     bio: string;
     /** Parágrafos da página Sobre que explicam por que o site existe. */
     about: string[];
+    /** Foto do autor, na página Sobre e no JSON-LD. `src` é o nome de um arquivo em src/assets/. */
+    photo?: {
+      src: string;
+      alt: string;
+    };
   };
   /** Redes do autor; também alimentarão o sameAs do JSON-LD (Etapa 2). */
   social: SocialLink[];
@@ -59,6 +64,10 @@ export const site: SiteConfig = {
       'Criei este site para registrar esses conhecimentos e experiências, para que qualquer pessoa possa acessá-los de forma livre e aberta e compartilhá-los também.',
       'Aqui não há nenhum interesse comercial nem de ganhar dinheiro. É apenas uma forma de registrar e compartilhar experiências e conhecimentos, de graça e com liberdade.',
     ],
+    photo: {
+      src: 'autor.jpg',
+      alt: 'Leandro Reinaux sorrindo, de óculos escuros e camiseta preta, sentado sobre uma rocha diante de uma grande pedra de granito.',
+    },
   },
   social: [
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/leandroreinaux' },

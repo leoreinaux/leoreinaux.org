@@ -14,8 +14,14 @@ permissions:
   contents: read
 
 jobs:
+  qualidade:
+    name: Qualidade
+    uses: ./.github/workflows/qualidade.yml
+
   deploy:
     name: Build e publicação na Cloudflare
+    # Só publica se acessibilidade e desempenho cumprirem as metas.
+    needs: qualidade
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
