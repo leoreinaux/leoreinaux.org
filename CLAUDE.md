@@ -22,11 +22,11 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 
 - `site.config.ts`: tudo o que é pessoal (nome, URL, autor e foto em `src/assets/`, redes, URL do Listmonk, repositório do código, licença dos textos, e-mail de privacidade, chave do IndexNow). Nenhum dado pessoal fica fora dele, para que um fork só precise trocar este arquivo e a pasta de posts.
 - `src/content.config.ts`: schema da coleção `posts`.
-- `src/content/posts/<slug>/index.md`: um post por pasta, com capa e transcrição na mesma pasta. O nome da pasta é o slug e a URL é `/posts/<slug>`.
+- `src/content/posts/<slug>/index.md`: um post por pasta, com capa e transcrição na mesma pasta. A transcrição do vídeo, se houver, fica em `transcricao.md` (Markdown puro, sem frontmatter) e aparece num bloco recolhível abaixo do player, no JSON-LD e na versão Markdown. O nome da pasta é o slug e a URL é `/posts/<slug>`.
 - `src/lib/posts.ts`: `getPublishedPosts()` (já filtra rascunhos em produção e ordena por data). Use sempre ele em vez de `getCollection('posts')`.
-- `src/lib/jsonld.ts` (dados estruturados), `src/lib/og.ts` (cards sociais com Satori e resvg), `src/lib/markdown.ts` (versão Markdown dos posts) e `src/lib/images.ts` (URL absoluta de uma imagem processada).
+- `src/lib/jsonld.ts` (dados estruturados), `src/lib/og.ts` (cards sociais com Satori e resvg), `src/lib/markdown.ts` (versão Markdown dos posts), `src/lib/images.ts` (URL absoluta de uma imagem processada) e `src/lib/video.ts` (miniatura do YouTube baixada no build, transcrição e duração).
 - `src/layouts/`: `BaseLayout` (HTML base, `<head>` com canonical, Open Graph e JSON-LD, cabeçalho e rodapé) e `PostLayout`.
-- `src/components/`: `Header`, `Footer`, `ThemeToggle` e `NewsletterForm` (inscrição sem JavaScript, enviada direto ao Listmonk; só aparece com `newsletter.listUuid` preenchido). Próximas etapas: `VideoEmbed`, `Toc`.
+- `src/components/`: `Header`, `Footer`, `ThemeToggle`, `NewsletterForm` (inscrição sem JavaScript, enviada direto ao Listmonk; só aparece com `newsletter.listUuid` preenchido) e `VideoEmbed` (miniatura servida pelo site e player de `youtube-nocookie.com` só no clique). Próxima etapa: `Toc`.
 - `src/pages/`: `index`, `sobre`, `newsletter` (o que chega, quando e como cancelar, com o formulário ou o aviso de "em breve"), `privacidade` (política de privacidade; atualize a data no topo a cada mudança e mantenha o texto fiel às configurações de `infra/`), `indexnow.txt` (chave do IndexNow), `busca` (interface própria sobre a API do Pagefind; só o `<article>` dos posts é indexado, via `data-pagefind-body`), `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `robots.txt`, `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post), `og.png` e `og/[slug].png` (cards sociais), `newsletter.json` (posts para o `scripts/newsletter.ts`). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
 - `src/styles/`: `tokens.css` (cores e espaçamentos dos dois temas), `tipografia.css`, `global.css` (inclui `.rotulo`, `.campo-texto` e `.botao`, usados pelos formulários).
 - `src/assets/fonts/`: arquivos woff2 e licença OFL das fontes; os woff estáticos da Source Sans 3 servem só para desenhar os cards sociais.
@@ -72,7 +72,7 @@ WCAG 2.2 nível AA em todo o site.
 
 - Corpo de 18px no mobile e 20px a partir de 48em, entrelinha 1,65 e cerca de 68 caracteres por linha (`--measure: 58ch` com a Literata). Ao trocar de fonte, meça de novo e ajuste o `--measure`.
 - No máximo duas famílias de fonte OFL, servidas localmente pelo Fonts API do Astro. Nada de Google Fonts ou CDN de terceiros.
-- Zero JavaScript por padrão. As exceções atuais são o script do tema (inline no `<head>` e no `ThemeToggle`) e o da página `/busca`, que carrega o Pagefind só nela (o índice baixa na primeira busca). Todo script novo precisa ser discutido antes; a meta é menos de 30 KB por página.
+- Zero JavaScript por padrão. As exceções atuais são o script do tema (inline no `<head>` e no `ThemeToggle`), o da página `/busca`, que carrega o Pagefind só nela (o índice baixa na primeira busca), e o do `VideoEmbed`, só em posts com vídeo, que troca a miniatura pelo player no clique (sem ele, o link abre o vídeo no YouTube). Todo script novo precisa ser discutido antes; a meta é menos de 30 KB por página.
 - LCP < 2,0 s, CLS < 0,05, INP < 200 ms e post sem vídeo com menos de 300 KB no total.
 - Imagens sempre por `astro:assets` (`<Picture>`/`<Image>`), com largura e altura fixas.
 

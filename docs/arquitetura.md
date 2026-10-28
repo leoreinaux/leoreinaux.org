@@ -124,7 +124,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 | `Person` | Página Sobre (dentro de um `ProfilePage`), home e como autor de cada post | Nome, cargo, foto, `sameAs` com LinkedIn e Instagram |
 | `WebSite` | Home | Nome, URL, busca interna (`SearchAction` para `/busca?q=`) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
-| `VideoObject` | Posts com vídeo (entra com o componente de vídeo) | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
+| `VideoObject` | Posts com vídeo | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
 | `BreadcrumbList` | Posts | Início › título, enquanto não houver uma página que liste os posts |
 
 **Escrita que vira resposta (AEO)**
@@ -217,7 +217,7 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 O vídeo de 1min30 a 2min30 fica hospedado no YouTube, onde ele já será publicado, e entra no post como uma miniatura leve que só carrega o player ao clicar. A transcrição vai para a página como texto, que é o que buscadores e IAs conseguem ler.
 
-- **Embed leve.** O componente `VideoEmbed` usa o padrão lite-youtube: mostra a miniatura e o botão de play e só carrega o iframe (via `youtube-nocookie.com`) quando a pessoa clica. Evita centenas de KB de JavaScript do YouTube em cada visita e não grava cookies antes do clique.
+- **Embed leve.** O componente `VideoEmbed` usa o padrão lite-youtube: mostra a miniatura e o botão de play e só carrega o iframe (via `youtube-nocookie.com`) quando a pessoa clica. Evita centenas de KB de JavaScript do YouTube em cada visita e não grava cookies antes do clique. Em vez da biblioteca `lite-youtube-embed`, que busca a miniatura nos servidores do Google ao abrir a página, a miniatura é baixada no build e servida pelo próprio site, e um script de poucas linhas troca o link pelo player; sem JavaScript, o link abre o vídeo no YouTube. Se a miniatura não puder ser baixada, o build segue com um fundo neutro.
 - **Transcrição.** Gerada localmente com Whisper (open source, MIT), revisada e salva em `transcricao.md` na pasta do post. Aparece num bloco recolhível "Transcrição do vídeo" logo abaixo do player, e o texto entra no HTML e no índice da busca.
 - **Legendas.** O mesmo Whisper gera o arquivo `.vtt`, enviado ao YouTube como legenda em português.
 - **Dados estruturados.** `VideoObject` no JSON-LD com duração, miniatura, data de upload e a transcrição.
