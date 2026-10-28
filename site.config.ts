@@ -35,6 +35,8 @@ export interface SiteConfig {
     /** URL do Listmonk (Etapa 3). */
     listmonkUrl: string;
   };
+  /** Repositório público com o código do site (licença MIT). */
+  sourceCode: string;
   /** Licença dos textos de src/content/. */
   contentLicense: {
     name: string;
@@ -65,6 +67,7 @@ export const site: SiteConfig = {
   newsletter: {
     listmonkUrl: 'https://newsletter.leoreinaux.org',
   },
+  sourceCode: 'https://github.com/leoreinaux/leoreinaux.org',
   contentLicense: {
     name: 'CC BY 4.0',
     url: 'https://creativecommons.org/licenses/by/4.0/deed.pt-br',

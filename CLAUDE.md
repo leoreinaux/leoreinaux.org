@@ -19,7 +19,7 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 
 ## Estrutura
 
-- `site.config.ts`: tudo o que é pessoal (nome, URL, autor, redes, URL do Listmonk, licença dos textos). Nenhum dado pessoal fica fora dele, para que um fork só precise trocar este arquivo e a pasta de posts.
+- `site.config.ts`: tudo o que é pessoal (nome, URL, autor, redes, URL do Listmonk, repositório do código, licença dos textos). Nenhum dado pessoal fica fora dele, para que um fork só precise trocar este arquivo e a pasta de posts.
 - `src/content.config.ts`: schema da coleção `posts`.
 - `src/content/posts/<slug>/index.md`: um post por pasta, com capa e transcrição na mesma pasta. O nome da pasta é o slug e a URL é `/posts/<slug>`.
 - `src/lib/posts.ts`: `getPublishedPosts()` (já filtra rascunhos em produção e ordena por data). Use sempre ele em vez de `getCollection('posts')`.

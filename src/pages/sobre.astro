@@ -13,8 +13,11 @@ import { site } from '../../site.config';
     {site.author.about.map((paragrafo) => <p>{paragrafo}</p>)}
     <p>
       Por isso os textos estão sob a licença{' '}
-      <a href={site.contentLicense.url} rel="license">{site.contentLicense.name}</a>: podem ser copiados e republicados com crédito. O código do
-      site é aberto, sob licença MIT.
+      <a href={site.contentLicense.url} rel="license">{site.contentLicense.name}</a>: podem ser copiados e republicados com crédito.
+    </p>
+    <p>
+      Quer fazer um site igual a esse? O código é open source e se encontra em{' '}
+      <a href={site.sourceCode}>{site.sourceCode.replace(/^https:\/\//, '')}</a>.
     </p>
 
     {

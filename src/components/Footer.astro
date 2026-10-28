@@ -8,7 +8,11 @@ const ano = new Date().getFullYear();
   <div class="coluna">
     <p>
       © {ano} {site.author.name}. Textos sob licença{' '}
-      <a href={site.contentLicense.url} rel="license">{site.contentLicense.name}</a>; código sob licença MIT.
+      <a href={site.contentLicense.url} rel="license">{site.contentLicense.name}</a>.
+    </p>
+    <p>
+      Quer fazer um site igual a esse? O código é open source e se encontra em{' '}
+      <a href={site.sourceCode}>{site.sourceCode.replace(/^https:\/\//, '')}</a>.
     </p>
     {
       site.social.length > 0 && (
