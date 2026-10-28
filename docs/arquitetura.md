@@ -114,7 +114,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 - `<html lang="pt-BR">`, `<link rel="canonical">` em todas as páginas e título único por página
 - Sitemap gerado no build (`@astrojs/sitemap`) e feed RSS completo (`@astrojs/rss`)
 - Open Graph e cards sociais com imagem gerada no build para cada post: um PNG de 1200×630 com o título sobre o fundo do site, desenhado pelo [Satori](https://github.com/vercel/satori) e convertido pelo [resvg-js](https://github.com/thx/resvg-js) (ambos MPL-2.0), com a Source Sans 3 em woff estático (o Satori não lê woff2). As páginas que não são posts usam um card padrão
-- Ping via IndexNow a cada deploy, para Bing e outros buscadores indexarem em minutos
+- Ping via IndexNow a cada deploy, para Bing e outros buscadores indexarem em minutos (`scripts/indexnow.ts`): só os posts publicados ou retirados desde o deploy anterior, mais a home. A chave é pública, fica no `site.config.ts` e é servida em `/indexnow.txt`
 - Cadastro no Google Search Console e no Bing Webmaster Tools; o índice do Bing alimenta respostas de vários assistentes
 
 **Dados estruturados (JSON-LD)**
