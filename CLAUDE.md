@@ -26,9 +26,9 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `src/lib/posts.ts`: `getPublishedPosts()` (já filtra rascunhos em produção e ordena por data). Use sempre ele em vez de `getCollection('posts')`.
 - `src/lib/jsonld.ts` (dados estruturados), `src/lib/og.ts` (cards sociais com Satori e resvg), `src/lib/markdown.ts` (versão Markdown dos posts) e `src/lib/images.ts` (URL absoluta de uma imagem processada).
 - `src/layouts/`: `BaseLayout` (HTML base, `<head>` com canonical, Open Graph e JSON-LD, cabeçalho e rodapé) e `PostLayout`.
-- `src/components/`: `Header`, `Footer`, `ThemeToggle`. Próximas etapas: `NewsletterForm`, `VideoEmbed`, `Toc`.
+- `src/components/`: `Header`, `Footer`, `ThemeToggle` e `NewsletterForm` (inscrição sem JavaScript, enviada direto ao Listmonk; só aparece com `newsletter.listUuid` preenchido). Próximas etapas: `VideoEmbed`, `Toc`.
 - `src/pages/`: `index`, `sobre`, `privacidade` (política de privacidade; atualize a data no topo a cada mudança e mantenha o texto fiel às configurações de `infra/`), `indexnow.txt` (chave do IndexNow), `busca` (interface própria sobre a API do Pagefind; só o `<article>` dos posts é indexado, via `data-pagefind-body`), `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `robots.txt`, `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post), `og.png` e `og/[slug].png` (cards sociais). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
-- `src/styles/`: `tokens.css` (cores e espaçamentos dos dois temas), `tipografia.css`, `global.css`.
+- `src/styles/`: `tokens.css` (cores e espaçamentos dos dois temas), `tipografia.css`, `global.css` (inclui `.rotulo`, `.campo-texto` e `.botao`, usados pelos formulários).
 - `src/assets/fonts/`: arquivos woff2 e licença OFL das fontes; os woff estáticos da Source Sans 3 servem só para desenhar os cards sociais.
 - `scripts/qualidade.ts`: verificação de acessibilidade e desempenho do `dist/`.
 - `scripts/indexnow.ts`: depois do deploy, avisa os buscadores pelo IndexNow dos posts que mudaram (chave pública em `site.config.ts`, servida em `/indexnow.txt`). `BASE_SHA=<commit> INDEXNOW_SIMULAR=1 node scripts/indexnow.ts` mostra o que seria enviado.

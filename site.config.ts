@@ -39,6 +39,11 @@ export interface SiteConfig {
   newsletter: {
     /** URL do Listmonk (Etapa 3). */
     listmonkUrl: string;
+    /**
+     * UUID da lista pública (double opt-in) no Listmonk, em Lists → a lista → UUID.
+     * Enquanto estiver vazio, o formulário de inscrição não aparece no site.
+     */
+    listUuid: string;
   };
   /** E-mail para pedidos sobre dados pessoais (LGPD), publicado na política de privacidade. */
   privacyEmail: string;
@@ -82,6 +87,7 @@ export const site: SiteConfig = {
   ],
   newsletter: {
     listmonkUrl: 'https://newsletter.leoreinaux.org',
+    listUuid: '',
   },
   privacyEmail: 'privacidade@leoreinaux.org',
   sourceCode: 'https://github.com/leoreinaux/leoreinaux.org',

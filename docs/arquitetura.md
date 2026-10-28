@@ -196,7 +196,7 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 2. O workflow de deploy gera e publica o site.
 3. Com o deploy concluído, `scripts/newsletter.ts` pergunta à API do Listmonk se já existe campanha com o slug do post; o script é idempotente e não guarda estado no repositório.
 4. Se não existe, cria a campanha com o template "novo post": título, capa, `summary` e um botão "Ler no site".
-5. A campanha é agendada para 2 horas depois, janela para revisar ou cancelar no painel.
+5. A campanha é agendada para as 7h (horário de Brasília) do dia seguinte, janela para revisar ou cancelar no painel.
 6. O Listmonk envia pelo SES em ritmo controlado, com cabeçalho de descadastro em um clique.
 
 **Entregabilidade**
@@ -289,7 +289,7 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 
 ## Decisões em aberto
 
-- [x] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual? **Decidido:** envio automático, agendado para o próximo horário do Brasil com mais chance de leitura com calma, e não para 2 horas depois; o horário exato é definido no `scripts/newsletter.ts`.
+- [x] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual? **Decidido:** envio automático às 7h (horário de Brasília) do dia seguinte à publicação, quando é mais provável ler com calma, em vez de 2 horas depois do deploy; o painel do Listmonk continua permitindo revisar ou cancelar até lá.
 - [x] Fontes tipográficas: par serifada no texto + sem serifa nos títulos, ou uma família só? **Decidido:** Literata no corpo (desenhada para leitura longa em tela) e Source Sans 3 nos títulos e na interface, ambas OFL.
 - [x] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear? **Decidido:** liberar; o `robots.txt` libera pelo nome os crawlers de busca e de treinamento de IA.
 - [x] Provedor e região da VPS. **Decidido:** Hetzner CX23 (2 vCPU, 4 GB), na Alemanha ou na Finlândia.

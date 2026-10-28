@@ -1,0 +1,103 @@
+---
+import { site } from '../../site.config';
+
+/**
+ * Formulário de inscrição na newsletter, enviado direto ao Listmonk, sem JavaScript.
+ * O Listmonk responde com a própria página ("confira o seu e-mail") e manda o e-mail de confirmação
+ * (double opt-in). Só aparece quando a lista está configurada em site.config.ts.
+ */
+interface Props {
+  /** Prefixo dos ids, caso o formulário apareça mais de uma vez na página. */
+  id?: string;
+}
+
+const { id = 'newsletter' } = Astro.props;
+const { listmonkUrl, listUuid } = site.newsletter;
+---
+
+{
+  listUuid && (
+    <section class="newsletter" aria-labelledby={`${id}-titulo`}>
+      <h2 id={`${id}-titulo`}>Receba os novos textos por e-mail</h2>
+      <p>Um e-mail a cada texto novo, sem propaganda. Você pode cancelar quando quiser.</p>
+      <form method="post" action={`${listmonkUrl}/subscription/form`}>
+        <input type="hidden" name="l" value={listUuid} />
+        <div class="campo">
+          <label class="rotulo" for={`${id}-email`}>E-mail</label>
+          <input class="campo-texto" id={`${id}-email`} name="email" type="email" autocomplete="email" required />
+        </div>
+        <div class="campo">
+          <label class="rotulo" for={`${id}-nome`}>
+            Nome <span class="opcional">(opcional)</span>
+          </label>
+          <input class="campo-texto" id={`${id}-nome`} name="name" type="text" autocomplete="given-name" />
+        </div>
+        {/* Campo-isca: invisível para pessoas; o Listmonk recusa o envio se um robô preenchê-lo. */}
+        <div class="isca" aria-hidden="true">
+          <label>
+            Deixe em branco
+            <input name="nonce" type="text" tabindex="-1" autocomplete="off" />
+          </label>
+        </div>
+        <div class="consentimento">
+          <input id={`${id}-consentimento`} type="checkbox" required />
+          <label for={`${id}-consentimento`}>
+            Quero receber os novos textos por e-mail e li a <a href="/privacidade">política de privacidade</a>.
+          </label>
+        </div>
+        <button class="botao" type="submit">Assinar</button>
+      </form>
+      <p class="texto-secundario aviso">Depois de assinar, confirme a inscrição pelo link que chega no seu e-mail.</p>
+    </section>
+  )
+}
+
+<style>
+  .newsletter {
+    margin-block: var(--space-5);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
+  .newsletter h2 {
+    margin-block-start: 0;
+  }
+
+  .campo {
+    margin-block-end: var(--space-3);
+  }
+
+  .opcional {
+    font-weight: 400;
+  }
+
+  .isca {
+    position: absolute;
+    inset-inline-start: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .consentimento {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin-block-end: var(--space-3);
+  }
+
+  /* Caixa grande o bastante para o dedo; o rótulo inteiro também marca a caixa. */
+  .consentimento input {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 0.15em 0 0;
+    accent-color: var(--color-accent);
+  }
+
+  .aviso {
+    margin-block: var(--space-3) 0;
+  }
+</style>

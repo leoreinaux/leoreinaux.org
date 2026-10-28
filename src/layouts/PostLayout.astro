@@ -2,6 +2,7 @@
 import { Picture } from 'astro:assets';
 import { site } from '../../site.config';
 import BaseLayout from './BaseLayout.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
 import { formatDate, postUrl, type Post } from '../lib/posts';
 import { postNodes } from '../lib/jsonld';
 
@@ -61,6 +62,7 @@ const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
     </div>
 
     <footer class="post-rodape" data-pagefind-ignore>
+      <NewsletterForm />
       {
         tags && tags.length > 0 && (
           <p class="texto-secundario">
