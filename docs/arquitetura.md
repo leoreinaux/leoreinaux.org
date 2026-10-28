@@ -208,7 +208,7 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 **LGPD**
 
-- Finalidade clara no formulário e política de privacidade publicada
+- Finalidade clara no formulário e política de privacidade publicada em `/privacidade`, com o contato `privacyEmail` do `site.config.ts`
 - Data e origem da confirmação registradas pelo Listmonk
 - Descadastro em todo e-mail; exportação e exclusão dos dados de um inscrito pelo painel
 - O Umami não usa cookies, então o site dispensa banner de consentimento
@@ -275,7 +275,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 - [ ] Conta SES com SPF, DKIM e DMARC; pedido de saída do sandbox
 - [ ] Formulário, lista double opt-in e template "novo post"
 - [ ] `scripts/newsletter.ts` ligado ao deploy
-- [ ] Política de privacidade
+- [x] Política de privacidade
 
 **Etapa 4 — Lançamento**
 

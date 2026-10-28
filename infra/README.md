@@ -30,6 +30,10 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 6. **Listmonk.** Entre em `https://newsletter.leoreinaux.org/admin` com o usuário e a senha do `.env` e, em *Settings*:
    - *General*: `Root URL` = `https://newsletter.leoreinaux.org`, nome do site e idioma português.
    - *SMTP*: os dados do Amazon SES (próximo passo da Etapa 3).
+   - *Privacy*, como promete a política de privacidade do site (`/privacidade`):
+     - *Individual subscriber tracking*: **desligado** (aberturas e cliques contados só no total);
+     - *Record opt-in IP*: **ligado** (prova do consentimento);
+     - *Allow unsubscribe*, *Allow exporting* e *Allow wiping*: **ligados** (a pessoa cancela, baixa e apaga os próprios dados pela página da inscrição).
    - Crie a lista pública da newsletter com *Opt-in* = **Double**.
 7. **Umami.** Entre em `https://analytics.leoreinaux.org` com `admin` / `umami`, **troque a senha na hora** e cadastre o site `leoreinaux.org`.
 8. **Backup.** Crie um bucket no Cloudflare R2 (10 GB grátis) e um token de API com permissão de leitura e escrita só nele. Preencha as variáveis `RESTIC_*` e `AWS_*` do `.env` e rode `./backup.sh` uma vez para criar o repositório e o primeiro backup. Depois agende com `crontab -e`:

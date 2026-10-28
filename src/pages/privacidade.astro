@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../../site.config';
+import { formatDate } from '../lib/posts';
+
+/** Atualize a data a cada mudança no texto. */
+const atualizadaEm = new Date('2026-10-28');
+const email = site.privacyEmail;
+---
+
+<BaseLayout title="Política de privacidade" description={`Quais dados ${site.name} coleta, para quê, por quanto tempo e como pedir acesso ou exclusão.`}>
+  <article class="coluna privacidade">
+    <h1>Política de privacidade</h1>
+    <p class="texto-secundario">Atualizada em <time datetime={atualizadaEm.toISOString().slice(0, 10)}>{formatDate(atualizadaEm, site.locale)}</time>.</p>
+
+    <p>
+      Este site coleta o mínimo de dados possível. Ler os textos não exige cadastro e não usa cookies. Dados pessoais só são
+      tratados se você assinar a newsletter. Esta política segue a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018).
+    </p>
+
+    <h2>Quem cuida dos seus dados</h2>
+    <p>
+      O controlador dos dados é {site.author.name}, autor do site, que responde por eles diretamente. Para qualquer pedido ou dúvida
+      sobre os seus dados, escreva para <a href={`mailto:${email}`}>{email}</a>.
+    </p>
+
+    <h2>Newsletter</h2>
+    <p>Se você assinar a newsletter, guardamos:</p>
+    <ul>
+      <li>o seu e-mail e, se você informar, o seu nome;</li>
+      <li>a data da inscrição e da confirmação, e o endereço IP de onde você confirmou, como prova do seu consentimento;</li>
+      <li>o número de aberturas e de cliques de cada e-mail, contado no total, sem ligar a leitura a quem leu.</li>
+    </ul>
+    <p>
+      Esses dados servem só para enviar os novos textos do site. A base legal é o seu consentimento (art. 7º, I, da LGPD), dado em
+      duas etapas: você preenche o formulário e depois confirma pelo link que chega no seu e-mail. Sem a confirmação, nenhum e-mail
+      da newsletter é enviado.
+    </p>
+    <p>
+      Todo e-mail traz um link para cancelar a inscrição com um clique. Pela mesma página você pode baixar os seus dados ou
+      apagá-los. Os dados ficam guardados enquanto a inscrição estiver ativa e são apagados quando você pede a exclusão.
+    </p>
+    <p>Os seus dados nunca são vendidos, alugados ou usados para publicidade.</p>
+
+    <h2>Estatísticas de visita</h2>
+    <p>
+      Para saber quais textos são lidos, o site usa o <a href="https://umami.is">Umami</a>, um analytics de código aberto que roda
+      num servidor próprio e não usa cookies. Ele registra a página visitada, o site de onde você veio, o tipo de navegador, de
+      sistema e de aparelho, e o país, deduzido do endereço IP. O IP não é guardado, e as visitas não são ligadas a você nem
+      seguidas em outros sites. A base legal é o legítimo interesse em entender o alcance dos textos (art. 7º, IX).
+    </p>
+
+    <h2>Hospedagem, envio e segurança</h2>
+    <p>Alguns serviços processam dados técnicos para que o site funcione:</p>
+    <ul>
+      <li>
+        <strong>Cloudflare</strong> entrega as páginas e protege o site contra ataques. Como qualquer servidor, recebe o seu IP e
+        os dados do navegador a cada acesso.
+      </li>
+      <li>
+        <strong>Hetzner</strong>, na Alemanha, hospeda o servidor da newsletter e das estatísticas. O servidor usa o IP de quem envia o
+        formulário de inscrição para barrar tentativas em sequência, sem guardá-lo.
+      </li>
+      <li><strong>Amazon Web Services (Amazon SES)</strong> entrega os e-mails da newsletter e recebe o seu e-mail para isso.</li>
+    </ul>
+    <p>
+      Esses serviços podem guardar os dados fora do Brasil. A transferência acontece só para prestar o serviço, com empresas que
+      se comprometem contratualmente a proteger os dados (art. 33 da LGPD).
+    </p>
+    <p>
+      O servidor tem backup diário cifrado, guardado no Cloudflare R2. Um dado apagado some das cópias de segurança em até 12 meses,
+      quando a cópia mais antiga é descartada.
+    </p>
+    <p>
+      Posts com vídeo mostram só uma miniatura. O player do YouTube só carrega se você clicar nela, e a partir daí valem as regras
+      de privacidade do Google.
+    </p>
+    <p>As fontes, as imagens e a busca do site são servidas pelo próprio site, sem serviços de terceiros.</p>
+
+    <h2>Os seus direitos</h2>
+    <p>Pela LGPD (art. 18), você pode pedir a qualquer momento:</p>
+    <ul>
+      <li>a confirmação de que tratamos dados seus e o acesso a eles;</li>
+      <li>a correção de dados incompletos ou errados;</li>
+      <li>a exclusão dos dados e a revogação do consentimento;</li>
+      <li>a portabilidade dos dados e informações sobre com quem eles são compartilhados.</li>
+    </ul>
+    <p>
+      Escreva para <a href={`mailto:${email}`}>{email}</a>. A resposta vem em até 15 dias. Se não ficar satisfeito, você pode
+      reclamar na <a href="https://www.gov.br/anpd">Autoridade Nacional de Proteção de Dados (ANPD)</a>.
+    </p>
+
+    <h2>Mudanças nesta política</h2>
+    <p>
+      Se esta política mudar, a data no topo é atualizada. Mudanças que afetem a newsletter são avisadas por e-mail aos inscritos.
+      O histórico completo do texto fica no <a href={site.sourceCode}>repositório público do site</a>.
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .privacidade {
+    padding-block-start: var(--space-5);
+  }
+</style>

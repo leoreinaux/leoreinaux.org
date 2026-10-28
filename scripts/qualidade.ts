@@ -49,6 +49,7 @@ const posts = readdirSync('dist/posts')
 const paginas: Pagina[] = [
   { caminho: '/' },
   { caminho: '/sobre' },
+  { caminho: '/privacidade' },
   { caminho: '/busca', semSeo: true },
   { caminho: '/pagina-que-nao-existe', semSeo: true, semLighthouse: true },
   ...posts.map((caminho) => ({ caminho, post: true })),

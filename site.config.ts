@@ -40,6 +40,8 @@ export interface SiteConfig {
     /** URL do Listmonk (Etapa 3). */
     listmonkUrl: string;
   };
+  /** E-mail para pedidos sobre dados pessoais (LGPD), publicado na política de privacidade. */
+  privacyEmail: string;
   /** Repositório público com o código do site (licença MIT). */
   sourceCode: string;
   /** Licença dos textos de src/content/. */
@@ -81,6 +83,7 @@ export const site: SiteConfig = {
   newsletter: {
     listmonkUrl: 'https://newsletter.leoreinaux.org',
   },
+  privacyEmail: 'privacidade@leoreinaux.org',
   sourceCode: 'https://github.com/leoreinaux/leoreinaux.org',
   contentLicense: {
     name: 'CC BY 4.0',
