@@ -22,7 +22,7 @@ export interface SiteConfig {
   locale: string;
   author: {
     name: string;
-    /** Cargo ou ocupação, usado na página Sobre e, mais tarde, no JSON-LD. */
+    /** Cargo ou ocupação, usado no JSON-LD. */
     jobTitle: string;
     /** Uma ou duas frases; aparece na página Sobre e no fim de cada post. */
     bio: string;
