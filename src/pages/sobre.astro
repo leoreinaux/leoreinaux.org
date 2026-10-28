@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../../site.config';
+import { profilePageNodes } from '../lib/jsonld';
 ---
 
-<BaseLayout title="Sobre" description={`Quem é ${site.author.name} e o que você encontra neste site.`}>
+<BaseLayout title="Sobre" description={`Quem é ${site.author.name} e o que você encontra neste site.`} jsonLd={profilePageNodes()}>
   <div class="coluna sobre">
     <h1>Sobre</h1>
     <p><strong>{site.author.name}</strong> · {site.author.jobTitle}</p>

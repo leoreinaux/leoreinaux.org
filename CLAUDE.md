@@ -23,11 +23,12 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `src/content.config.ts`: schema da coleção `posts`.
 - `src/content/posts/<slug>/index.md`: um post por pasta, com capa e transcrição na mesma pasta. O nome da pasta é o slug e a URL é `/posts/<slug>`.
 - `src/lib/posts.ts`: `getPublishedPosts()` (já filtra rascunhos em produção e ordena por data). Use sempre ele em vez de `getCollection('posts')`.
-- `src/layouts/`: `BaseLayout` (HTML base, `<head>`, cabeçalho e rodapé) e `PostLayout`.
+- `src/lib/jsonld.ts` (dados estruturados), `src/lib/og.ts` (cards sociais com Satori e resvg), `src/lib/markdown.ts` (versão Markdown dos posts) e `src/lib/images.ts` (URL absoluta de uma imagem processada).
+- `src/layouts/`: `BaseLayout` (HTML base, `<head>` com canonical, Open Graph e JSON-LD, cabeçalho e rodapé) e `PostLayout`.
 - `src/components/`: `Header`, `Footer`, `ThemeToggle`. Próximas etapas: `NewsletterForm`, `VideoEmbed`, `Toc`.
-- `src/pages/`: `index`, `sobre`, `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `robots.txt`, `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post, montada por `src/lib/markdown.ts`). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
+- `src/pages/`: `index`, `sobre`, `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `robots.txt`, `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post), `og.png` e `og/[slug].png` (cards sociais). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
 - `src/styles/`: `tokens.css` (cores e espaçamentos dos dois temas), `tipografia.css`, `global.css`.
-- `src/assets/fonts/`: arquivos woff2 e licença OFL das fontes.
+- `src/assets/fonts/`: arquivos woff2 e licença OFL das fontes; os woff estáticos da Source Sans 3 servem só para desenhar os cards sociais.
 - `wrangler.jsonc` e `.github/workflows/deploy.yml`: publicação na Cloudflare a cada push na `main`.
 
 ## Frontmatter dos posts
@@ -60,7 +61,7 @@ WCAG 2.2 nível AA em todo o site.
 - Contraste mínimo de 4,5:1 nos textos (o corpo busca 7:1) e de 3:1 em bordas de componentes, nos dois temas. Cores novas entram só em `src/styles/tokens.css`, com o contraste conferido.
 - `alt` obrigatório em todas as imagens.
 - Alvos de toque de pelo menos 44 × 44 px (`--tap-target`) e respeito a `prefers-reduced-motion`.
-- Todas as páginas passam `title` e `description` para o `BaseLayout`, que gera `canonical` e meta description.
+- Todas as páginas passam `title` e `description` para o `BaseLayout`, que gera `canonical`, meta description e Open Graph. Páginas com dados estruturados passam também `jsonLd`.
 
 ## Metas de legibilidade e performance
 

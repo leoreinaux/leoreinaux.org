@@ -3,6 +3,7 @@ import { Picture } from 'astro:assets';
 import { site } from '../../site.config';
 import BaseLayout from './BaseLayout.astro';
 import { formatDate, postUrl, type Post } from '../lib/posts';
+import { postNodes } from '../lib/jsonld';
 
 interface Props {
   post: Post;
@@ -10,10 +11,16 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, description, summary, pubDate, updatedDate, cover, tags } = post.data;
+const ogPath = `/og/${post.id}.png`;
+const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} ogType="article" ogImage={{ path: ogPath, alt: title }} jsonLd={jsonLd}>
   <Fragment slot="head">
+    <meta property="article:published_time" content={pubDate.toISOString()} />
+    {updatedDate && <meta property="article:modified_time" content={updatedDate.toISOString()} />}
+    <meta property="article:author" content={new URL('/sobre', site.url).href} />
+    {tags?.map((tag) => <meta property="article:tag" content={tag} />)}
     <link rel="alternate" type="text/markdown" title="Versão em Markdown" href={`${postUrl(post)}.md`} />
     <slot name="head" />
   </Fragment>

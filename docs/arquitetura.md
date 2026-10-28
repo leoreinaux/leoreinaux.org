@@ -113,7 +113,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 - URLs curtas em português, sem data: `/posts/tecnologia-brasileira`
 - `<html lang="pt-BR">`, `<link rel="canonical">` em todas as páginas e título único por página
 - Sitemap gerado no build (`@astrojs/sitemap`) e feed RSS completo (`@astrojs/rss`)
-- Open Graph e cards sociais com imagem gerada no build para cada post
+- Open Graph e cards sociais com imagem gerada no build para cada post: um PNG de 1200×630 com o título sobre o fundo do site, desenhado pelo [Satori](https://github.com/vercel/satori) e convertido pelo [resvg-js](https://github.com/thx/resvg-js) (ambos MPL-2.0), com a Source Sans 3 em woff estático (o Satori não lê woff2). As páginas que não são posts usam um card padrão
 - Ping via IndexNow a cada deploy, para Bing e outros buscadores indexarem em minutos
 - Cadastro no Google Search Console e no Bing Webmaster Tools; o índice do Bing alimenta respostas de vários assistentes
 
@@ -121,11 +121,11 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 
 | Tipo | Onde | Campos que importam |
 | --- | --- | --- |
-| `Person` | Página Sobre e como autor de cada post | Nome, cargo, foto, `sameAs` com LinkedIn e Instagram |
-| `WebSite` | Home | Nome, URL, busca interna |
+| `Person` | Página Sobre (dentro de um `ProfilePage`), home e como autor de cada post | Nome, cargo, foto (quando houver), `sameAs` com LinkedIn e Instagram |
+| `WebSite` | Home | Nome, URL, busca interna (quando o Pagefind entrar) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
-| `VideoObject` | Posts com vídeo | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
-| `BreadcrumbList` | Posts | Home › Posts › título |
+| `VideoObject` | Posts com vídeo (entra com o componente de vídeo) | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
+| `BreadcrumbList` | Posts | Início › título, enquanto não houver uma página que liste os posts |
 
 **Escrita que vira resposta (AEO)**
 
@@ -264,7 +264,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 **Etapa 2 — Descoberta**
 
 - [x] Sitemap, RSS, `robots.txt`, `llms.txt` e versão Markdown dos posts
-- [ ] JSON-LD e Open Graph com imagens geradas no build
+- [x] JSON-LD e Open Graph com imagens geradas no build
 - [ ] Busca com Pagefind
 - [ ] Lighthouse CI e axe-core no workflow de qualidade
 - [ ] Search Console, Bing Webmaster Tools e IndexNow

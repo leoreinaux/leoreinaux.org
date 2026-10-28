@@ -1,6 +1,6 @@
-import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { site } from '../../site.config';
+import { imageUrl } from './images';
 import { formatDate, postUrl, type Post } from './posts';
 
 /** Imagens que ficam nas pastas dos posts, indexadas pelo caminho a partir da raiz do projeto. */
@@ -8,12 +8,6 @@ const postImages = import.meta.glob<ImageMetadata>('/src/content/posts/*/**/*.{j
   eager: true,
   import: 'default',
 });
-
-/** Gera a imagem em WebP e devolve a URL absoluta, que funciona fora do site. */
-async function imageUrl(src: ImageMetadata): Promise<string> {
-  const image = await getImage({ src, format: 'webp', width: Math.min(src.width, 1360) });
-  return new URL(image.src, site.url).href;
-}
 
 /** Troca imagens com caminho relativo (./foto.jpg) pela URL da imagem processada. */
 async function resolveImages(markdown: string, post: Post): Promise<string> {
