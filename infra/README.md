@@ -11,6 +11,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 | `backup.sh` | Backup diário cifrado com restic, restauração e lista de backups |
 | `.env.example` | Modelo das variáveis e segredos; a cópia preenchida (`.env`) nunca vai para o repositório |
 | `listmonk/publico.css` | Visual do site nas páginas públicas do Listmonk |
+| `listmonk/novo-post.html` | Modelo do e-mail de post novo, sincronizado com o Listmonk pelo deploy |
 | `ses.md` | Roteiro do Amazon SES: domínio de envio, DKIM, SPF, DMARC, bounces e saída do sandbox |
 
 ## Subir a VPS
@@ -38,6 +39,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
      - *Allow unsubscribe*, *Allow exporting* e *Allow wiping*: **ligados** (a pessoa cancela, baixa e apaga os próprios dados pela página da inscrição).
    - *Appearance → Public*: cole o conteúdo de [`listmonk/publico.css`](listmonk/publico.css), para as páginas de inscrição, confirmação e descadastro terem o visual do site. Em *General*, use `Leandro Reinaux` como *Site name* e `https://leoreinaux.org/favicon.svg` como *Favicon URL*.
    - Crie a lista pública da newsletter, chamada **Novos textos** (é o nome que o leitor vê ao confirmar e ao cancelar), com *Opt-in* = **Double**, e copie o UUID dela para `newsletter.listUuid` no `site.config.ts`: só então o formulário de inscrição aparece no site.
+   - **Usuário de API para o deploy.** Em *Users → User roles*, crie o papel `Campanhas automáticas` só com as permissões `lists:get_all`, `campaigns:get_all`, `campaigns:manage_all`, `campaigns:send`, `templates:get` e `templates:manage`. Em *Users*, crie o usuário `deploy` do tipo **API** com esse papel e copie o token. No GitHub, em *Settings → Secrets and variables → Actions*, crie os secrets `LISTMONK_API_USER` (`deploy`) e `LISTMONK_API_TOKEN` (o token). A partir daí, cada deploy com post novo com `newsletter: true` cria e agenda a campanha (`scripts/newsletter.ts`), e o modelo "Novo post" é mantido igual a [`listmonk/novo-post.html`](listmonk/novo-post.html).
    - Em *Settings → General*, escolha o idioma **Português (Brasil)**: é nele que aparecem a página de "confira o seu e-mail" e o e-mail de confirmação.
 7. **Umami.** Entre em `https://analytics.leoreinaux.org` com `admin` / `umami`, **troque a senha na hora** e cadastre o site `leoreinaux.org`.
 8. **Backup.** Crie um bucket no Cloudflare R2 (10 GB grátis) e um token de API com permissão de leitura e escrita só nele. Preencha as variáveis `RESTIC_*` e `AWS_*` do `.env` e rode `./backup.sh` uma vez para criar o repositório e o primeiro backup. Depois agende com `crontab -e`:

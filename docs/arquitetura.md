@@ -194,8 +194,8 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 1. Um commit adiciona um post com `newsletter: true` na branch principal.
 2. O workflow de deploy gera e publica o site.
-3. Com o deploy concluído, `scripts/newsletter.ts` pergunta à API do Listmonk se já existe campanha com o slug do post; o script é idempotente e não guarda estado no repositório.
-4. Se não existe, cria a campanha com o template "novo post": título, capa, `summary` e um botão "Ler no site".
+3. Com o deploy concluído, `scripts/newsletter.ts` lê o `/newsletter.json` gerado no build e pergunta à API do Listmonk se já existe campanha com a tag `post:<slug>`; o script é idempotente, não guarda estado no repositório e só considera posts publicados nos últimos 7 dias.
+4. Se não existe, cria a campanha com o template "novo post" (`infra/listmonk/novo-post.html`, que o script mantém sincronizado): título, capa em JPEG, `summary` e um botão "Ler no site", com versão em texto puro.
 5. A campanha é agendada para as 7h (horário de Brasília) do dia seguinte, janela para revisar ou cancelar no painel.
 6. O Listmonk envia pelo SES em ritmo controlado, com cabeçalho de descadastro em um clique.
 
@@ -274,7 +274,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 - [ ] VPS com Docker Compose: Caddy, Listmonk, Umami, PostgreSQL e backup com restic
 - [ ] Conta SES com SPF, DKIM e DMARC; pedido de saída do sandbox
 - [ ] Formulário, lista double opt-in e template "novo post"
-- [ ] `scripts/newsletter.ts` ligado ao deploy
+- [x] `scripts/newsletter.ts` ligado ao deploy
 - [x] Política de privacidade
 
 **Etapa 4 — Lançamento**
