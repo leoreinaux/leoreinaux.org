@@ -30,6 +30,8 @@ const canonical = new URL(path, site.url).href;
     <link rel="canonical" href={canonical} />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={site.name} href={new URL('/rss.xml', site.url).href} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="generator" content={Astro.generator} />
     <!-- Pré-carrega só os estilos normais; os itálicos baixam quando usados. -->
     <Font cssVariable="--font-body" preload={[{ style: 'normal' }]} />
@@ -41,7 +43,7 @@ const canonical = new URL(path, site.url).href;
         if (tema === 'light' || tema === 'dark') document.documentElement.dataset.theme = tema;
       } catch {}
     </script>
-    <!-- Espaço para Open Graph, JSON-LD e feeds (Etapa 2). -->
+    <!-- Espaço para Open Graph e JSON-LD (Etapa 2). -->
     <slot name="head" />
   </head>
   <body>

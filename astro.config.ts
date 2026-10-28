@@ -1,4 +1,5 @@
 import { defineConfig, fontProviders } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 import { site } from './site.config';
 
 // Subconjunto latino: cobre todo o português (inclui ã, õ, ç e acentos).
@@ -33,6 +34,12 @@ export default defineConfig({
   build: {
     format: 'file',
   },
+  integrations: [
+    // Gera sitemap-index.xml e sitemap-0.xml no build; a página 404 fica de fora.
+    sitemap({
+      filter: (page) => !/\/404$/.test(page),
+    }),
+  ],
   // Fontes OFL servidas pelo próprio site (ver src/assets/fonts/README.md).
   fonts: [
     {
