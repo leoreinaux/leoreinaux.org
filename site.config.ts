@@ -47,6 +47,11 @@ export interface SiteConfig {
     name: string;
     url: string;
   };
+  /**
+   * Chave do IndexNow (8 a 128 letras, números ou hífens). É pública: o site a serve em
+   * /indexnow.txt para os buscadores confirmarem os avisos. Num fork, gere outra.
+   */
+  indexNowKey: string;
 }
 
 export const site: SiteConfig = {
@@ -81,4 +86,5 @@ export const site: SiteConfig = {
     name: 'CC BY 4.0',
     url: 'https://creativecommons.org/licenses/by/4.0/deed.pt-br',
   },
+  indexNowKey: '43c686058ded6381db262d2657afe178',
 };
