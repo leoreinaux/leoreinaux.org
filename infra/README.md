@@ -10,6 +10,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 | `postgres/init-umami.sh` | Cria o banco e o usuário do Umami na primeira subida |
 | `backup.sh` | Backup diário cifrado com restic, restauração e lista de backups |
 | `.env.example` | Modelo das variáveis e segredos; a cópia preenchida (`.env`) nunca vai para o repositório |
+| `ses.md` | Roteiro do Amazon SES: domínio de envio, DKIM, SPF, DMARC, bounces e saída do sandbox |
 
 ## Subir a VPS
 
@@ -29,7 +30,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 5. **Subir.** `docker compose up -d --build`. Na primeira vez, o build do Caddy leva alguns minutos. Confira com `docker compose ps` e `docker compose logs -f`.
 6. **Listmonk.** Entre em `https://newsletter.leoreinaux.org/admin` com o usuário e a senha do `.env` e, em *Settings*:
    - *General*: `Root URL` = `https://newsletter.leoreinaux.org`, nome do site e idioma português.
-   - *SMTP*: os dados do Amazon SES (próximo passo da Etapa 3).
+   - *SMTP*, bounces e remetente: siga o roteiro do Amazon SES em [`ses.md`](ses.md).
    - *Privacy*, como promete a política de privacidade do site (`/privacidade`):
      - *Individual subscriber tracking*: **desligado** (aberturas e cliques contados só no total);
      - *Record opt-in IP*: **ligado** (prova do consentimento);
