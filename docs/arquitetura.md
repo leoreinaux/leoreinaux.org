@@ -185,8 +185,8 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 **Captura de inscritos**
 
-1. Formulário no fim de cada post e na home: e-mail, nome opcional e caixa de consentimento com link para a política de privacidade.
-2. O formulário funciona sem JavaScript, com envio direto para o endpoint de inscrição do Listmonk; com JavaScript, envia pela [API pública de inscrição](https://forge.dmz.skyfritt.net/stopplidelsen/innhold/src/branch/latest/docs/newsletter-plugin.md) e mostra a confirmação na própria página.
+1. Formulário no fim de cada post, na home e na página `/newsletter` (que explica o que chega, quando e como cancelar), com e-mail, nome opcional e caixa de consentimento com link para a política de privacidade.
+2. O formulário funciona sem JavaScript, com envio direto para o endpoint de inscrição do Listmonk, que responde com a própria página ("confira o seu e-mail"), com o visual do site (`infra/listmonk/publico.css`). A versão com JavaScript, que mostraria a confirmação na página do post pela [API pública de inscrição](https://forge.dmz.skyfritt.net/stopplidelsen/innhold/src/branch/latest/docs/newsletter-plugin.md), ficou de fora por decisão do autor: o ganho é pequeno diante de um script novo e da liberação de CORS no Caddy, que o Listmonk 6.2 não oferece. Pode voltar se a saída do site atrapalhar na prática.
 3. A lista é double opt-in: a pessoa só vira inscrita depois de clicar no link de confirmação.
 4. Contra spam: double opt-in, um campo isca oculto e [limite de requisições no Caddy](https://www.ssdnodes.com/learn/stop-subscription-bombing-signups). O hCaptcha fica de fora por ser proprietário.
 
@@ -280,7 +280,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 **Etapa 4 — Lançamento**
 
 - [ ] Migrar o artigo sobre tecnologia brasileira, com vídeo e transcrição
-- [ ] Páginas Sobre e Newsletter
+- [x] Páginas Sobre e Newsletter
 - [ ] Envio de teste para uma lista interna antes de abrir inscrições
 
 **Depois do lançamento — redes sociais**
