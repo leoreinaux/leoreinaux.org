@@ -201,7 +201,7 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 **Entregabilidade**
 
-- SPF, DKIM e DMARC configurados para o domínio de envio (`news.leoreinaux.org`, no SES da região de São Paulo), com MAIL FROM próprio no SES; passo a passo em `infra/ses.md`
+- SPF, DKIM e DMARC configurados para o domínio de envio (`news.leoreinaux.org`, no SES da região de Ohio, `us-east-2`), com MAIL FROM próprio no SES; passo a passo em `infra/ses.md`
 - Bounces e reclamações voltam do SES para o Listmonk, que remove endereços problemáticos sozinho
 - Contas novas do SES começam em sandbox; é preciso pedir acesso de produção antes do lançamento
 - E-mail com versão em texto puro e HTML simples, sem imagens pesadas

@@ -6,7 +6,7 @@ As escolhas abaixo podem ser trocadas; se trocar, troque em todos os passos:
 
 | O quê | Valor |
 | --- | --- |
-| Região do SES | `sa-east-1` (São Paulo), para os e-mails dos inscritos ficarem no Brasil |
+| Região do SES | `us-east-2` (Ohio), a região que a AWS atribui aos projetos de contas brasileiras; a lista já fica fora do Brasil, na VPS |
 | Domínio de envio | `news.leoreinaux.org`, separado do domínio principal |
 | Remetente | `Leandro Reinaux <leandro@news.leoreinaux.org>` |
 | MAIL FROM (retorno de bounces) | `bounce.news.leoreinaux.org` |
@@ -16,8 +16,9 @@ Todos os registros DNS são criados na zona `leoreinaux.org` da Cloudflare, com 
 ## 1. Conta da AWS
 
 1. Crie a conta em [aws.amazon.com](https://aws.amazon.com) e ative a autenticação em dois fatores (MFA) no usuário raiz.
-2. Em *Billing → Budgets*, crie um alerta de gasto de US$ 5 por mês, para saber logo se algo sair do previsto (o esperado é menos de US$ 1).
-3. No canto superior direito do console, escolha a região **América do Sul (São Paulo) `sa-east-1`**. Tudo do SES abaixo é feito nela.
+2. Passe para o plano pago (*Upgrade plan*): o plano gratuito encerra a conta depois de 6 meses. Os créditos continuam valendo.
+3. Em *AWS Settings → Project*, crie o projeto `leoreinaux.org`. A AWS escolhe a região do projeto pelo país do endereço de contato e não deixa trocar: para o Brasil, **EUA (Ohio) `us-east-2`**. Tudo do SES abaixo é feito nela.
+4. Em *Billing → Cost by project*, defina o limite de gastos do projeto em US$ 20 por mês (o mínimo) e ligue os três controles antecipados. Ao chegar perto do limite, a AWS pausa o projeto: com envio legítimo o gasto fica abaixo de US$ 1, então isso só acontece se a senha SMTP vazar. Avisos chegam em 50%, 75% e 90% do limite.
 
 ## 2. Domínio de envio e DKIM
 
@@ -29,7 +30,7 @@ Todos os registros DNS são criados na zona `leoreinaux.org` da Cloudflare, com 
 | Tipo | Nome | Conteúdo | Para quê |
 | --- | --- | --- | --- |
 | CNAME (×3) | `<token>._domainkey.news` | `<token>.dkim.amazonses.com` | DKIM: os três valores exatos aparecem no SES |
-| MX | `bounce.news` | `feedback-smtp.sa-east-1.amazonses.com`, prioridade 10 | MAIL FROM: recebe os bounces |
+| MX | `bounce.news` | `feedback-smtp.us-east-2.amazonses.com`, prioridade 10 | MAIL FROM: recebe os bounces |
 | TXT | `bounce.news` | `v=spf1 include:amazonses.com -all` | SPF do MAIL FROM |
 | TXT | `_dmarc.news` | `v=DMARC1; p=none; rua=mailto:privacidade@leoreinaux.org; adkim=s; aspf=r` | DMARC do domínio de envio |
 
@@ -45,7 +46,7 @@ Em até uma hora a identidade fica *Verified* e o DKIM e o MAIL FROM ficam *Succ
 
 | Campo | Valor |
 | --- | --- |
-| Host | `email-smtp.sa-east-1.amazonaws.com` |
+| Host | `email-smtp.us-east-2.amazonaws.com` |
 | Port | `587` |
 | Auth protocol | `LOGIN` |
 | Username / Password | as credenciais do passo anterior |
