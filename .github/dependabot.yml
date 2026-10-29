@@ -13,6 +13,10 @@ updates:
       npm:
         patterns: ['*']
         update-types: [minor, patch]
+    # O satteri acompanha a versão que o @astrojs/markdown-satteri pede (ver CLAUDE.md):
+    # subir só ele instala uma segunda cópia que o processador do Astro não usa.
+    ignore:
+      - dependency-name: satteri
 
   # Actions fixadas por SHA; o Dependabot atualiza o SHA e o comentário com a versão.
   - package-ecosystem: github-actions

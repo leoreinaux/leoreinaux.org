@@ -86,4 +86,5 @@ WCAG 2.2 nível AA em todo o site.
 - Nenhum segredo no repositório: tokens ficam nos secrets do ambiente `producao` do GitHub (*Settings → Environments*), restrito à `main` e usado só pelo job `deploy` do `deploy.yml`.
 - Dependências só open source, com versão exata no `package.json`. Ao atualizar `esbuild` ou `workerd`, aprove de novo o script de instalação com `npm install-scripts approve <pacote>` (o npm 11 bloqueia scripts que não estão em `allowScripts`).
 - Links externos abrem em nova aba, com o aviso "abre em nova aba" para leitores de tela (`aria-describedby`, ver `src/lib/links.ts`). Nos posts em Markdown, o plugin `linksExternos` cuida disso; nos componentes `.astro`, use `{...externo()}` no `<a>` (ou `{...externo('me')}` para somar ao `rel`).
+- O `satteri` (só para o `defineHastPlugin` e os tipos de `src/lib/links.ts`) fica na versão que o `@astrojs/markdown-satteri` pede; ao atualizar este, atualize aquele junto. O Dependabot ignora o `satteri`.
 - O Astro 7 compacta o HTML com regras de JSX: um espaço entre elementos inline em linhas diferentes some. Use `{' '}` quando precisar dele.
