@@ -1,6 +1,6 @@
 import { site } from '../../site.config';
 import { authorPhoto, imageUrl } from './images';
-import { postUrl, type Post } from './posts';
+import { postUrl, transcricaoTexto, type Post, type Transcricao } from './posts';
 
 /**
  * Dados estruturados (schema.org) em JSON-LD.
@@ -58,9 +58,29 @@ export async function profilePageNodes(): Promise<JsonLdNode[]> {
   ];
 }
 
-export async function postNodes(post: Post, ogImage: string): Promise<JsonLdNode[]> {
+/** Vídeo do post: a miniatura é a capa, a mesma imagem que o player mostra antes do clique. */
+async function videoNode(post: Post, transcricao?: Transcricao): Promise<JsonLdNode | undefined> {
+  const { title, summary, cover, video } = post.data;
+  if (!video) return undefined;
+  return {
+    '@type': 'VideoObject',
+    '@id': `${abs(postUrl(post))}#video`,
+    name: title,
+    description: summary,
+    thumbnailUrl: await imageUrl(cover.src),
+    uploadDate: video.uploadDate.toISOString(),
+    duration: video.duration,
+    embedUrl: `https://www.youtube-nocookie.com/embed/${video.youtubeId}`,
+    url: `https://www.youtube.com/watch?v=${video.youtubeId}`,
+    inLanguage: site.lang,
+    ...(transcricao ? { transcript: transcricaoTexto(transcricao) } : {}),
+  };
+}
+
+export async function postNodes(post: Post, ogImage: string, transcricao?: Transcricao): Promise<JsonLdNode[]> {
   const { title, summary, pubDate, updatedDate, cover, tags } = post.data;
   const url = abs(postUrl(post));
+  const video = await videoNode(post, transcricao);
   return [
     {
       '@type': 'BlogPosting',
@@ -78,7 +98,9 @@ export async function postNodes(post: Post, ogImage: string): Promise<JsonLdNode
       isPartOf: { '@id': ids.website },
       license: site.contentLicense.url,
       ...(tags && tags.length > 0 ? { keywords: tags } : {}),
+      ...(video ? { video: { '@id': video['@id'] } } : {}),
     },
+    ...(video ? [video] : []),
     {
       // Ainda não existe uma página que liste os posts, então o caminho é Início › post.
       '@type': 'BreadcrumbList',

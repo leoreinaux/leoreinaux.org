@@ -1,0 +1,80 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+/**
+ * Sumário do post, com os subtítulos de nível 2 e 3. Só aparece em textos com pelo menos
+ * três subtítulos de nível 2, onde ele ajuda a ter uma visão do todo e a pular para uma parte.
+ */
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+interface Item {
+  heading: MarkdownHeading;
+  filhos: MarkdownHeading[];
+}
+
+const itens = Astro.props.headings.reduce<Item[]>((lista, heading) => {
+  if (heading.depth === 2) lista.push({ heading, filhos: [] });
+  else if (heading.depth === 3) lista.at(-1)?.filhos.push(heading);
+  return lista;
+}, []);
+---
+
+{
+  itens.length >= 3 && (
+    <nav class="sumario nao-imprimir" aria-labelledby="sumario-titulo" data-pagefind-ignore>
+      <h2 id="sumario-titulo">Neste texto</h2>
+      <ol>
+        {itens.map(({ heading, filhos }) => (
+          <li>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+            {filhos.length > 0 && (
+              <ol>
+                {filhos.map((filho) => (
+                  <li>
+                    <a href={`#${filho.slug}`}>{filho.text}</a>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
+<style>
+  .sumario {
+    margin-block-end: var(--space-5);
+    font-family: var(--font-heading);
+  }
+
+  h2 {
+    margin-block: 0 var(--space-2);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  ol {
+    margin: 0;
+    padding-inline-start: 1.4em;
+  }
+
+  ol ol {
+    list-style: lower-alpha;
+  }
+
+  li + li {
+    margin-block-start: 0;
+  }
+
+  /* Cada link ocupa uma linha inteira de toque. */
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+  }
+</style>

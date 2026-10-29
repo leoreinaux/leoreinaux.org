@@ -1,7 +1,7 @@
 import type { ImageMetadata } from 'astro';
 import { site } from '../../site.config';
 import { imageUrl } from './images';
-import { formatDate, postUrl, type Post } from './posts';
+import { formatDate, formatDuration, getTranscricao, postUrl, type Post } from './posts';
 
 /** Imagens que ficam nas pastas dos posts, indexadas pelo caminho a partir da raiz do projeto. */
 const postImages = import.meta.glob<ImageMetadata>('/src/content/posts/*/**/*.{jpg,jpeg,png,webp,avif,gif}', {
@@ -25,15 +25,25 @@ function absolutizeLinks(markdown: string): string {
   return markdown.replace(/\]\(\/(?!\/)/g, `](${site.url}/`);
 }
 
+/** Link para o vídeo e, se houver, a transcrição, no fim da versão em Markdown. */
+async function videoSection(post: Post): Promise<string | undefined> {
+  const { video } = post.data;
+  if (!video) return undefined;
+  const transcricao = await getTranscricao(post);
+  const link = `Vídeo de ${formatDuration(video.duration)}: https://www.youtube.com/watch?v=${video.youtubeId}`;
+  return ['## Transcrição do vídeo', link, transcricao?.body?.trim()].filter(Boolean).join('\n\n');
+}
+
 /**
  * Versão em Markdown puro de um post, para leitura por modelos de linguagem:
- * título, autoria, datas, licença, resumo, capa e o texto original.
+ * título, autoria, datas, licença, resumo, capa, o texto original e a transcrição do vídeo.
  */
 export async function postToMarkdown(post: Post): Promise<string> {
   const { title, summary, pubDate, updatedDate, cover } = post.data;
   const datas = [`Publicado em ${formatDate(pubDate, site.locale)}`];
   if (updatedDate) datas.push(`atualizado em ${formatDate(updatedDate, site.locale)}`);
   const body = absolutizeLinks(await resolveImages(post.body ?? '', post));
+  const video = await videoSection(post);
 
   return [
     `# ${title}`,
@@ -46,6 +56,7 @@ export async function postToMarkdown(post: Post): Promise<string> {
     `> **Resumo:** ${summary}`,
     `![${cover.alt}](${await imageUrl(cover.src)})`,
     body.trim(),
+    ...(video ? [video] : []),
   ].join('\n\n') + '\n';
 }
 

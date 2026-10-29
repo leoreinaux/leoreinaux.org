@@ -1,0 +1,142 @@
+---
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import { site } from '../../site.config';
+import { formatDuration } from '../lib/posts';
+
+/**
+ * Vídeo do YouTube no padrão lite-youtube, sem JavaScript: o iframe começa com um documento local
+ * (srcdoc) que só mostra a capa do post e um botão de play. O player (youtube-nocookie.com) só carrega
+ * quando a pessoa clica, então nenhuma requisição ao Google nem cookie acontece antes disso.
+ * O conteúdo do slot (a transcrição) aparece num bloco recolhível logo abaixo do player.
+ */
+interface Props {
+  youtubeId: string;
+  /** Título do post: nomeia o iframe e o link do player. */
+  title: string;
+  /** Imagem mostrada antes do clique (a capa do post). */
+  poster: ImageMetadata;
+  /** Duração em ISO 8601, por exemplo PT2M10S. */
+  duration: string;
+}
+
+const { youtubeId, title, poster, duration } = Astro.props;
+const duracao = formatDuration(duration);
+const player = `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1`;
+const assistir = `https://www.youtube.com/watch?v=${youtubeId}`;
+
+const widths = [640, 960, 1360].filter((w) => w <= poster.width);
+const [avif, webp] = await Promise.all(
+  (['avif', 'webp'] as const).map((format) => getImage({ src: poster, format, widths: widths.length > 0 ? widths : [poster.width] })),
+);
+
+const escapar = (texto: string) => texto.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const rotulo = escapar(`Assistir ao vídeo: ${title} (${duracao})`);
+
+// Documento inicial do iframe. Fica dentro do iframe, então não herda as cores nem as fontes do site:
+// o botão é escuro sobre a imagem, com contraste nos dois temas.
+const srcdoc = `<!doctype html><html lang="${site.lang}"><head><meta charset="utf-8"><title>${rotulo}</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+a{position:absolute;inset:0;display:block}
+img{width:100%;height:100%;object-fit:cover}
+svg{position:absolute;top:50%;left:50%;width:72px;height:72px;transform:translate(-50%,-50%)}
+circle{fill:#000;fill-opacity:.75;stroke:#fff;stroke-width:3}
+a:hover circle,a:focus-visible circle{fill-opacity:.95}
+a:focus-visible{outline:4px solid #fff;outline-offset:-10px;box-shadow:inset 0 0 0 6px #000}
+</style></head><body>
+<a href="${player}" aria-label="${rotulo}"><picture>
+<source type="image/avif" srcset="${avif!.srcSet.attribute}" sizes="100vw">
+<img src="${webp!.src}" srcset="${webp!.srcSet.attribute}" sizes="100vw" width="${poster.width}" height="${poster.height}" alt="">
+</picture><svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="33"/><path d="M29 23v26l21-13z" fill="#fff"/></svg></a>
+</body></html>`;
+---
+
+<figure class="video">
+  <iframe
+    title={`Vídeo: ${title}`}
+    srcdoc={srcdoc}
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+    referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  <figcaption class="texto-secundario">
+    Vídeo de {duracao}. O player do YouTube só carrega quando você clica.{' '}
+    <a href={assistir}>Assistir no YouTube</a>.
+  </figcaption>
+  {
+    Astro.slots.has('default') && (
+      <details class="transcricao">
+        <summary>Transcrição do vídeo</summary>
+        <div class="transcricao-texto">
+          <slot />
+        </div>
+      </details>
+    )
+  }
+</figure>
+
+<style>
+  .video {
+    margin: 0 0 var(--space-5);
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
+  figcaption {
+    margin-block-start: var(--space-2);
+    font-family: var(--font-heading);
+  }
+
+  .transcricao {
+    margin-block-start: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding-inline: var(--space-3);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* O marcador nativo some no flex; este o repõe, girando quando o bloco abre. */
+  summary::before {
+    content: '▸';
+    margin-inline-end: var(--space-2);
+    transition: transform 0.15s;
+  }
+
+  details[open] > summary::before {
+    transform: rotate(90deg);
+  }
+
+  .transcricao-texto {
+    padding: 0 var(--space-3) var(--space-1);
+  }
+
+  @media print {
+    iframe {
+      display: none;
+    }
+
+    .transcricao summary::before {
+      content: none;
+    }
+  }
+</style>
