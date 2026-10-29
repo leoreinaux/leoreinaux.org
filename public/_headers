@@ -1,0 +1,12 @@
+# Cabeçalhos de segurança de todas as respostas, lidos pelo Workers static assets.
+# Referência: https://developers.cloudflare.com/workers/static-assets/headers/
+# A Content-Security-Policy completa sai do Astro numa <meta> de cada página (security.csp em
+# astro.config.ts), com os hashes dos scripts inline. Aqui fica só o que a <meta> não aceita.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
