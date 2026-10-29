@@ -280,7 +280,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 
 **Etapa 4 — Lançamento**
 
-- [ ] Migrar o artigo sobre tecnologia brasileira, com vídeo e transcrição
+- [ ] Publicar o primeiro texto, "Por que estou voltando a produzir conteúdo"; o artigo sobre tecnologia brasileira, com vídeo e transcrição, vem depois
 - [x] Páginas Sobre e Newsletter
 - [x] Envio de teste para uma lista interna antes de abrir inscrições
 
