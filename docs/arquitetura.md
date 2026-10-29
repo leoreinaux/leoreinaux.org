@@ -49,7 +49,7 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 | Analytics | [Umami v3](https://heise.de/-11069615) | MIT | Sem cookies; usa o mesmo PostgreSQL do Listmonk | Plausible CE |
 | Servidor | VPS + Docker Compose + Caddy | Apache-2.0 (Caddy) | HTTPS automático para os dois serviços (`newsletter.leoreinaux.org` e `analytics.leoreinaux.org`); passo a passo em `infra/README.md` | — |
 | CI/CD | GitHub Actions | Gratuito em repositório público | Build, testes, deploy e disparo da newsletter | Forgejo Actions (Codeberg) |
-| Vídeo | YouTube + embed leve (lite-youtube) | Apache-2.0 (embed) | Alcance do YouTube sem pesar a página | PeerTube |
+| Vídeo | YouTube + embed leve no padrão lite-youtube, sem JavaScript | — | Alcance do YouTube sem pesar a página | PeerTube |
 
 **Sobre o Astro.** Em janeiro de 2026 a Cloudflare comprou a empresa que mantém o Astro, que segue [MIT, com governança aberta e suporte a vários hosts](https://www.heise.de/en/news/Web-Development-Cloudflare-Acquires-Astro-Technology-Company-11145912.html?view=print). O risco é baixo: como o site é estático, trocar de host é trocar o comando de deploy.
 
@@ -124,7 +124,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 | `Person` | Página Sobre (dentro de um `ProfilePage`), home e como autor de cada post | Nome, cargo, foto, `sameAs` com LinkedIn e Instagram |
 | `WebSite` | Home | Nome, URL, busca interna (`SearchAction` para `/busca?q=`) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
-| `VideoObject` | Posts com vídeo (entra com o componente de vídeo) | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
+| `VideoObject` | Posts com vídeo | Nome, duração, miniatura (a capa do post), `uploadDate`, `embedUrl`, `transcript` |
 | `BreadcrumbList` | Posts | Início › título, enquanto não houver uma página que liste os posts |
 
 **Escrita que vira resposta (AEO)**
@@ -217,7 +217,7 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 O vídeo de 1min30 a 2min30 fica hospedado no YouTube, onde ele já será publicado, e entra no post como uma miniatura leve que só carrega o player ao clicar. A transcrição vai para a página como texto, que é o que buscadores e IAs conseguem ler.
 
-- **Embed leve.** O componente `VideoEmbed` usa o padrão lite-youtube: mostra a miniatura e o botão de play e só carrega o iframe (via `youtube-nocookie.com`) quando a pessoa clica. Evita centenas de KB de JavaScript do YouTube em cada visita e não grava cookies antes do clique.
+- **Embed leve.** O componente `VideoEmbed` usa o padrão lite-youtube: mostra a miniatura e o botão de play e só carrega o player (via `youtube-nocookie.com`) quando a pessoa clica. Evita centenas de KB de JavaScript do YouTube em cada visita e não grava cookies antes do clique. Em vez da biblioteca lite-youtube, que é JavaScript, o iframe começa com um documento local (`srcdoc`) cujo link leva ao player; assim a página segue sem script. A miniatura é a própria capa do post, processada pelo `astro:assets`, para que nada seja pedido ao Google antes do clique; com vídeo, o player toma o lugar da capa no topo do post.
 - **Transcrição.** Gerada localmente com Whisper (open source, MIT), revisada e salva em `transcricao.md` na pasta do post. Aparece num bloco recolhível "Transcrição do vídeo" logo abaixo do player, e o texto entra no HTML e no índice da busca.
 - **Legendas.** O mesmo Whisper gera o arquivo `.vtt`, enviado ao YouTube como legenda em português.
 - **Dados estruturados.** `VideoObject` no JSON-LD com duração, miniatura, data de upload e a transcrição.
@@ -280,7 +280,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 **Etapa 4 — Lançamento**
 
 - [ ] Migrar o artigo sobre tecnologia brasileira, com vídeo e transcrição
-- [ ] Páginas Sobre e Newsletter
+- [x] Páginas Sobre e Newsletter
 - [ ] Envio de teste para uma lista interna antes de abrir inscrições
 
 **Depois do lançamento — redes sociais**
