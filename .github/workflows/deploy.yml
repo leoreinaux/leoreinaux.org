@@ -22,6 +22,11 @@ jobs:
     name: Build e publicação na Cloudflare
     # Só publica se acessibilidade e desempenho cumprirem as metas.
     needs: qualidade
+    # Os secrets da Cloudflare e do Listmonk ficam no ambiente producao, restrito à main:
+    # nenhum workflow de outro branch consegue publicar o site ou agendar a newsletter.
+    environment:
+      name: producao
+      url: https://leoreinaux.org
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
