@@ -16,8 +16,8 @@ interface Props {
   description: string;
   /** Caminho canônico; por padrão, o da própria página. */
   canonicalPath?: string;
-  /** Card social (Open Graph) com o texto alternativo; por padrão, o card do site. */
-  ogImage?: { path: string; alt: string };
+  /** Card social (Open Graph, 1200×630): caminho ou URL absoluta, tipo e texto alternativo; por padrão, o card do site. */
+  ogImage?: { path: string; type: 'image/png' | 'image/jpeg'; alt: string };
   /** "article" nos posts; "website" no resto. */
   ogType?: 'website' | 'article';
   /** Nós de dados estruturados da página (schema.org). */
@@ -30,7 +30,7 @@ const {
   title,
   description,
   canonicalPath,
-  ogImage = { path: '/og.png', alt: `${site.name}: ${site.description}` },
+  ogImage = { path: '/og.png', type: 'image/png', alt: `${site.name}: ${site.description}` },
   ogType = 'website',
   jsonLd,
   noindex = false,
@@ -72,7 +72,7 @@ const ogImageUrl = new URL(ogImage.path, site.url).href;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
-    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:type" content={ogImage.type} />
     <meta property="og:image:width" content={String(OG_WIDTH)} />
     <meta property="og:image:height" content={String(OG_HEIGHT)} />
     <meta property="og:image:alt" content={ogImage.alt} />
