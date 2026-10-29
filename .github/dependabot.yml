@@ -17,6 +17,10 @@ updates:
     # subir só ele instala uma segunda cópia que o processador do Astro não usa.
     ignore:
       - dependency-name: satteri
+      # O @astrojs/check (e o Volar, por baixo dele) só aceita TypeScript 5 e 6; o 7 entra
+      # junto com um @astrojs/check compatível, atualizado à mão.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
 
   # Actions fixadas por SHA; o Dependabot atualiza o SHA e o comentário com a versão.
   - package-ecosystem: github-actions
