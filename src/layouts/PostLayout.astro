@@ -9,6 +9,7 @@ import VideoEmbed from '../components/VideoEmbed.astro';
 import { transcricaoDoPost } from '../lib/video';
 import { formatDate, postUrl, type Post } from '../lib/posts';
 import { postNodes } from '../lib/jsonld';
+import { externo } from '../lib/links';
 
 interface Props {
   post: Post;
@@ -101,7 +102,7 @@ const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
       </section>
       <p class="licenca texto-secundario">
         Este texto está sob a licença{' '}
-        <a href={site.contentLicense.url} rel="license">Creative Commons Atribuição 4.0 Internacional ({site.contentLicense.name})</a>. Você pode
+        <a href={site.contentLicense.url} {...externo('license')}>Creative Commons Atribuição 4.0 Internacional ({site.contentLicense.name})</a>. Você pode
         copiar, adaptar e republicar, inclusive para fins comerciais, desde que dê crédito a {site.author.name} e inclua um link para esta página.
       </p>
     </footer>

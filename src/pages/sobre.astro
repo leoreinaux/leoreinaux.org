@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../../site.config';
+import { externo } from '../lib/links';
 import { Picture } from 'astro:assets';
 import { profilePageNodes } from '../lib/jsonld';
 import { authorPhoto } from '../lib/images';
@@ -31,11 +32,11 @@ const photo = authorPhoto();
     {site.author.about.map((paragrafo) => <p>{paragrafo}</p>)}
     <p>
       Por isso os textos estão sob a licença{' '}
-      <a href={site.contentLicense.url} rel="license">{site.contentLicense.name}</a>: podem ser copiados e republicados com crédito.
+      <a href={site.contentLicense.url} {...externo('license')}>{site.contentLicense.name}</a>: podem ser copiados e republicados com crédito.
     </p>
     <p>
       Quer fazer um site igual a este? O código é open source e se encontra em{' '}
-      <a href={site.sourceCode}>{site.sourceCode.replace(/^https:\/\//, '')}</a>.
+      <a href={site.sourceCode} {...externo()}>{site.sourceCode.replace(/^https:\/\//, '')}</a>.
     </p>
 
     {
@@ -45,7 +46,7 @@ const photo = authorPhoto();
           <ul>
             {site.social.map(({ label, url }) => (
               <li>
-                <a href={url} rel="me">
+                <a href={url} {...externo('me')}>
                   {label}
                 </a>
               </li>

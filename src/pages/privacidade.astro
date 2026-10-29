@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../../site.config';
 import { formatDate } from '../lib/posts';
+import { externo } from '../lib/links';
 
 /** Atualize a data a cada mudança no texto. */
 const atualizadaEm = new Date('2026-10-29');
@@ -44,7 +45,7 @@ const email = site.privacyEmail;
 
     <h2>Estatísticas de visita</h2>
     <p>
-      Para saber quais textos são lidos, o site usa o <a href="https://umami.is">Umami</a>, um analytics de código aberto que roda
+      Para saber quais textos são lidos, o site usa o <a href="https://umami.is" {...externo()}>Umami</a>, um analytics de código aberto que roda
       num servidor próprio e não usa cookies. Ele registra a página visitada, o site de onde você veio, o tipo de navegador, de
       sistema e de aparelho, e o país, deduzido do endereço IP. O IP não é guardado, e as visitas não são ligadas a você nem
       seguidas em outros sites. A base legal é o legítimo interesse em entender o alcance dos textos (art. 7º, IX).
@@ -87,13 +88,13 @@ const email = site.privacyEmail;
     </ul>
     <p>
       Escreva para <a href={`mailto:${email}`}>{email}</a>. A resposta vem em até 15 dias. Se não ficar satisfeito, você pode
-      reclamar na <a href="https://www.gov.br/anpd">Autoridade Nacional de Proteção de Dados (ANPD)</a>.
+      reclamar na <a href="https://www.gov.br/anpd" {...externo()}>Autoridade Nacional de Proteção de Dados (ANPD)</a>.
     </p>
 
     <h2>Mudanças nesta política</h2>
     <p>
       Se esta política mudar, a data no topo é atualizada. Mudanças que afetem a newsletter são avisadas por e-mail aos inscritos.
-      O histórico completo do texto fica no <a href={site.sourceCode}>repositório público do site</a>.
+      O histórico completo do texto fica no <a href={site.sourceCode} {...externo()}>repositório público do site</a>.
     </p>
   </article>
 </BaseLayout>

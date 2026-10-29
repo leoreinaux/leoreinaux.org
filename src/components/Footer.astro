@@ -1,5 +1,6 @@
 ---
 import { site } from '../../site.config';
+import { externo } from '../lib/links';
 
 const ano = new Date().getFullYear();
 ---
@@ -8,19 +9,19 @@ const ano = new Date().getFullYear();
   <div class="coluna">
     <p>
       © {ano} {site.author.name}. Textos sob licença{' '}
-      <a href={site.contentLicense.url} rel="license">{site.contentLicense.name}</a>.{' '}
+      <a href={site.contentLicense.url} {...externo('license')}>{site.contentLicense.name}</a>.{' '}
       <a href="/privacidade">Política de privacidade</a>.
     </p>
     <p>
       Quer fazer um site igual a este? O código é open source e se encontra em{' '}
-      <a href={site.sourceCode}>{site.sourceCode.replace(/^https:\/\//, '')}</a>.
+      <a href={site.sourceCode} {...externo()}>{site.sourceCode.replace(/^https:\/\//, '')}</a>.
     </p>
     {
       site.social.length > 0 && (
         <ul class="redes" aria-label="Redes sociais">
           {site.social.map(({ label, url }) => (
             <li>
-              <a href={url} rel="me">
+              <a href={url} {...externo('me')}>
                 {label}
               </a>
             </li>
