@@ -246,7 +246,7 @@ O repositório é público desde o primeiro commit, com o código em MIT e os te
 
 - **Duas licenças, dois arquivos.** `LICENSE` (MIT) cobre código, componentes e scripts; `LICENSE-CONTENT` (CC BY 4.0) cobre `src/content/`. Cada post exibe a licença no rodapé.
 - **Licenças das dependências.** Astro, Pagefind e Umami são MIT; Caddy é Apache-2.0; PostgreSQL tem licença própria permissiva. O Listmonk é AGPL-3.0: usá-lo sem modificar não gera obrigação; se o código dele for alterado, as alterações precisam ser publicadas.
-- **Nenhum segredo no repositório.** Tokens da Cloudflare, do Listmonk e do SES ficam nos secrets do GitHub e no `.env` da VPS; o repositório traz um `.env.example`.
+- **Nenhum segredo no repositório.** Tokens da Cloudflare e do Listmonk ficam nos secrets do ambiente `producao` do GitHub, restrito à `main` e usado só pelo job de deploy; as credenciais do SES e os segredos da VPS ficam no `.env` da VPS; o repositório traz um `.env.example`.
 - **README como guia de uso.** O que é o projeto, a stack, como rodar localmente, como subir a VPS com `docker compose up` e como fazer um fork em 5 passos.
 - **`CLAUDE.md` para quem constrói com IA.** Convenções do projeto, comandos, metas de acessibilidade e performance e as regras do frontmatter, para que o Claude Code siga a arquitetura em cada sessão.
 - **Espelho opcional no Codeberg.** O GitHub fica como principal pelo alcance e pelo Actions; um espelho em plataforma open source preserva o código se algo mudar.
