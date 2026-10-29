@@ -273,16 +273,16 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 **Etapa 3 — Newsletter e analytics**
 
 - [x] VPS com Docker Compose: Caddy, Listmonk, Umami, PostgreSQL e backup com restic
-- [ ] Conta SES com SPF, DKIM e DMARC; pedido de saída do sandbox
-- [ ] Formulário, lista double opt-in e template "novo post"
+- [x] Conta SES com SPF, DKIM e DMARC; pedido de saída do sandbox
+- [x] Formulário, lista double opt-in e template "novo post"
 - [x] `scripts/newsletter.ts` ligado ao deploy
 - [x] Política de privacidade
 
 **Etapa 4 — Lançamento**
 
-- [ ] Migrar o artigo sobre tecnologia brasileira, com vídeo e transcrição
+- [ ] Publicar o primeiro texto, "Por que estou voltando a produzir conteúdo"; o artigo sobre tecnologia brasileira, com vídeo e transcrição, vem depois
 - [x] Páginas Sobre e Newsletter
-- [ ] Envio de teste para uma lista interna antes de abrir inscrições
+- [x] Envio de teste para uma lista interna antes de abrir inscrições
 
 **Depois do lançamento — redes sociais**
 
