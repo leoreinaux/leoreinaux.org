@@ -4,8 +4,8 @@ description: Por que voltei a produzir conteúdo depois de mais de dez anos, ent
 summary: Entre 2008 e 2013, mantive um blog sobre inovação e negócios, até que o trabalho e uma empresa nova pediram mais de mim. Agora volto, movido por duas inquietações, a desinformação que circula pelas redes e a dificuldade de encontrar conhecimento de qualidade sem um produto à venda no fim. Neste texto, conto de onde venho, o que mudou desde então e o que você vai encontrar aqui. Tudo será gratuito, sem anúncios e publicado sob a licença CC BY 4.0.
 pubDate: 2026-10-29
 cover:
-  src: ./capa.jpg # provisória, copiada do post de exemplo: troque pela capa definitiva
-  alt: Ilustração abstrata de uma página de texto, com linhas cinzas sobre fundo creme e um círculo azul à direita.
+  src: ./capa.png
+  alt: Capa com o título "Por que estou voltando a produzir conteúdo" em letras escuras sobre fundo creme, a etiqueta "Primeiro texto" em laranja, uma grade de pontos à direita e, no rodapé, o nome Leandro Reinaux e o endereço leoreinaux.org.
 newsletter: false
 draft: true
 ---
