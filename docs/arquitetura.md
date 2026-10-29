@@ -282,7 +282,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 
 - [ ] Migrar o artigo sobre tecnologia brasileira, com vídeo e transcrição
 - [x] Páginas Sobre e Newsletter
-- [ ] Envio de teste para uma lista interna antes de abrir inscrições
+- [x] Envio de teste para uma lista interna antes de abrir inscrições
 
 **Depois do lançamento — redes sociais**
 
