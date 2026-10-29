@@ -106,7 +106,7 @@ export const site: SiteConfig = {
   },
   analytics: {
     umamiUrl: 'https://analytics.leoreinaux.org',
-    websiteId: '',
+    websiteId: '0e25fcec-c76a-4e0a-8e41-b530b8fdb6bf',
   },
   privacyEmail: 'privacidade@leoreinaux.org',
   sourceCode: 'https://github.com/leoreinaux/leoreinaux.org',
