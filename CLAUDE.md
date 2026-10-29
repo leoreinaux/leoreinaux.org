@@ -20,14 +20,14 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 
 ## Estrutura
 
-- `site.config.ts`: tudo o que é pessoal (nome, URL, autor e foto em `src/assets/`, redes, URL do Listmonk, repositório do código, licença dos textos, e-mail de privacidade, chave do IndexNow). Nenhum dado pessoal fica fora dele, para que um fork só precise trocar este arquivo e a pasta de posts.
+- `site.config.ts`: tudo o que é pessoal (nome, URL, autor e foto em `src/assets/`, redes, URL do Listmonk, URL e ID do site no Umami, repositório do código, licença dos textos, e-mail de privacidade, chave do IndexNow). Nenhum dado pessoal fica fora dele, para que um fork só precise trocar este arquivo e a pasta de posts.
 - `src/content.config.ts`: schema das coleções `posts` e `transcricoes`.
 - `src/content/posts/<slug>/index.md`: um post por pasta, com capa e transcrição na mesma pasta. O nome da pasta é o slug e a URL é `/posts/<slug>`.
 - `src/content/posts/<slug>/transcricao.md`: transcrição do vídeo (coleção `transcricoes`), sem frontmatter e só com parágrafos, sem subtítulos. Só aparece se o post tiver `video`; entra na página, na busca, no `VideoObject` e na versão Markdown.
 - `src/lib/posts.ts`: `getPublishedPosts()` (já filtra rascunhos em produção e ordena por data). Use sempre ele em vez de `getCollection('posts')`. `getTranscricao(post)` busca a transcrição do vídeo.
 - `src/lib/jsonld.ts` (dados estruturados), `src/lib/og.ts` (cards sociais com Satori e resvg), `src/lib/markdown.ts` (versão Markdown dos posts) e `src/lib/images.ts` (URL absoluta de uma imagem processada).
 - `src/layouts/`: `BaseLayout` (HTML base, `<head>` com canonical, Open Graph e JSON-LD, cabeçalho e rodapé) e `PostLayout`.
-- `src/components/`: `Header`, `Footer`, `ThemeToggle` e `NewsletterForm` (inscrição sem JavaScript, enviada direto ao Listmonk; só aparece com `newsletter.listUuid` preenchido), `VideoEmbed` (vídeo do YouTube sem JavaScript: um iframe com `srcdoc` mostra a capa do post e o botão de play, e o player do `youtube-nocookie.com` só carrega no clique; com vídeo, ele toma o lugar da capa no topo do post) e `Toc` (sumário "Neste texto", com os subtítulos de nível 2 e 3; só aparece com pelo menos três subtítulos de nível 2).
+- `src/components/`: `Header`, `Footer`, `ThemeToggle`, `Analytics` (script do Umami no `<head>`; só entra com `analytics.websiteId` preenchido) e `NewsletterForm` (inscrição sem JavaScript, enviada direto ao Listmonk; só aparece com `newsletter.listUuid` preenchido), `VideoEmbed` (vídeo do YouTube sem JavaScript: um iframe com `srcdoc` mostra a capa do post e o botão de play, e o player do `youtube-nocookie.com` só carrega no clique; com vídeo, ele toma o lugar da capa no topo do post) e `Toc` (sumário "Neste texto", com os subtítulos de nível 2 e 3; só aparece com pelo menos três subtítulos de nível 2).
 - `src/pages/`: `index`, `sobre`, `newsletter` (como funciona e formulário de inscrição; sem `listUuid`, aponta para o RSS), `privacidade` (política de privacidade; atualize a data no topo a cada mudança e mantenha o texto fiel às configurações de `infra/`), `indexnow.txt` (chave do IndexNow), `busca` (interface própria sobre a API do Pagefind; só o `<article>` dos posts é indexado, via `data-pagefind-body`), `404`, `posts/[slug]`, `rss.xml` (feed com o texto completo de cada post), `robots.txt`, `llms.txt`, `llms-full.txt` e `posts/[slug].md` (versão Markdown de cada post), `og.png` e `og/[slug].png` (cards sociais), `newsletter.json` (posts para o `scripts/newsletter.ts`). O sitemap sai do `@astrojs/sitemap`, configurado em `astro.config.ts`.
 - `src/styles/`: `tokens.css` (cores e espaçamentos dos dois temas), `tipografia.css`, `global.css` (inclui `.rotulo`, `.campo-texto` e `.botao`, usados pelos formulários).
 - `src/assets/fonts/`: arquivos woff2 e licença OFL das fontes; os woff estáticos da Source Sans 3 servem só para desenhar os cards sociais.
@@ -73,7 +73,7 @@ WCAG 2.2 nível AA em todo o site.
 
 - Corpo de 18px no mobile e 20px a partir de 48em, entrelinha 1,65 e cerca de 68 caracteres por linha (`--measure: 58ch` com a Literata). Ao trocar de fonte, meça de novo e ajuste o `--measure`.
 - No máximo duas famílias de fonte OFL, servidas localmente pelo Fonts API do Astro. Nada de Google Fonts ou CDN de terceiros.
-- Zero JavaScript por padrão. As exceções atuais são o script do tema (inline no `<head>` e no `ThemeToggle`) e o da página `/busca`, que carrega o Pagefind só nela (o índice baixa na primeira busca). Todo script novo precisa ser discutido antes; a meta é menos de 30 KB por página.
+- Zero JavaScript por padrão. As exceções atuais são o script do tema (inline no `<head>` e no `ThemeToggle`) o da página `/busca`, que carrega o Pagefind só nela (o índice baixa na primeira busca), e o do Umami (`Analytics`, com `defer`, servido pela VPS). Todo script novo precisa ser discutido antes; a meta é menos de 30 KB por página.
 - LCP < 2,0 s, CLS < 0,05, INP < 200 ms e post sem vídeo com menos de 300 KB no total.
 - Imagens sempre por `astro:assets` (`<Picture>`/`<Image>`), com largura e altura fixas.
 

@@ -4,6 +4,7 @@ import '../styles/global.css';
 import { site } from '../../site.config';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Analytics from '../components/Analytics.astro';
 import { OG_HEIGHT, OG_WIDTH } from '../lib/og';
 import { serializeJsonLd, type JsonLdNode } from '../lib/jsonld';
 
@@ -75,6 +76,7 @@ const ogImageUrl = new URL(ogImage.path, site.url).href;
     <meta property="og:image:height" content={String(OG_HEIGHT)} />
     <meta property="og:image:alt" content={ogImage.alt} />
     <meta name="twitter:card" content="summary_large_image" />
+    <Analytics />
     {jsonLd && <script type="application/ld+json" is:inline set:html={serializeJsonLd(jsonLd)} />}
     <slot name="head" />
   </head>
