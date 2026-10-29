@@ -7,7 +7,6 @@ cover:
   src: ./capa.png
   alt: Capa com o título "Por que estou voltando a produzir conteúdo" em letras escuras sobre fundo creme, a etiqueta "Primeiro texto" em laranja, uma grade de pontos à direita e, no rodapé, o nome Leandro Reinaux e o endereço leoreinaux.org.
 newsletter: false
-draft: true
 ---
 
 Nos últimos meses, prestei mais atenção ao que chega até mim pelas redes sociais e pelos grupos de mensagens. Notícias falsas, vídeos manipulados que parecem reais, golpes cada vez mais convincentes, informações fora de contexto. E quase sempre compartilhadas por várias pessoas.
