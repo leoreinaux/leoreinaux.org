@@ -49,7 +49,7 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 | Analytics | [Umami v3](https://heise.de/-11069615) | MIT | Sem cookies; usa o mesmo PostgreSQL do Listmonk | Plausible CE |
 | Servidor | VPS + Docker Compose + Caddy | Apache-2.0 (Caddy) | HTTPS automático para os dois serviços (`newsletter.leoreinaux.org` e `analytics.leoreinaux.org`); passo a passo em `infra/README.md` | — |
 | CI/CD | GitHub Actions | Gratuito em repositório público | Build, testes, deploy e disparo da newsletter | Forgejo Actions (Codeberg) |
-| Vídeo | YouTube + embed leve no padrão lite-youtube, sem JavaScript | — | Alcance do YouTube sem pesar a página | PeerTube |
+| Vídeo | YouTube + embed leve (lite-youtube) | Apache-2.0 (embed) | Alcance do YouTube sem pesar a página | PeerTube |
 
 **Sobre o Astro.** Em janeiro de 2026 a Cloudflare comprou a empresa que mantém o Astro, que segue [MIT, com governança aberta e suporte a vários hosts](https://www.heise.de/en/news/Web-Development-Cloudflare-Acquires-Astro-Technology-Company-11145912.html?view=print). O risco é baixo: como o site é estático, trocar de host é trocar o comando de deploy.
 
@@ -124,7 +124,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 | `Person` | Página Sobre (dentro de um `ProfilePage`), home e como autor de cada post | Nome, cargo, foto, `sameAs` com LinkedIn e Instagram |
 | `WebSite` | Home | Nome, URL, busca interna (`SearchAction` para `/busca?q=`) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
-| `VideoObject` | Posts com vídeo | Nome, duração, miniatura (a capa do post), `uploadDate`, `embedUrl`, `transcript` |
+| `VideoObject` | Posts com vídeo | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
 | `BreadcrumbList` | Posts | Início › título, enquanto não houver uma página que liste os posts |
 
 **Escrita que vira resposta (AEO)**
@@ -174,7 +174,7 @@ A meta é WCAG 2.2 nível AA em todo o site e leitura confortável de textos lon
 | LCP (maior elemento visível) | < 2,0 s |
 | CLS (deslocamento de layout) | < 0,05 |
 | INP (resposta a interações) | < 200 ms |
-| JavaScript por página | < 30 KB; a busca carrega só quando aberta e o script do Umami (≈ 2 KB, com `defer`) é a única exceção nas demais páginas, além do tema |
+| JavaScript por página | < 30 KB; a busca carrega só quando aberta; o script do Umami (≈ 2 KB, com `defer`) entra em todas as páginas |
 | Peso total de um post sem vídeo | < 300 KB |
 
 Imagens passam pelo `astro:assets` (AVIF/WebP, tamanhos responsivos, largura e altura fixas). O workflow de qualidade (`scripts/qualidade.ts`) roda o axe-core e o Lighthouse, ambos open source, e bloqueia o deploy se alguma meta cair. O axe-core testa cada página nos temas claro e escuro, no celular e no desktop; o Lighthouse mede a mediana de três execuções no celular em 4G simulado, com o TBT no lugar do INP, que não se mede em laboratório. O Lighthouse é usado direto pela API Node em vez do Lighthouse CI, parado desde junho de 2025 na versão 12 do Lighthouse e com dependências vulneráveis. O build do teste inclui os rascunhos, para que a página de post seja testada desde o início.
@@ -185,8 +185,8 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 **Captura de inscritos**
 
-1. Formulário no fim de cada post e na home: e-mail, nome opcional e caixa de consentimento com link para a política de privacidade.
-2. O formulário funciona sem JavaScript, com envio direto para o endpoint de inscrição do Listmonk; com JavaScript, envia pela [API pública de inscrição](https://forge.dmz.skyfritt.net/stopplidelsen/innhold/src/branch/latest/docs/newsletter-plugin.md) e mostra a confirmação na própria página.
+1. Formulário no fim de cada post, na home e na página `/newsletter` (que explica o que chega, quando e como cancelar), com e-mail, nome opcional e caixa de consentimento com link para a política de privacidade.
+2. O formulário funciona sem JavaScript, com envio direto para o endpoint de inscrição do Listmonk, que responde com a própria página ("confira o seu e-mail"), com o visual do site (`infra/listmonk/publico.css`). A versão com JavaScript, que mostraria a confirmação na página do post pela [API pública de inscrição](https://forge.dmz.skyfritt.net/stopplidelsen/innhold/src/branch/latest/docs/newsletter-plugin.md), ficou de fora por decisão do autor: o ganho é pequeno diante de um script novo e da liberação de CORS no Caddy, que o Listmonk 6.2 não oferece. Pode voltar se a saída do site atrapalhar na prática.
 3. A lista é double opt-in: a pessoa só vira inscrita depois de clicar no link de confirmação.
 4. Contra spam: double opt-in, um campo isca oculto e [limite de requisições no Caddy](https://www.ssdnodes.com/learn/stop-subscription-bombing-signups). O hCaptcha fica de fora por ser proprietário.
 
@@ -201,7 +201,7 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 **Entregabilidade**
 
-- SPF, DKIM e DMARC configurados para o domínio de envio (`news.leoreinaux.org`, no SES da região de São Paulo), com MAIL FROM próprio no SES; passo a passo em `infra/ses.md`
+- SPF, DKIM e DMARC configurados para o domínio de envio (`news.leoreinaux.org`, no SES da região de Ohio, `us-east-2`), com MAIL FROM próprio no SES; passo a passo em `infra/ses.md`
 - Bounces e reclamações voltam do SES para o Listmonk, que remove endereços problemáticos sozinho
 - Contas novas do SES começam em sandbox; é preciso pedir acesso de produção antes do lançamento
 - E-mail com versão em texto puro e HTML simples, sem imagens pesadas
@@ -218,7 +218,7 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 O vídeo de 1min30 a 2min30 fica hospedado no YouTube, onde ele já será publicado, e entra no post como uma miniatura leve que só carrega o player ao clicar. A transcrição vai para a página como texto, que é o que buscadores e IAs conseguem ler.
 
-- **Embed leve.** O componente `VideoEmbed` usa o padrão lite-youtube: mostra a miniatura e o botão de play e só carrega o player (via `youtube-nocookie.com`) quando a pessoa clica. Evita centenas de KB de JavaScript do YouTube em cada visita e não grava cookies antes do clique. Em vez da biblioteca lite-youtube, que é JavaScript, o iframe começa com um documento local (`srcdoc`) cujo link leva ao player; assim a página segue sem script. A miniatura é a própria capa do post, processada pelo `astro:assets`, para que nada seja pedido ao Google antes do clique; com vídeo, o player toma o lugar da capa no topo do post.
+- **Embed leve.** O componente `VideoEmbed` usa o padrão lite-youtube: mostra a miniatura e o botão de play e só carrega o iframe (via `youtube-nocookie.com`) quando a pessoa clica. Evita centenas de KB de JavaScript do YouTube em cada visita e não grava cookies antes do clique. Em vez da biblioteca `lite-youtube-embed`, que busca a miniatura nos servidores do Google ao abrir a página, a miniatura é baixada no build e servida pelo próprio site, e um script de poucas linhas troca o link pelo player; sem JavaScript, o link abre o vídeo no YouTube. Se a miniatura não puder ser baixada, o build segue com um fundo neutro.
 - **Transcrição.** Gerada localmente com Whisper (open source, MIT), revisada e salva em `transcricao.md` na pasta do post. Aparece num bloco recolhível "Transcrição do vídeo" logo abaixo do player, e o texto entra no HTML e no índice da busca.
 - **Legendas.** O mesmo Whisper gera o arquivo `.vtt`, enviado ao YouTube como legenda em português.
 - **Dados estruturados.** `VideoObject` no JSON-LD com duração, miniatura, data de upload e a transcrição.
@@ -293,7 +293,7 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 - [x] Newsletter: envio automático 2 horas após o deploy ou campanha em rascunho com envio manual? **Decidido:** envio automático às 7h (horário de Brasília) do dia seguinte à publicação, quando é mais provável ler com calma, em vez de 2 horas depois do deploy; o painel do Listmonk continua permitindo revisar ou cancelar até lá.
 - [x] Fontes tipográficas: par serifada no texto + sem serifa nos títulos, ou uma família só? **Decidido:** Literata no corpo (desenhada para leitura longa em tela) e Source Sans 3 nos títulos e na interface, ambas OFL.
 - [x] Crawlers de treinamento de IA (GPTBot, CCBot): liberar, coerente com CC BY e alcance máximo, ou bloquear? **Decidido:** liberar; o `robots.txt` libera pelo nome os crawlers de busca e de treinamento de IA.
-- [x] Provedor e região da VPS. **Decidido:** Hetzner CX23 (2 vCPU, 4 GB), na Alemanha ou na Finlândia.
+- [x] Provedor e região da VPS. **Decidido:** Hetzner CX23 (2 vCPU, 4 GB) em Helsinque, na Finlândia, a única região com o CX23 disponível na contratação (a política de privacidade diz onde fica o servidor).
 - [x] Domínio de envio: `leoreinaux.org` ou um subdomínio dedicado? **Decidido:** subdomínio dedicado, para separar a reputação de envio do domínio principal.
 - [ ] Identidade visual: cores, logotipo e favicon
 

@@ -4,8 +4,8 @@ import ThemeToggle from './ThemeToggle.astro';
 
 const links = [
   { href: '/', label: 'Textos' },
-  { href: '/sobre', label: 'Sobre' },
   { href: '/newsletter', label: 'Newsletter' },
+  { href: '/sobre', label: 'Sobre' },
   { href: '/busca', label: 'Busca' },
 ];
 const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
@@ -94,7 +94,7 @@ const atual = (href: string) => (href === '/' ? path === '/' || path.startsWith(
     text-underline-offset: 0.3em;
   }
 
-  /* Celular: o nome do site e o botão de tema numa linha; o menu inteiro na de baixo. */
+  /* Celular: o nome do site e o botão de tema na primeira linha; o menu inteiro na de baixo. */
   @media (max-width: 30em) {
     nav {
       order: 1;

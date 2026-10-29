@@ -1,6 +1,8 @@
+import { getImage } from 'astro:assets';
 import { site } from '../../site.config';
 import { authorPhoto, imageUrl } from './images';
-import { postUrl, transcricaoTexto, type Post, type Transcricao } from './posts';
+import { postUrl, type Post } from './posts';
+import { miniaturaDoVideo, transcricaoDoPost } from './video';
 
 /**
  * Dados estruturados (schema.org) em JSON-LD.
@@ -58,29 +60,35 @@ export async function profilePageNodes(): Promise<JsonLdNode[]> {
   ];
 }
 
-/** Vídeo do post: a miniatura é a capa, a mesma imagem que o player mostra antes do clique. */
-async function videoNode(post: Post, transcricao?: Transcricao): Promise<JsonLdNode | undefined> {
-  const { title, summary, cover, video } = post.data;
+/** Vídeo do post: o mesmo do player, com a transcrição em texto, que buscadores e IAs conseguem ler. */
+async function videoNode(post: Post, url: string): Promise<JsonLdNode | undefined> {
+  const { video, title, summary, cover } = post.data;
   if (!video) return undefined;
+  const remota = await miniaturaDoVideo(video.youtubeId);
+  // Sem a miniatura do YouTube, a capa do post faz o papel: o Google exige uma miniatura.
+  const miniatura = remota
+    ? abs((await getImage({ src: remota, inferSize: true, width: 1280, format: 'webp' })).src)
+    : await imageUrl(cover.src, 'jpeg', 1280);
+  const transcricao = transcricaoDoPost(post.id);
   return {
     '@type': 'VideoObject',
-    '@id': `${abs(postUrl(post))}#video`,
+    '@id': `${url}#video`,
     name: title,
     description: summary,
-    thumbnailUrl: await imageUrl(cover.src),
-    uploadDate: video.uploadDate.toISOString(),
+    thumbnailUrl: miniatura,
+    uploadDate: isoDate(video.uploadDate),
     duration: video.duration,
     embedUrl: `https://www.youtube-nocookie.com/embed/${video.youtubeId}`,
     url: `https://www.youtube.com/watch?v=${video.youtubeId}`,
     inLanguage: site.lang,
-    ...(transcricao ? { transcript: transcricaoTexto(transcricao) } : {}),
+    ...(transcricao ? { transcript: transcricao.texto } : {}),
   };
 }
 
-export async function postNodes(post: Post, ogImage: string, transcricao?: Transcricao): Promise<JsonLdNode[]> {
+export async function postNodes(post: Post, ogImage: string): Promise<JsonLdNode[]> {
   const { title, summary, pubDate, updatedDate, cover, tags } = post.data;
   const url = abs(postUrl(post));
-  const video = await videoNode(post, transcricao);
+  const video = await videoNode(post, url);
   return [
     {
       '@type': 'BlogPosting',

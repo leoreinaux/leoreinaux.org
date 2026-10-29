@@ -41,17 +41,4 @@ const posts = defineCollection({
     }),
 });
 
-/**
- * Transcrição do vídeo de um post: src/content/posts/<slug>/transcricao.md, sem frontmatter.
- * O id é o slug do post; ela só aparece se o post tiver o campo video.
- */
-const transcricoes = defineCollection({
-  loader: glob({
-    pattern: '*/transcricao.md',
-    base: './src/content/posts',
-    generateId: ({ entry }) => entry.split('/')[0]!,
-  }),
-  schema: z.strictObject({}),
-});
-
-export const collections = { posts, transcricoes };
+export const collections = { posts };
