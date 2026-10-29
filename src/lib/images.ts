@@ -1,6 +1,7 @@
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { site } from '../../site.config';
+import { OG_HEIGHT, OG_WIDTH } from './og';
 
 /** Imagens de src/assets/, indexadas pelo nome do arquivo (por exemplo, a foto do autor). */
 const assets = import.meta.glob<ImageMetadata>('/src/assets/*.{jpg,jpeg,png,webp,avif}', { eager: true, import: 'default' });
@@ -20,5 +21,14 @@ export function authorPhoto(): { src: ImageMetadata; alt: string } | undefined {
  */
 export async function imageUrl(src: ImageMetadata, format: 'webp' | 'jpeg' = 'webp', maxWidth = 1360): Promise<string> {
   const image = await getImage({ src, format, width: Math.min(src.width, maxWidth) });
+  return new URL(image.src, site.url).href;
+}
+
+/**
+ * Capa recortada em 1200×630 (proporção dos cards do Open Graph), em JPEG, que todas as redes e o WhatsApp leem.
+ * Devolve a URL absoluta.
+ */
+export async function ogImageUrl(src: ImageMetadata): Promise<string> {
+  const image = await getImage({ src, format: 'jpeg', width: OG_WIDTH, height: OG_HEIGHT, fit: 'cover' });
   return new URL(image.src, site.url).href;
 }
