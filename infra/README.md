@@ -53,6 +53,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 ## Manutenção
 
 - **Atualizar:** troque a versão da imagem em `docker-compose.yml` (sempre uma versão exata), faça o commit e, no servidor, rode `git pull && docker compose up -d --build`. O Listmonk aplica as migrações do banco sozinho ao subir. Antes, rode um `./backup.sh`.
+- **Mudar o Caddyfile:** depois do `git pull`, rode `docker compose restart caddy`. O arquivo é montado sozinho no contêiner, e o `git pull` grava um arquivo novo no lugar dele: sem o restart, o Caddy continua com a configuração antiga, e o `docker compose up -d` não o recria porque nada no compose mudou. Confira com `docker compose logs caddy --tail 20`.
 - **Ver backups:** `./backup.sh snapshots`.
 - **Restaurar:** `./backup.sh restaurar` grava o último dump em `infra/restauracao/postgres.sql`. Com o PostgreSQL de pé e o Listmonk e o Umami parados (`docker compose stop listmonk umami`), carregue com `docker compose exec -T postgres psql -U listmonk -d postgres < restauracao/postgres.sql` e suba tudo de novo. Dois erros são esperados e inofensivos: `role "listmonk" already exists` e `current user cannot be dropped`. Depois, apague `restauracao/postgres.sql`: ele tem os e-mails dos assinantes em texto puro. Teste a restauração de vez em quando, numa VPS temporária.
 - **Licenças:** Caddy (Apache-2.0), PostgreSQL (licença PostgreSQL), Umami (MIT), restic (BSD-2-Clause) e Listmonk (AGPL-3.0, usado sem modificações).
