@@ -16,7 +16,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 
 ## Subir a VPS
 
-1. **Servidor.** Na Hetzner, crie um CX23 (2 vCPU, 4 GB) com Ubuntu LTS, na Alemanha ou na Finlândia, com a sua chave SSH. No firewall da Hetzner, libere só as portas 22, 80 e 443 (TCP) e 443 (UDP).
+1. **Servidor.** Na Hetzner, crie um CX23 (2 vCPU, 4 GB) com Ubuntu LTS, na Alemanha ou na Finlândia, com a sua chave SSH. No firewall da Hetzner, libere só as portas 80 e 443 (TCP) e 443 (UDP) para qualquer origem e a 22 só para o seu IP (atualize a regra se ele mudar; o console web da Hetzner continua de reserva). Confira que o SSH aceita só chave: `sshd -T | grep -E 'passwordauthentication|permitrootlogin'` deve mostrar `no` e `prohibit-password` (ou `no`).
 2. **DNS.** Na Cloudflare, crie registros `A` (e `AAAA`, se houver IPv6) para `newsletter` e `analytics` apontando para o IP da VPS, com o proxy **desligado** (nuvem cinza). Assim o Caddy emite os certificados e o limite de inscrições vê o IP real de quem se inscreve.
 3. **Docker.** No servidor, instale o Docker Engine e o plugin Compose pelo [repositório oficial](https://docs.docker.com/engine/install/ubuntu/).
 4. **Código e segredos.**
@@ -54,5 +54,5 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 
 - **Atualizar:** troque a versão da imagem em `docker-compose.yml` (sempre uma versão exata), faça o commit e, no servidor, rode `git pull && docker compose up -d --build`. O Listmonk aplica as migrações do banco sozinho ao subir. Antes, rode um `./backup.sh`.
 - **Ver backups:** `./backup.sh snapshots`.
-- **Restaurar:** `./backup.sh restaurar` grava o último dump em `infra/restauracao/postgres.sql`. Com o PostgreSQL de pé e o Listmonk e o Umami parados (`docker compose stop listmonk umami`), carregue com `docker compose exec -T postgres psql -U listmonk -d postgres < restauracao/postgres.sql` e suba tudo de novo. Dois erros são esperados e inofensivos: `role "listmonk" already exists` e `current user cannot be dropped`. Teste a restauração de vez em quando, numa VPS temporária.
+- **Restaurar:** `./backup.sh restaurar` grava o último dump em `infra/restauracao/postgres.sql`. Com o PostgreSQL de pé e o Listmonk e o Umami parados (`docker compose stop listmonk umami`), carregue com `docker compose exec -T postgres psql -U listmonk -d postgres < restauracao/postgres.sql` e suba tudo de novo. Dois erros são esperados e inofensivos: `role "listmonk" already exists` e `current user cannot be dropped`. Depois, apague `restauracao/postgres.sql`: ele tem os e-mails dos assinantes em texto puro. Teste a restauração de vez em quando, numa VPS temporária.
 - **Licenças:** Caddy (Apache-2.0), PostgreSQL (licença PostgreSQL), Umami (MIT), restic (BSD-2-Clause) e Listmonk (AGPL-3.0, usado sem modificações).
