@@ -1,0 +1,132 @@
+---
+import { externo } from '../lib/links';
+
+/**
+ * Convite para compartilhar a página: links diretos para a tela de novo post de cada rede (sem
+ * scripts nem botões de terceiros) e, com JavaScript, "Copiar link" e o menu de compartilhamento
+ * do sistema (navigator.share), que alcança o Instagram e outros apps no celular.
+ */
+interface Props {
+  /** URL absoluta da página. */
+  url: string;
+  /** Título que acompanha o link nas redes que aceitam texto. */
+  title: string;
+}
+
+const { url, title } = Astro.props;
+const texto = encodeURIComponent(`${title} ${url}`);
+const link = encodeURIComponent(url);
+
+const redes = [
+  { nome: 'WhatsApp', href: `https://wa.me/?text=${texto}` },
+  { nome: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${link}` },
+  { nome: 'X', href: `https://x.com/intent/post?text=${encodeURIComponent(title)}&url=${link}` },
+  { nome: 'Threads', href: `https://www.threads.com/intent/post?text=${texto}` },
+  { nome: 'Bluesky', href: `https://bsky.app/intent/compose?text=${texto}` },
+];
+---
+
+<section class="compartilhar nao-imprimir" aria-labelledby="compartilhar-titulo" data-pagefind-ignore>
+  <h2 id="compartilhar-titulo">Acredita que esse conteúdo vai ajudar alguém? Compartilhe:</h2>
+  <ul class="opcoes" role="list" data-compartilhar data-url={url} data-titulo={title}>
+    <li hidden>
+      <button type="button" class="opcao" data-copiar>Copiar link</button>
+    </li>
+    <li hidden>
+      <button type="button" class="opcao" data-nativo>Mais opções</button>
+    </li>
+    {
+      redes.map(({ nome, href }) => (
+        <li>
+          <a class="opcao" href={href} {...externo()}>
+            {nome}
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <a class="opcao" href={`mailto:?subject=${encodeURIComponent(title)}&body=${link}`}>E-mail</a>
+    </li>
+  </ul>
+  <p class="visualmente-oculto" role="status" data-aviso></p>
+  <script is:inline>
+    // "Copiar link" e "Mais opções" só aparecem onde o navegador oferece cada recurso. Inline e
+    // logo depois da lista, para os botões entrarem antes do primeiro desenho (sem CLS).
+    (() => {
+      const lista = document.currentScript.parentElement.querySelector('[data-compartilhar]');
+      const copiar = lista.querySelector('[data-copiar]');
+      const nativo = lista.querySelector('[data-nativo]');
+      const aviso = lista.parentElement.querySelector('[data-aviso]');
+      const { url, titulo } = lista.dataset;
+
+      if (navigator.clipboard) {
+        copiar.parentElement.hidden = false;
+        copiar.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(url);
+            copiar.textContent = 'Link copiado';
+            aviso.textContent = 'Link copiado para a área de transferência.';
+            setTimeout(() => (copiar.textContent = 'Copiar link'), 3000);
+          } catch {
+            aviso.textContent = 'Não foi possível copiar o link.';
+          }
+        });
+      }
+
+      if ('share' in navigator) {
+        nativo.parentElement.hidden = false;
+        nativo.addEventListener('click', () => navigator.share({ title: titulo, url }).catch(() => {}));
+      }
+    })();
+  </script>
+</section>
+
+<style>
+  .compartilhar {
+    margin-block: var(--space-5);
+  }
+
+  .compartilhar h2 {
+    font-size: 1.2em;
+  }
+
+  .opcoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Botões e links com a mesma altura e alinhados; :not([hidden]) preserva o hidden do script. */
+  .opcoes > li:not([hidden]) {
+    display: flex;
+  }
+
+  /* O gap já separa os itens; sem isto, o li + li da tipografia desalinha a primeira linha. */
+  .opcoes > li + li {
+    margin-block-start: 0;
+  }
+
+  .opcao {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding: 0 var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-accent);
+    font: inherit;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .opcao:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent-hover);
+  }
+</style>

@@ -3,6 +3,7 @@ import type { MarkdownHeading } from 'astro';
 import { Picture } from 'astro:assets';
 import { site } from '../../site.config';
 import BaseLayout from './BaseLayout.astro';
+import Compartilhar from '../components/Compartilhar.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import Toc from '../components/Toc.astro';
 import VideoEmbed from '../components/VideoEmbed.astro';
@@ -86,6 +87,7 @@ const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
     </div>
 
     <footer class="post-rodape" data-pagefind-ignore>
+      <Compartilhar url={new URL(postUrl(post), site.url).href} title={title} />
       <NewsletterForm />
       {
         tags && tags.length > 0 && (
