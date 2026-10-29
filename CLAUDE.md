@@ -88,4 +88,5 @@ WCAG 2.2 nível AA em todo o site.
 - Links externos abrem em nova aba, com o aviso "abre em nova aba" para leitores de tela (`aria-describedby`, ver `src/lib/links.ts`). Nos posts em Markdown, o plugin `linksExternos` cuida disso; nos componentes `.astro`, use `{...externo()}` no `<a>` (ou `{...externo('me')}` para somar ao `rel`).
 - O `satteri` (só para o `defineHastPlugin` e os tipos de `src/lib/links.ts`) fica na versão que o `@astrojs/markdown-satteri` pede; ao atualizar este, atualize aquele junto. O Dependabot ignora o `satteri`.
 - O `typescript` fica na versão major que o `@astrojs/check` aceita (hoje até a 6); o Dependabot não propõe versões major dele, que entram junto com um `@astrojs/check` compatível.
+- O `fflate` fica fixado na 0.8.3 por um `overrides` no `package.json`, porque o `satori` 0.63.2 fixa a 0.7.3, que tem um alerta de segurança. Quando um `satori` novo já trouxer o `fflate` 0.8 ou mais novo, tire o `overrides` e confira se o `og.png` continua igual.
 - O Astro 7 compacta o HTML com regras de JSX: um espaço entre elementos inline em linhas diferentes some. Use `{' '}` quando precisar dele.
