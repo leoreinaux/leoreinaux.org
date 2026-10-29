@@ -23,6 +23,8 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `site.config.ts`: tudo o que é pessoal (nome, URL, autor e foto em `src/assets/`, redes, URL do Listmonk, URL e ID do site no Umami, repositório do código, licença dos textos, e-mail de privacidade, chave do IndexNow). Nenhum dado pessoal fica fora dele, para que um fork só precise trocar este arquivo e a pasta de posts.
 - `src/content.config.ts`: schema da coleção `posts`.
 - `src/content/posts/<slug>/index.md`: um post por pasta, com capa e transcrição na mesma pasta. A transcrição do vídeo, se houver, fica em `transcricao.md` (Markdown puro, sem frontmatter) e aparece num bloco recolhível abaixo do player, no JSON-LD e na versão Markdown. O nome da pasta é o slug e a URL é `/posts/<slug>`.
+- `src/integrations/`: `pagefind.ts` (índice da busca) e `csp.ts`, que soma à Content-Security-Policy de cada página o hash dos scripts `is:inline` (o Astro só calcula o dos scripts que processa). A CSP sai numa `<meta>` (`security.csp` em `astro.config.ts`); uma origem externa nova (script, iframe, formulário, `fetch`) precisa entrar ali.
+- `public/_headers`: cabeçalhos de segurança de todas as respostas na Cloudflare (HSTS, `frame-ancestors`, `nosniff`, Referrer-Policy, Permissions-Policy).
 - `src/lib/posts.ts`: `getPublishedPosts()` (já filtra rascunhos em produção e ordena por data). Use sempre ele em vez de `getCollection('posts')`.
 - `src/lib/jsonld.ts` (dados estruturados), `src/lib/og.ts` (cards sociais com Satori e resvg), `src/lib/markdown.ts` (versão Markdown dos posts), `src/lib/images.ts` (URL absoluta de uma imagem processada), `src/lib/links.ts` (links externos em nova aba) e `src/lib/video.ts` (miniatura do YouTube baixada no build, transcrição e duração).
 - `src/layouts/`: `BaseLayout` (HTML base, `<head>` com canonical, Open Graph e JSON-LD, cabeçalho e rodapé) e `PostLayout`.
@@ -34,6 +36,7 @@ Node.js 22.23.4 ou mais novo (Node 24 LTS em `.nvmrc`), npm.
 - `scripts/indexnow.ts`: depois do deploy, avisa os buscadores pelo IndexNow dos posts que mudaram (chave pública em `site.config.ts`, servida em `/indexnow.txt`). `BASE_SHA=<commit> INDEXNOW_SIMULAR=1 node scripts/indexnow.ts` mostra o que seria enviado.
 - `scripts/newsletter.ts`: depois do deploy, cria e agenda no Listmonk a campanha de cada post novo com `newsletter: true` (às `newsletter.sendTime` do dia seguinte), a partir do `/newsletter.json` (`src/pages/newsletter.json.ts`). Precisa dos secrets `LISTMONK_API_USER` e `LISTMONK_API_TOKEN`; sem eles, não faz nada. `NEWSLETTER_SIMULAR=1` mostra o que faria.
 - `infra/`: VPS da newsletter e do analytics (Docker Compose com Caddy, Listmonk, Umami e PostgreSQL, mais `backup.sh` com restic). Versões exatas das imagens; passo a passo e manutenção em `infra/README.md`.
+- `.github/dependabot.yml`: PRs semanais de atualização de npm, actions e imagens Docker. As actions ficam fixadas por SHA, com a versão num comentário.
 - `wrangler.jsonc` e `.github/workflows/deploy.yml`: publicação na Cloudflare a cada push na `main`, depois do `qualidade.yml`.
 
 ## Frontmatter dos posts
