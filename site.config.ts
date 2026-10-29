@@ -100,7 +100,7 @@ export const site: SiteConfig = {
   ],
   newsletter: {
     listmonkUrl: 'https://newsletter.leoreinaux.org',
-    listUuid: '',
+    listUuid: '2b1f377c-ce84-40a1-b2e5-00dab902089b',
     sendTime: '07:00',
     sendTimeZone: 'America/Sao_Paulo',
   },
