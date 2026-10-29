@@ -174,7 +174,7 @@ A meta é WCAG 2.2 nível AA em todo o site e leitura confortável de textos lon
 | LCP (maior elemento visível) | < 2,0 s |
 | CLS (deslocamento de layout) | < 0,05 |
 | INP (resposta a interações) | < 200 ms |
-| JavaScript por página | < 30 KB; a busca carrega só quando aberta |
+| JavaScript por página | < 30 KB; a busca carrega só quando aberta; o script do Umami (≈ 2 KB, com `defer`) entra em todas as páginas |
 | Peso total de um post sem vídeo | < 300 KB |
 
 Imagens passam pelo `astro:assets` (AVIF/WebP, tamanhos responsivos, largura e altura fixas). O workflow de qualidade (`scripts/qualidade.ts`) roda o axe-core e o Lighthouse, ambos open source, e bloqueia o deploy se alguma meta cair. O axe-core testa cada página nos temas claro e escuro, no celular e no desktop; o Lighthouse mede a mediana de três execuções no celular em 4G simulado, com o TBT no lugar do INP, que não se mede em laboratório. O Lighthouse é usado direto pela API Node em vez do Lighthouse CI, parado desde junho de 2025 na versão 12 do Lighthouse e com dependências vulneráveis. O build do teste inclui os rascunhos, para que a página de post seja testada desde o início.
@@ -212,6 +212,7 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 - Data e origem da confirmação registradas pelo Listmonk
 - Descadastro em todo e-mail; exportação e exclusão dos dados de um inscrito pelo painel
 - O Umami não usa cookies, então o site dispensa banner de consentimento
+- O script do Umami vem da própria VPS (`analytics.leoreinaux.org`), conta só visitas no domínio do site e não registra o que vem depois do "?" na URL, como os termos da busca
 
 ## Vídeos com transcrição
 

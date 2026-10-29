@@ -49,6 +49,15 @@ export interface SiteConfig {
     /** Fuso do horário de envio (nome IANA). */
     sendTimeZone: string;
   };
+  analytics: {
+    /** URL do Umami (Etapa 3). */
+    umamiUrl: string;
+    /**
+     * ID do site no Umami, em Settings → Websites → o site → Website ID.
+     * Enquanto estiver vazio, o script de estatísticas não entra nas páginas.
+     */
+    websiteId: string;
+  };
   /** E-mail para pedidos sobre dados pessoais (LGPD), publicado na política de privacidade. */
   privacyEmail: string;
   /** Repositório público com o código do site (licença MIT). */
@@ -94,6 +103,10 @@ export const site: SiteConfig = {
     listUuid: '',
     sendTime: '07:00',
     sendTimeZone: 'America/Sao_Paulo',
+  },
+  analytics: {
+    umamiUrl: 'https://analytics.leoreinaux.org',
+    websiteId: '',
   },
   privacyEmail: 'privacidade@leoreinaux.org',
   sourceCode: 'https://github.com/leoreinaux/leoreinaux.org',

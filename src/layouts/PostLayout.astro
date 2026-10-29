@@ -1,8 +1,10 @@
 ---
+import type { MarkdownHeading } from 'astro';
 import { Picture } from 'astro:assets';
 import { site } from '../../site.config';
 import BaseLayout from './BaseLayout.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
+import Toc from '../components/Toc.astro';
 import VideoEmbed from '../components/VideoEmbed.astro';
 import { transcricaoDoPost } from '../lib/video';
 import { formatDate, postUrl, type Post } from '../lib/posts';
@@ -10,9 +12,11 @@ import { postNodes } from '../lib/jsonld';
 
 interface Props {
   post: Post;
+  /** Subtítulos do texto, para o sumário. */
+  headings: MarkdownHeading[];
 }
 
-const { post } = Astro.props;
+const { post, headings } = Astro.props;
 const { title, description, summary, pubDate, updatedDate, cover, tags, video } = post.data;
 const transcricao = video && transcricaoDoPost(post.id);
 const ogPath = `/og/${post.id}.png`;
@@ -73,6 +77,8 @@ const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
         </section>
       )
     }
+
+    <Toc headings={headings} />
 
     <div class="post-conteudo">
       <slot />

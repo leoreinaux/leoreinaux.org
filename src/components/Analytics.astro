@@ -1,0 +1,24 @@
+---
+import { site } from '../../site.config';
+
+/**
+ * Script do Umami (estatísticas sem cookies), servido pela própria VPS. Só entra nas páginas
+ * quando analytics.websiteId está preenchido em site.config.ts.
+ * - defer: não atrasa a primeira pintura;
+ * - data-domains: só conta visitas no domínio do site, não em localhost nem no preview;
+ * - data-exclude-search: não registra o que vem depois do "?", como os termos da busca.
+ */
+const { umamiUrl, websiteId } = site.analytics;
+---
+
+{
+  websiteId && (
+    <script
+      is:inline
+      defer
+      src={`${umamiUrl}/script.js`}
+      data-website-id={websiteId}
+      data-domains={new URL(site.url).hostname}
+      data-exclude-search="true"></script>
+  )
+}
