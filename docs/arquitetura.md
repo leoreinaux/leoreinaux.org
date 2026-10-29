@@ -124,7 +124,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 | `Person` | Página Sobre (dentro de um `ProfilePage`), home e como autor de cada post | Nome, cargo, foto, `sameAs` com LinkedIn e Instagram |
 | `WebSite` | Home | Nome, URL, busca interna (`SearchAction` para `/busca?q=`) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
-| `VideoObject` | Posts com vídeo (entra com o componente de vídeo) | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
+| `VideoObject` | Posts com vídeo | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
 | `BreadcrumbList` | Posts | Início › título, enquanto não houver uma página que liste os posts |
 
 **Escrita que vira resposta (AEO)**
@@ -185,8 +185,8 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 **Captura de inscritos**
 
-1. Formulário no fim de cada post e na home: e-mail, nome opcional e caixa de consentimento com link para a política de privacidade.
-2. O formulário funciona sem JavaScript, com envio direto para o endpoint de inscrição do Listmonk; com JavaScript, envia pela [API pública de inscrição](https://forge.dmz.skyfritt.net/stopplidelsen/innhold/src/branch/latest/docs/newsletter-plugin.md) e mostra a confirmação na própria página.
+1. Formulário no fim de cada post, na home e na página `/newsletter` (que explica o que chega, quando e como cancelar), com e-mail, nome opcional e caixa de consentimento com link para a política de privacidade.
+2. O formulário funciona sem JavaScript, com envio direto para o endpoint de inscrição do Listmonk, que responde com a própria página ("confira o seu e-mail"), com o visual do site (`infra/listmonk/publico.css`). A versão com JavaScript, que mostraria a confirmação na página do post pela [API pública de inscrição](https://forge.dmz.skyfritt.net/stopplidelsen/innhold/src/branch/latest/docs/newsletter-plugin.md), ficou de fora por decisão do autor: o ganho é pequeno diante de um script novo e da liberação de CORS no Caddy, que o Listmonk 6.2 não oferece. Pode voltar se a saída do site atrapalhar na prática.
 3. A lista é double opt-in: a pessoa só vira inscrita depois de clicar no link de confirmação.
 4. Contra spam: double opt-in, um campo isca oculto e [limite de requisições no Caddy](https://www.ssdnodes.com/learn/stop-subscription-bombing-signups). O hCaptcha fica de fora por ser proprietário.
 
@@ -217,7 +217,7 @@ O Listmonk roda em `newsletter.leoreinaux.org`, recebe as inscrições com confi
 
 O vídeo de 1min30 a 2min30 fica hospedado no YouTube, onde ele já será publicado, e entra no post como uma miniatura leve que só carrega o player ao clicar. A transcrição vai para a página como texto, que é o que buscadores e IAs conseguem ler.
 
-- **Embed leve.** O componente `VideoEmbed` usa o padrão lite-youtube: mostra a miniatura e o botão de play e só carrega o iframe (via `youtube-nocookie.com`) quando a pessoa clica. Evita centenas de KB de JavaScript do YouTube em cada visita e não grava cookies antes do clique.
+- **Embed leve.** O componente `VideoEmbed` usa o padrão lite-youtube: mostra a miniatura e o botão de play e só carrega o iframe (via `youtube-nocookie.com`) quando a pessoa clica. Evita centenas de KB de JavaScript do YouTube em cada visita e não grava cookies antes do clique. Em vez da biblioteca `lite-youtube-embed`, que busca a miniatura nos servidores do Google ao abrir a página, a miniatura é baixada no build e servida pelo próprio site, e um script de poucas linhas troca o link pelo player; sem JavaScript, o link abre o vídeo no YouTube. Se a miniatura não puder ser baixada, o build segue com um fundo neutro.
 - **Transcrição.** Gerada localmente com Whisper (open source, MIT), revisada e salva em `transcricao.md` na pasta do post. Aparece num bloco recolhível "Transcrição do vídeo" logo abaixo do player, e o texto entra no HTML e no índice da busca.
 - **Legendas.** O mesmo Whisper gera o arquivo `.vtt`, enviado ao YouTube como legenda em português.
 - **Dados estruturados.** `VideoObject` no JSON-LD com duração, miniatura, data de upload e a transcrição.
@@ -280,7 +280,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 **Etapa 4 — Lançamento**
 
 - [ ] Migrar o artigo sobre tecnologia brasileira, com vídeo e transcrição
-- [ ] Páginas Sobre e Newsletter
+- [x] Páginas Sobre e Newsletter
 - [ ] Envio de teste para uma lista interna antes de abrir inscrições
 
 **Depois do lançamento — redes sociais**

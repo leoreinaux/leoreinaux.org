@@ -3,6 +3,8 @@ import { Picture } from 'astro:assets';
 import { site } from '../../site.config';
 import BaseLayout from './BaseLayout.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import { transcricaoDoPost } from '../lib/video';
 import { formatDate, postUrl, type Post } from '../lib/posts';
 import { postNodes } from '../lib/jsonld';
 
@@ -11,7 +13,8 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, summary, pubDate, updatedDate, cover, tags } = post.data;
+const { title, description, summary, pubDate, updatedDate, cover, tags, video } = post.data;
+const transcricao = video && transcricaoDoPost(post.id);
 const ogPath = `/og/${post.id}.png`;
 const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
 ---
@@ -56,6 +59,20 @@ const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
         fetchpriority="high"
       />
     </figure>
+
+    {
+      video && (
+        <section class="post-video" aria-label="Vídeo">
+          <VideoEmbed youtubeId={video.youtubeId} title={title} duration={video.duration} />
+          {transcricao && (
+            <details class="transcricao">
+              <summary>Transcrição do vídeo</summary>
+              <transcricao.Content />
+            </details>
+          )}
+        </section>
+      )
+    }
 
     <div class="post-conteudo">
       <slot />
@@ -121,6 +138,30 @@ const jsonLd = await postNodes(post, new URL(ogPath, site.url).href);
   .capa :global(img) {
     width: 100%;
     border-radius: var(--radius);
+  }
+
+  .post-video {
+    margin-block-end: var(--space-5);
+  }
+
+  .transcricao {
+    margin-block-start: calc(-1 * var(--space-3));
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .transcricao summary {
+    display: flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .transcricao[open] summary {
+    margin-block-end: var(--space-2);
   }
 
   .post-rodape {

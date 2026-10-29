@@ -1,0 +1,124 @@
+---
+import { getImage } from 'astro:assets';
+import { duracaoLegivel, miniaturaDoVideo } from '../lib/video';
+
+/**
+ * Vídeo do YouTube no padrão lite-youtube: mostra a miniatura (servida pelo site) e um botão de play,
+ * e só carrega o player de youtube-nocookie.com quando a pessoa clica. Sem JavaScript, o link abre
+ * o vídeo no YouTube.
+ */
+interface Props {
+  youtubeId: string;
+  /** Título do vídeo, usado no nome acessível do botão e no iframe. */
+  title: string;
+  /** Duração em ISO 8601 (PT2M10S). */
+  duration: string;
+}
+
+const { youtubeId, title, duration } = Astro.props;
+const remota = await miniaturaDoVideo(youtubeId);
+// Duas larguras bastam: a coluna de leitura tem no máximo ~44rem.
+const miniatura = remota
+  ? await Promise.all([640, 1280].map((width) => getImage({ src: remota, inferSize: true, width, format: 'webp' })))
+  : undefined;
+const srcset = miniatura?.map((imagem) => `${imagem.src} ${imagem.attributes.width}w`).join(', ');
+const duracao = duracaoLegivel(duration);
+---
+
+<figure class="video">
+  <a
+    class="video-capa"
+    href={`https://www.youtube.com/watch?v=${youtubeId}`}
+    data-video-id={youtubeId}
+    data-video-titulo={title}
+    aria-label={`Assistir ao vídeo: ${title} (${duracao})`}
+  >
+    {
+      miniatura && (
+        <img
+          src={miniatura[0]!.src}
+          srcset={srcset}
+          sizes="(min-width: 48em) 44rem, 100vw"
+          alt=""
+          width="1280"
+          height="720"
+          loading="lazy"
+          decoding="async"
+        />
+      )
+    }
+    <span class="video-play" aria-hidden="true">
+      <svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3.3 34 .3 34 .3s-21.3 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6C12.7 47.7 34 47.7 34 47.7s21.3 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" class="play-fundo"/><path d="M45 24 27 14v20z" class="play-seta"/></svg>
+    </span>
+  </a>
+  <figcaption class="texto-secundario">Vídeo · {duracao}. O player do YouTube só carrega quando você clica.</figcaption>
+</figure>
+
+<script>
+  // Troca a miniatura pelo player só no clique: até lá, nada do YouTube é carregado.
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-video-id]')) {
+    link.addEventListener('click', (evento) => {
+      evento.preventDefault();
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${link.dataset.videoId}?autoplay=1&rel=0`;
+      iframe.title = link.dataset.videoTitulo ?? 'Vídeo do YouTube';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      link.replaceWith(iframe);
+      iframe.focus();
+    });
+  }
+</script>
+
+<style>
+  .video {
+    margin: 0 0 var(--space-5);
+  }
+
+  /* 16:9 reservado desde o início: a troca pelo player não move a página (CLS). */
+  .video-capa,
+  .video :global(iframe) {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .video-capa img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .play-fundo {
+    fill: var(--color-text);
+    fill-opacity: 0.85;
+  }
+
+  .play-seta {
+    fill: var(--color-bg);
+  }
+
+  .video-capa:hover .play-fundo,
+  .video-capa:focus-visible .play-fundo {
+    fill: var(--color-accent);
+    fill-opacity: 1;
+  }
+
+  figcaption {
+    margin-block-start: var(--space-2);
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+  }
+</style>

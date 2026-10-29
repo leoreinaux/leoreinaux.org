@@ -1,6 +1,7 @@
 import type { ImageMetadata } from 'astro';
 import { site } from '../../site.config';
 import { imageUrl } from './images';
+import { duracaoLegivel, transcricaoDoPost } from './video';
 import { formatDate, postUrl, type Post } from './posts';
 
 /** Imagens que ficam nas pastas dos posts, indexadas pelo caminho a partir da raiz do projeto. */
@@ -30,7 +31,8 @@ function absolutizeLinks(markdown: string): string {
  * título, autoria, datas, licença, resumo, capa e o texto original.
  */
 export async function postToMarkdown(post: Post): Promise<string> {
-  const { title, summary, pubDate, updatedDate, cover } = post.data;
+  const { title, summary, pubDate, updatedDate, cover, video } = post.data;
+  const transcricao = video && transcricaoDoPost(post.id);
   const datas = [`Publicado em ${formatDate(pubDate, site.locale)}`];
   if (updatedDate) datas.push(`atualizado em ${formatDate(updatedDate, site.locale)}`);
   const body = absolutizeLinks(await resolveImages(post.body ?? '', post));
@@ -45,6 +47,8 @@ export async function postToMarkdown(post: Post): Promise<string> {
     ].join('\n'),
     `> **Resumo:** ${summary}`,
     `![${cover.alt}](${await imageUrl(cover.src)})`,
+    ...(video ? [`Vídeo (${duracaoLegivel(video.duration)}): https://www.youtube.com/watch?v=${video.youtubeId}`] : []),
+    ...(transcricao ? [`## Transcrição do vídeo\n\n${transcricao.texto}`] : []),
     body.trim(),
   ].join('\n\n') + '\n';
 }

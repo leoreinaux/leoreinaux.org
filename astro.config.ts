@@ -42,6 +42,10 @@ export default defineConfig({
     }),
     pagefindIndex(),
   ],
+  // Miniaturas dos vídeos: baixadas do YouTube no build e servidas pelo site (src/lib/video.ts).
+  image: {
+    domains: ['i.ytimg.com'],
+  },
   // Fontes OFL servidas pelo próprio site (ver src/assets/fonts/README.md).
   fonts: [
     {
