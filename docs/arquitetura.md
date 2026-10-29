@@ -274,7 +274,7 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 
 - [x] VPS com Docker Compose: Caddy, Listmonk, Umami, PostgreSQL e backup com restic
 - [x] Conta SES com SPF, DKIM e DMARC; pedido de saída do sandbox
-- [ ] Formulário, lista double opt-in e template "novo post"
+- [x] Formulário, lista double opt-in e template "novo post"
 - [x] `scripts/newsletter.ts` ligado ao deploy
 - [x] Política de privacidade
 
