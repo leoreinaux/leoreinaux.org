@@ -1,0 +1,35 @@
+# Avisa de versões novas e de falhas de segurança nas dependências, com um PR por grupo.
+# Cada PR passa pelo workflow Qualidade antes do merge.
+# Referência: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # Versões exatas no package.json, como pede o CLAUDE.md.
+    versioning-strategy: increase
+    groups:
+      npm:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  # Actions fixadas por SHA; o Dependabot atualiza o SHA e o comentário com a versão.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
+
+  # Imagens da VPS (infra/docker-compose.yml) e do Caddy (infra/caddy/Dockerfile).
+  - package-ecosystem: docker-compose
+    directory: /infra
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: docker
+    directory: /infra/caddy
+    schedule:
+      interval: weekly
