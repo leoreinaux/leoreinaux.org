@@ -30,10 +30,11 @@ case "${1:-backup}" in
     restic "$RESTIC_IMAGEM" snapshots
     ;;
   restaurar)
-    mkdir -p restauracao
-    restic "$RESTIC_IMAGEM" dump --tag postgres latest /postgres.sql > restauracao/postgres.sql
+    # O dump tem os e-mails dos assinantes em texto puro: só o dono do arquivo lê.
+    (umask 077 && mkdir -p restauracao && restic "$RESTIC_IMAGEM" dump --tag postgres latest /postgres.sql > restauracao/postgres.sql)
     echo "Dump restaurado em infra/restauracao/postgres.sql. Para carregar num banco vazio:"
     echo "  docker compose exec -T postgres psql -U \$POSTGRES_USER -d postgres < restauracao/postgres.sql"
+    echo "Depois de carregar, apague o dump: rm restauracao/postgres.sql"
     ;;
   backup)
     # Cria o repositório na primeira execução.

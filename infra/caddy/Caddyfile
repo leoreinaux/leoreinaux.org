@@ -30,6 +30,16 @@
 			events 5
 			window 10m
 		}
+		# Contra força bruta na senha do painel: até 10 tentativas de login por IP a cada 10 minutos.
+		zone login_listmonk {
+			match {
+				method POST
+				path /admin/login
+			}
+			key {remote_host}
+			events 10
+			window 10m
+		}
 	}
 
 	reverse_proxy listmonk:9000
@@ -37,5 +47,19 @@
 
 {$UMAMI_DOMINIO} {
 	import cabecalhos
+
+	# Contra força bruta na senha do painel: até 10 tentativas de login por IP a cada 10 minutos.
+	rate_limit {
+		zone login_umami {
+			match {
+				method POST
+				path /api/auth/login
+			}
+			key {remote_host}
+			events 10
+			window 10m
+		}
+	}
+
 	reverse_proxy umami:3000
 }

@@ -1,6 +1,7 @@
 import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import pagefindIndex from './src/integrations/pagefind';
+import cspScriptsInline from './src/integrations/csp';
 import { site } from './site.config';
 import { satteri } from '@astrojs/markdown-satteri';
 import { linksExternos } from './src/lib/links';
@@ -42,11 +43,39 @@ export default defineConfig({
     sitemap({
       filter: (page) => !/\/(404|busca)$/.test(page),
     }),
+    cspScriptsInline(),
     pagefindIndex(),
   ],
   // Links externos dos posts abrem em nova aba (src/lib/links.ts).
   markdown: {
     processor: satteri({ hastPlugins: [linksExternos] }),
+  },
+  // Content-Security-Policy numa <meta> de cada página, com o hash de cada script e estilo inline
+  // (os scripts is:inline entram pela integração src/integrations/csp.ts).
+  // O que a <meta> não aceita (frame-ancestors) e os demais cabeçalhos ficam em public/_headers.
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        // Umami: o script vem da VPS e envia as visitas para ela.
+        `connect-src 'self' ${site.analytics.umamiUrl}`,
+        // Player do VideoEmbed, só depois do clique.
+        'frame-src https://www.youtube-nocookie.com',
+        // Formulário de inscrição, enviado direto ao Listmonk.
+        `form-action 'self' ${site.newsletter.listmonkUrl}`,
+        "base-uri 'self'",
+        "object-src 'none'",
+      ],
+      scriptDirective: {
+        // 'wasm-unsafe-eval': o Pagefind roda a busca em WebAssembly.
+        resources: ["'self'", site.analytics.umamiUrl, "'wasm-unsafe-eval'"],
+      },
+      styleDirective: {
+        // Atributos style só no realce de código (Shiki); <style> e folhas seguem por hash.
+        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }],
+      },
+    },
   },
   // Miniaturas dos vídeos: baixadas do YouTube no build e servidas pelo site (src/lib/video.ts).
   image: {
