@@ -42,7 +42,7 @@ const { listmonkUrl, listUuid } = site.newsletter;
         <div class="consentimento">
           <input id={`${id}-consentimento`} type="checkbox" required />
           <label for={`${id}-consentimento`}>
-            Quero receber os novos textos por e-mail e li a <a href="/privacidade">política de privacidade</a>.
+            Aceito a <a href="/privacidade">política de privacidade</a>.
           </label>
         </div>
         <button class="botao" type="submit">Assinar</button>
@@ -95,6 +95,10 @@ const { listmonkUrl, listUuid } = site.newsletter;
     height: 1.5rem;
     margin: 0.15em 0 0;
     accent-color: var(--color-accent);
+  }
+
+  .consentimento label {
+    font-size: var(--text-sm);
   }
 
   .aviso {

@@ -7,6 +7,7 @@ import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
 import { OG_HEIGHT, OG_WIDTH } from '../lib/og';
 import { serializeJsonLd, type JsonLdNode } from '../lib/jsonld';
+import { NOVA_ABA_ID } from '../lib/links';
 
 interface Props {
   /** Título da página; o nome do site é acrescentado, exceto na home. */
@@ -87,5 +88,7 @@ const ogImageUrl = new URL(ogImage.path, site.url).href;
       <slot />
     </main>
     <Footer />
+    <!-- Aviso lido pelos leitores de tela nos links externos (aria-describedby); ver src/lib/links.ts. -->
+    <span id={NOVA_ABA_ID} hidden>abre em nova aba</span>
   </body>
 </html>

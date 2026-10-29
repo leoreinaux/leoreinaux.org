@@ -1,5 +1,6 @@
 ---
 import { getImage } from 'astro:assets';
+import { externo } from '../lib/links';
 import { duracaoLegivel, miniaturaDoVideo } from '../lib/video';
 
 /**
@@ -29,6 +30,7 @@ const duracao = duracaoLegivel(duration);
   <a
     class="video-capa"
     href={`https://www.youtube.com/watch?v=${youtubeId}`}
+    {...externo()}
     data-video-id={youtubeId}
     data-video-titulo={title}
     aria-label={`Assistir ao vídeo: ${title} (${duracao})`}

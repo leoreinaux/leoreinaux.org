@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Compartilhar from '../components/Compartilhar.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { site } from '../../site.config';
 import { formatDate, getPublishedPosts, postUrl } from '../lib/posts';
@@ -11,7 +12,6 @@ const posts = await getPublishedPosts();
 <BaseLayout title={site.name} description={site.description} jsonLd={[websiteNode(), await personNode()]}>
   <div class="coluna">
     <h1 class="visualmente-oculto">{site.name}</h1>
-    <p class="apresentacao">{site.description}</p>
 
     <section aria-labelledby="textos-titulo">
       <h2 id="textos-titulo">Textos</h2>
@@ -39,16 +39,12 @@ const posts = await getPublishedPosts();
       }
     </section>
 
+    <Compartilhar url={new URL('/', site.url).href} title={site.name} />
     <NewsletterForm />
   </div>
 </BaseLayout>
 
 <style>
-  .apresentacao {
-    font-size: 1.2em;
-    margin-block: var(--space-5);
-  }
-
   .lista-posts {
     margin: 0;
     padding: 0;

@@ -2,6 +2,8 @@ import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import pagefindIndex from './src/integrations/pagefind';
 import { site } from './site.config';
+import { satteri } from '@astrojs/markdown-satteri';
+import { linksExternos } from './src/lib/links';
 
 // Subconjunto latino: cobre todo o português (inclui ã, õ, ç e acentos).
 const latin = [
@@ -42,6 +44,10 @@ export default defineConfig({
     }),
     pagefindIndex(),
   ],
+  // Links externos dos posts abrem em nova aba (src/lib/links.ts).
+  markdown: {
+    processor: satteri({ hastPlugins: [linksExternos] }),
+  },
   // Miniaturas dos vídeos: baixadas do YouTube no build e servidas pelo site (src/lib/video.ts).
   image: {
     domains: ['i.ytimg.com'],
