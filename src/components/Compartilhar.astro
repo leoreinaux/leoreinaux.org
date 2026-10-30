@@ -17,12 +17,15 @@ const { url, title } = Astro.props;
 const texto = encodeURIComponent(`${title} ${url}`);
 const link = encodeURIComponent(url);
 
+// Ordem de uso no Brasil; Instagram, TikTok e YouTube não têm link de compartilhamento na web e
+// ficam com o menu do sistema ("Mais opções").
 const redes = [
   { nome: 'WhatsApp', href: `https://wa.me/?text=${texto}` },
+  { nome: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${link}` },
   { nome: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${link}` },
   { nome: 'X', href: `https://x.com/intent/post?text=${encodeURIComponent(title)}&url=${link}` },
-  { nome: 'Threads', href: `https://www.threads.com/intent/post?text=${texto}` },
   { nome: 'Bluesky', href: `https://bsky.app/intent/compose?text=${texto}` },
+  { nome: 'Threads', href: `https://www.threads.com/intent/post?text=${texto}` },
 ];
 ---
 
