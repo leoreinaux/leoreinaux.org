@@ -18,15 +18,18 @@ const ano = new Date().getFullYear();
     </p>
     {
       site.social.length > 0 && (
-        <ul class="redes" aria-label="Redes sociais">
-          {site.social.map(({ label, url }) => (
-            <li>
-              <a href={url} {...externo('me')}>
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <>
+          <p id="rotulo-redes">Acompanhe nas redes sociais:</p>
+          <ul class="redes" aria-labelledby="rotulo-redes">
+            {site.social.map(({ label, url }) => (
+              <li>
+                <a href={url} {...externo('me')}>
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
       )
     }
   </div>
