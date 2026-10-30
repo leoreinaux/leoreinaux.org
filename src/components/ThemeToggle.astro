@@ -1,19 +1,26 @@
 ---
 /**
- * Botão de tema claro/escuro. Sem JavaScript ele fica oculto e o site segue o sistema.
- * O tema salvo é aplicado antes da pintura por um script no <head> (BaseLayout).
+ * Botão de tema com três estados: segue o sistema, claro e escuro. Sem JavaScript ele fica oculto
+ * e o site segue o sistema. O tema salvo é aplicado antes da pintura por um script no <head> (BaseLayout).
+ *
+ * O primeiro clique sempre troca as cores (vai para o tema oposto ao do sistema); o segundo fixa o tema
+ * do sistema, e o terceiro volta a seguir o sistema. O ícone e o nome do botão mostram o estado atual.
  */
 ---
 
-<button type="button" class="alternar-tema" data-alternar-tema aria-pressed="false" hidden>
-  <svg class="icone-lua" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
-    <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+<button type="button" class="alternar-tema" data-alternar-tema data-estado="sistema" hidden>
+  <svg class="icone-sistema" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+    <rect x="3" y="4" width="18" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"></rect>
+    <path d="M8 20h8M12 16v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
   </svg>
   <svg class="icone-sol" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
     <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"></circle>
     <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
   </svg>
-  <span class="visualmente-oculto">Tema escuro</span>
+  <svg class="icone-lua" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+    <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+  </svg>
+  <span class="visualmente-oculto" data-nome-tema>Tema: igual ao do sistema</span>
 </button>
 
 <script is:inline>
@@ -21,19 +28,28 @@
     const botao = document.querySelector('[data-alternar-tema]');
     if (!botao) return;
     const raiz = document.documentElement;
-    const sistema = matchMedia('(prefers-color-scheme: dark)');
-    const atual = () => raiz.dataset.theme || (sistema.matches ? 'dark' : 'light');
-    const atualizar = () => botao.setAttribute('aria-pressed', String(atual() === 'dark'));
+    const nome = botao.querySelector('[data-nome-tema]');
+    const sistemaEscuro = matchMedia('(prefers-color-scheme: dark)');
+    const nomes = { sistema: 'Tema: igual ao do sistema', light: 'Tema: claro', dark: 'Tema: escuro' };
+    const mostrar = (estado) => {
+      botao.dataset.estado = estado;
+      nome.textContent = nomes[estado];
+      botao.title = nomes[estado];
+    };
     botao.addEventListener('click', () => {
-      const novo = atual() === 'dark' ? 'light' : 'dark';
-      raiz.dataset.theme = novo;
+      const doSistema = sistemaEscuro.matches ? 'dark' : 'light';
+      const oposto = doSistema === 'dark' ? 'light' : 'dark';
+      const atual = raiz.dataset.theme || 'sistema';
+      const novo = atual === 'sistema' ? oposto : atual === oposto ? doSistema : 'sistema';
       try {
-        localStorage.setItem('tema', novo);
+        if (novo === 'sistema') localStorage.removeItem('tema');
+        else localStorage.setItem('tema', novo);
       } catch {}
-      atualizar();
+      if (novo === 'sistema') delete raiz.dataset.theme;
+      else raiz.dataset.theme = novo;
+      mostrar(novo);
     });
-    sistema.addEventListener('change', atualizar);
-    atualizar();
+    mostrar(raiz.dataset.theme || 'sistema');
     botao.hidden = false;
   })();
 </script>
@@ -64,9 +80,10 @@
     grid-area: 1 / 1;
   }
 
-  /* Mostra o tema para o qual o botão leva. */
-  .alternar-tema[aria-pressed='false'] .icone-sol,
-  .alternar-tema[aria-pressed='true'] .icone-lua {
+  /* Mostra só o ícone do estado atual. */
+  .alternar-tema:not([data-estado='sistema']) .icone-sistema,
+  .alternar-tema:not([data-estado='light']) .icone-sol,
+  .alternar-tema:not([data-estado='dark']) .icone-lua {
     display: none;
   }
 </style>
