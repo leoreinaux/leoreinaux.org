@@ -33,13 +33,21 @@ const horario = `${hora}h${minuto ? String(minuto).padStart(2, '0') : ''}`;
       Os detalhes sobre os dados guardados estão na <a href="/privacidade">política de privacidade</a>.
     </p>
 
-    {listUuid ? <NewsletterForm /> : <p class="em-breve">As inscrições abrem em breve.</p>}
-
-    <h2>Prefere RSS?</h2>
-    <p>
-      Se você usa um leitor de feeds, assine o <a href="/rss.xml">feed RSS</a>: ele traz o texto completo de cada post, sem
-      precisar de e-mail.
-    </p>
+    {/* Com a lista configurada, o próprio formulário já oferece o feed RSS logo abaixo. */}
+    {
+      listUuid ? (
+        <NewsletterForm />
+      ) : (
+        <>
+          <p class="em-breve">As inscrições abrem em breve.</p>
+          <h2>Prefere RSS?</h2>
+          <p>
+            Se você usa um leitor de feeds, assine o <a href="/rss.xml">feed RSS</a>: ele traz o texto completo de cada post, sem
+            precisar de e-mail.
+          </p>
+        </>
+      )
+    }
   </div>
 </BaseLayout>
 
