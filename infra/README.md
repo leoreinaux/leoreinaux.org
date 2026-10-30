@@ -12,6 +12,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 | `.env.example` | Modelo das variáveis e segredos; a cópia preenchida (`.env`) nunca vai para o repositório |
 | `listmonk/publico.css` | Visual do site nas páginas públicas do Listmonk |
 | `listmonk/novo-post.html` | Modelo do e-mail de post novo, sincronizado com o Listmonk pelo deploy |
+| `listmonk/email-templates/subscriber-optin.html` | E-mail de confirmação da inscrição, montado no Listmonk pelo `docker-compose.yml` |
 | `ses.md` | Roteiro do Amazon SES: domínio de envio, DKIM, SPF, DMARC, bounces e saída do sandbox |
 
 ## Subir a VPS
@@ -61,6 +62,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 ## Manutenção
 
 - **Atualizar:** troque a versão da imagem em `docker-compose.yml` (sempre uma versão exata), faça o commit e, no servidor, rode `git pull && docker compose up -d --build`. O Listmonk aplica as migrações do banco sozinho ao subir. Antes, rode um `./backup.sh`.
+- **Mudar o e-mail de confirmação** (`listmonk/email-templates/subscriber-optin.html`): depois do `git pull`, rode `docker compose restart listmonk`, porque o Listmonk lê os modelos só ao subir. Para conferir, inscreva um endereço seu pelo site. A cada versão nova do Listmonk, compare o modelo com o `static/email-templates/subscriber-optin.html` dela, para o caso de os dados passados ao modelo terem mudado.
 - **Mudar o Caddyfile:** depois do `git pull`, rode `docker compose restart caddy`. O arquivo é montado sozinho no contêiner, e o `git pull` grava um arquivo novo no lugar dele: sem o restart, o Caddy continua com a configuração antiga, e o `docker compose up -d` não o recria porque nada no compose mudou. Confira com `docker compose logs caddy --tail 20`.
 - **Ver backups:** `./backup.sh snapshots`.
 - **Restaurar:** `./backup.sh restaurar` grava o último dump em `infra/restauracao/postgres.sql`. Com o PostgreSQL de pé e o Listmonk e o Umami parados (`docker compose stop listmonk umami`), carregue com `docker compose exec -T postgres psql -U listmonk -d postgres < restauracao/postgres.sql` e suba tudo de novo. Dois erros são esperados e inofensivos: `role "listmonk" already exists` e `current user cannot be dropped`. Depois, apague `restauracao/postgres.sql`: ele tem os e-mails dos assinantes em texto puro. Teste a restauração de vez em quando, numa VPS temporária.
