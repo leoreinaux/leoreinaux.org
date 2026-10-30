@@ -157,7 +157,7 @@ A meta é WCAG 2.2 nível AA em todo o site e leitura confortável de textos lon
 
 - Sumário do post: fixo na lateral no desktop, recolhível no topo no mobile
 - Tempo de leitura estimado e caixa de resumo no início
-- Tema claro e escuro conforme o sistema, com botão para trocar
+- Tema claro e escuro conforme o sistema, com botão de três estados (seguir o sistema, claro e escuro)
 
 **Acessibilidade**
 
