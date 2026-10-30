@@ -60,8 +60,11 @@ services:
       LISTMONK_ADMIN_USER: ${LISTMONK_ADMIN_USER}
       LISTMONK_ADMIN_PASSWORD: ${LISTMONK_ADMIN_PASSWORD}
       TZ: America/Sao_Paulo
+      # Modelos de e-mail próprios (infra/listmonk/email-templates), no lugar dos padrões de mesmo nome.
+      LISTMONK_static_dir: /listmonk/personalizado
     volumes:
       - listmonk-uploads:/listmonk/uploads
+      - ./listmonk/email-templates:/listmonk/personalizado/email-templates:ro
     depends_on:
       postgres:
         condition: service_healthy

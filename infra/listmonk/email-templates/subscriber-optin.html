@@ -1,0 +1,117 @@
+{{/*
+  E-mail de confirmação da inscrição (double opt-in), no lugar do modelo padrão do Listmonk.
+  O docker-compose.yml monta esta pasta como "static-dir" do Listmonk, que troca só os arquivos que
+  estão nela; os outros e-mails do sistema seguem os padrões. Depois de mudar este arquivo, rode
+  "docker compose restart listmonk" na VPS: o Listmonk lê os modelos só ao subir.
+
+  O assunto é o <title data-i18n>: o Listmonk o tira do corpo e o usa como assunto.
+  Mesmo visual do novo-post.html: tabelas e estilos embutidos, sem imagens.
+  O nome do formulário é opcional e, sem ele, o Listmonk usa o começo do e-mail, por isso a saudação não usa o nome.
+*/}}
+{{ define "subscriber-optin" }}
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light only" />
+    <title data-i18n>Confirme a sua inscrição na newsletter de Leandro Reinaux</title>
+  </head>
+  <body style="margin: 0; padding: 0; background: #faf8f3">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background: #faf8f3">
+      <tr>
+        <td align="center" style="padding: 24px 16px">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px">
+            <tr>
+              <td
+                style="
+                  padding: 0 0 16px;
+                  border-bottom: 1px solid #8a8378;
+                  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+                  font-size: 18px;
+                  font-weight: 700;
+                  color: #1c1b19;
+                "
+              >
+                <a href="https://leoreinaux.org" style="color: #1c1b19; text-decoration: none">Leandro Reinaux</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 24px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 18px; line-height: 1.65; color: #1c1b19">
+                <h1
+                  style="
+                    margin: 0 0 16px;
+                    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+                    font-size: 26px;
+                    line-height: 1.25;
+                    color: #1c1b19;
+                  "
+                >
+                  Falta só confirmar
+                </h1>
+                <p style="margin: 0 0 16px">Olá!</p>
+                <p style="margin: 0 0 16px">
+                  Alguém, provavelmente você, pediu para receber por e-mail os novos textos de
+                  <a href="https://leoreinaux.org" style="color: #1d4f7d">leoreinaux.org</a>
+                  {{- range .Lists }}{{ if eq .Type "public" }} (lista “{{ .Name }}”){{ end }}{{ end }}. Para começar a receber,
+                  confirme a inscrição:
+                </p>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 0 24px">
+                  <tr>
+                    <td style="border-radius: 6px; background: #1d4f7d">
+                      <a
+                        href="{{ .OptinURL }}"
+                        style="
+                          display: inline-block;
+                          padding: 12px 24px;
+                          font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+                          font-size: 17px;
+                          font-weight: 600;
+                          color: #faf8f3;
+                          text-decoration: none;
+                        "
+                        >Confirmar inscrição</a
+                      >
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin: 0 0 16px">
+                  Chega um e-mail por texto novo, com o resumo e o link para ler no site, sem propaganda. Se o botão não
+                  funcionar, copie este endereço no navegador:
+                </p>
+                <p style="margin: 0 0 16px; font-size: 15px; word-break: break-all">
+                  <a href="{{ .OptinURL }}" style="color: #1d4f7d">{{ .OptinURL }}</a>
+                </p>
+                <p style="margin: 0">
+                  Se não foi você, é só ignorar este e-mail: sem a confirmação, nada mais é enviado e o endereço não entra
+                  na lista.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  padding: 16px 0 0;
+                  border-top: 1px solid #8a8378;
+                  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+                  font-size: 14px;
+                  line-height: 1.5;
+                  color: #4f4b44;
+                "
+              >
+                <p style="margin: 0 0 8px">
+                  Você recebe este e-mail porque o endereço foi informado no formulário da newsletter de leoreinaux.org.
+                </p>
+                <p style="margin: 0">
+                  <a href="{{ .UnsubURL }}?manage=true" style="color: #4f4b44">Gerenciar ou cancelar a inscrição</a> ·
+                  <a href="https://leoreinaux.org/privacidade" style="color: #4f4b44">Política de privacidade</a>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+{{ end }}
