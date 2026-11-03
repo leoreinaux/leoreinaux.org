@@ -41,6 +41,7 @@ Uma VPS pequena com Docker Compose roda o [Listmonk](https://listmonk.app) (news
 5. **Subir.** `docker compose up -d --build`. Na primeira vez, o build do Caddy leva alguns minutos. Confira com `docker compose ps` e `docker compose logs -f`.
 6. **Listmonk.** Entre em `https://newsletter.leoreinaux.org/admin` com o usuário e a senha do `.env` e, em *Settings*:
    - *General*: `Root URL` = `https://newsletter.leoreinaux.org`, nome do site e idioma português.
+     Ainda em *General*, deixe **desligado** *Ask for double opt-in confirmation* ("Solicitar confirmação de double opt-in", em português): assim o clique no botão do e-mail já confirma a inscrição, sem uma segunda página com outro botão "Confirmar", que muita gente não apertava. O custo é que um antivírus de e-mail que abre os links sozinho pode confirmar a inscrição antes da pessoa; o limite de inscrições do Caddy segura o abuso.
    - *SMTP*, bounces e remetente: siga o roteiro do Amazon SES em [`ses.md`](ses.md).
    - *Privacy*, como promete a política de privacidade do site (`/privacidade`):
      - *Individual subscriber tracking*: **desligado** (aberturas e cliques contados só no total);
