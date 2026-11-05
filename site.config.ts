@@ -83,7 +83,7 @@ export const site: SiteConfig = {
   author: {
     name: 'Leandro Reinaux',
     jobTitle: 'Cofundador da Even3',
-    bio: 'Católico, marido de Jamilly, bacharel em Ciência da Computação e cofundador da Even3.',
+    bio: 'Bacharel em ciência da computação e cofundador da Even3.',
     about: [
       'Acredito que conhecimento e experiências, quando compartilhados, agregam muito valor à vida das pessoas.',
       'Criei este site para registrar esses conhecimentos e experiências, para que qualquer pessoa possa acessá-los de forma livre e aberta e compartilhá-los também.',
