@@ -97,7 +97,6 @@ export const site: SiteConfig = {
   social: [
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/leandroreinaux' },
     { label: 'Instagram', url: 'https://www.instagram.com/leoreinaux' },
-    { label: 'YouTube', url: 'https://www.youtube.com/@leoreinaux' },
     { label: 'X', url: 'https://x.com/leoreinaux' },
   ],
   newsletter: {
