@@ -1,7 +1,7 @@
 import { getImage } from 'astro:assets';
 import { site } from '../../site.config';
 import { authorPhoto, imageUrl } from './images';
-import { postUrl, type Post } from './posts';
+import { contarPalavras, postUrl, tempoDeLeitura, type Post } from './posts';
 import { miniaturaDoVideo, transcricaoDoPost } from './video';
 
 /**
@@ -105,6 +105,8 @@ export async function postNodes(post: Post, ogImage: string): Promise<JsonLdNode
       publisher: { '@id': ids.person },
       isPartOf: { '@id': ids.website },
       license: site.contentLicense.url,
+      wordCount: contarPalavras(post),
+      timeRequired: `PT${tempoDeLeitura(post)}M`,
       ...(tags && tags.length > 0 ? { keywords: tags } : {}),
       ...(video ? { video: { '@id': video['@id'] } } : {}),
     },
