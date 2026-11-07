@@ -2,8 +2,8 @@
  * Avisa Bing, Yandex e outros buscadores, pelo IndexNow, dos posts que mudaram num deploy.
  * Roda no deploy.yml depois da publicação, quando o arquivo da chave (/indexnow.txt) já está no ar.
  *
- * Os posts são os que mudaram em src/content/posts/ entre o commit do deploy anterior
- * (BASE_SHA, o "before" do push) e o atual. Entra o post publicado agora e também o que estava
+ * Os posts são os que mudaram em src/content/posts/ entre o commit do último deploy publicado
+ * (BASE_SHA, que o deploy.yml busca na API do GitHub Actions) e o atual. Entra o post publicado agora e também o que estava
  * publicado e saiu do ar (removido ou de volta a rascunho), para o buscador ver o 404. Rascunho
  * que nunca foi publicado fica de fora. Se algum post entrou, a home vai junto, porque lista os posts.
  *
@@ -23,7 +23,7 @@ function aviso(mensagem: string): never {
   process.exit(0);
 }
 
-// Push que cria o branch, workflow_dispatch ou commit anterior fora do histórico: não há o que comparar.
+// Primeiro deploy (sem deploy anterior publicado) ou BASE_SHA inválido: não há o que comparar.
 if (!/^[0-9a-f]{40}$/.test(base) || /^0+$/.test(base)) {
   console.log('IndexNow: sem commit anterior para comparar; nada a enviar.');
   process.exit(0);
