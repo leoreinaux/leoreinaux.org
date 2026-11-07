@@ -118,6 +118,52 @@ pre code {
   font-size: 1em;
 }
 
+/* Tabelas dos posts: a região .tabela (src/lib/tabelas.ts) rola para os lados quando a tabela não cabe na coluna. */
+.tabela {
+  margin-block: 0 1.2em;
+  overflow-x: auto;
+  border-radius: var(--radius);
+}
+
+.tabela:focus-visible {
+  outline-offset: 2px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+th,
+td {
+  padding: var(--space-2) var(--space-3);
+  text-align: start;
+  vertical-align: top;
+  border-block-end: 1px solid var(--color-border);
+}
+
+th {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  background: var(--color-surface);
+  border-block-end-width: 2px;
+}
+
+/* No celular, as colunas de texto ganham uma largura mínima e a região rola, em vez de virar uma palavra por linha.
+   A primeira coluna (rótulos, números) fica com a largura do conteúdo. */
+td,
+th {
+  min-width: 9em;
+}
+
+td:first-child,
+th:first-child {
+  min-width: 0;
+}
+
 hr {
   border: 0;
   border-block-start: 1px solid var(--color-border);

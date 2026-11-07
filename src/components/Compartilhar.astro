@@ -3,8 +3,8 @@ import { externo } from '../lib/links';
 
 /**
  * Convite para compartilhar a página: links diretos para a tela de novo post de cada rede (sem
- * scripts nem botões de terceiros) e, com JavaScript, "Copiar link" e o menu de compartilhamento
- * do sistema (navigator.share), que alcança o Instagram e outros apps no celular.
+ * scripts nem botões de terceiros, com UTM por rede) e, com JavaScript, "Copiar link" e o menu
+ * de compartilhamento do sistema (navigator.share), que alcança o Instagram e outros apps no celular.
  */
 interface Props {
   /** URL absoluta da página. */
@@ -14,19 +14,37 @@ interface Props {
 }
 
 const { url, title } = Astro.props;
-const texto = encodeURIComponent(`${title} ${url}`);
-const link = encodeURIComponent(url);
+
+/**
+ * URL da página com os parâmetros UTM de cada rede, para o Umami separar as visitas que vêm de
+ * cada compartilhamento. "Copiar link" e "Mais opções" seguem com a URL limpa, porque não se sabe
+ * para onde o link vai.
+ */
+function comUtm(source: string, medium = 'social'): string {
+  const destino = new URL(url);
+  destino.searchParams.set('utm_source', source);
+  destino.searchParams.set('utm_medium', medium);
+  destino.searchParams.set('utm_campaign', 'compartilhar');
+  return destino.href;
+}
+
+/** URL com UTM, codificada para entrar num parâmetro. */
+const link = (source: string) => encodeURIComponent(comUtm(source));
+/** Título seguido da URL com UTM, para as redes que só aceitam um texto. */
+const texto = (source: string) => encodeURIComponent(`${title} ${comUtm(source)}`);
 
 // Ordem de uso no Brasil; Instagram, TikTok e YouTube não têm link de compartilhamento na web e
 // ficam com o menu do sistema ("Mais opções").
 const redes = [
-  { nome: 'WhatsApp', href: `https://wa.me/?text=${texto}` },
-  { nome: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${link}` },
-  { nome: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${link}` },
-  { nome: 'X', href: `https://x.com/intent/post?text=${encodeURIComponent(title)}&url=${link}` },
-  { nome: 'Bluesky', href: `https://bsky.app/intent/compose?text=${texto}` },
-  { nome: 'Threads', href: `https://www.threads.com/intent/post?text=${texto}` },
+  { nome: 'WhatsApp', href: `https://wa.me/?text=${texto('whatsapp')}` },
+  { nome: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${link('facebook')}` },
+  { nome: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${link('linkedin')}` },
+  { nome: 'X', href: `https://x.com/intent/post?text=${encodeURIComponent(title)}&url=${link('x')}` },
+  { nome: 'Bluesky', href: `https://bsky.app/intent/compose?text=${texto('bluesky')}` },
+  { nome: 'Threads', href: `https://www.threads.com/intent/post?text=${texto('threads')}` },
 ];
+
+const email = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(comUtm('email', 'email'))}`;
 ---
 
 <section class="compartilhar nao-imprimir" aria-labelledby="compartilhar-titulo" data-pagefind-ignore>
@@ -48,7 +66,7 @@ const redes = [
       ))
     }
     <li>
-      <a class="opcao" href={`mailto:?subject=${encodeURIComponent(title)}&body=${link}`}>E-mail</a>
+      <a class="opcao" href={email}>E-mail</a>
     </li>
   </ul>
   <p class="visualmente-oculto" role="status" data-aviso></p>
