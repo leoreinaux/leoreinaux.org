@@ -5,6 +5,7 @@ import cspScriptsInline from './src/integrations/csp';
 import { site } from './site.config';
 import { satteri } from '@astrojs/markdown-satteri';
 import { linksExternos } from './src/lib/links';
+import { tabelasRolaveis } from './src/lib/tabelas';
 
 // Subconjunto latino: cobre todo o português (inclui ã, õ, ç e acentos).
 const latin = [
@@ -46,9 +47,9 @@ export default defineConfig({
     cspScriptsInline(),
     pagefindIndex(),
   ],
-  // Links externos dos posts abrem em nova aba (src/lib/links.ts).
+  // Links externos dos posts abrem em nova aba (src/lib/links.ts) e as tabelas rolam para os lados no celular (src/lib/tabelas.ts).
   markdown: {
-    processor: satteri({ hastPlugins: [linksExternos] }),
+    processor: satteri({ hastPlugins: [linksExternos, tabelasRolaveis] }),
   },
   // Content-Security-Policy numa <meta> de cada página, com o hash de cada script e estilo inline
   // (os scripts is:inline entram pela integração src/integrations/csp.ts).

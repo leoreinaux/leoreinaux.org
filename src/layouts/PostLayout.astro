@@ -8,7 +8,7 @@ import NewsletterForm from '../components/NewsletterForm.astro';
 import Toc from '../components/Toc.astro';
 import VideoEmbed from '../components/VideoEmbed.astro';
 import { transcricaoDoPost } from '../lib/video';
-import { formatDate, postUrl, type Post } from '../lib/posts';
+import { formatDate, postUrl, tempoDeLeitura, type Post } from '../lib/posts';
 import { postNodes } from '../lib/jsonld';
 import { externo } from '../lib/links';
 import { ogImageUrl } from '../lib/images';
@@ -22,6 +22,7 @@ interface Props {
 const { post, headings } = Astro.props;
 const { title, description, summary, pubDate, updatedDate, cover, tags, video } = post.data;
 const transcricao = video && transcricaoDoPost(post.id);
+const minutos = tempoDeLeitura(post);
 // O card social é a própria capa, recortada em 1200×630.
 const ogUrl = await ogImageUrl(cover.src);
 const jsonLd = await postNodes(post, ogUrl);
@@ -49,6 +50,7 @@ const jsonLd = await postNodes(post, ogUrl);
             </>
           )
         }
+        {' · '}{minutos} min de leitura
       </p>
       <section class="resumo" aria-labelledby="resumo-titulo">
         <h2 id="resumo-titulo" class="resumo-titulo">Resumo</h2>
