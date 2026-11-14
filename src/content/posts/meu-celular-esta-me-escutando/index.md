@@ -156,7 +156,7 @@ Perfil > menu ☰ > Central de Contas > Suas informações e permissões > Sua a
 Se você prefere continuar no Chrome, dá para reduzir bastante o rastreamento mudando duas configurações, no computador e no celular:
 
 1. Mais (⋮) > Configurações > Privacidade e segurança > Cookies de terceiros: escolha **Bloquear cookies de terceiros**. Se algum site parar de funcionar, dá para liberá-lo na mesma tela, em "Sites em que o uso de cookies de terceiros foi permitido" ([Google](https://support.google.com/chrome/answer/95647?hl=pt-BR)).
-2. Mais (⋮) > Configurações > Privacidade e segurança > Privacidade de anúncios: desative os recursos que aparecerem ali. Eles usam o que você faz no navegador para sugerir anúncios ([Google](https://support.google.com/chrome/answer/14005087?hl=pt-BR)).
+2. Mais (⋮) > Configurações > Privacidade e segurança > Privacidade de anúncios: desative os recursos que aparecerem ali. Eles usam o que você faz no navegador para sugerir anúncios.
 
 De vez em quando, também vale apagar os cookies em Privacidade e segurança > Excluir dados de navegação.
 
@@ -210,6 +210,5 @@ Se você abrir a sua lista na Meta, fiquei curioso para saber quantas empresas a
 - ANPD. [Direitos dos titulares](https://www.gov.br/anpd/pt-br/assuntos/titular-de-dados-1/direito-dos-titulares).
 - Google. [Como o Google usa cookies e o ID de publicidade](https://policies.google.com/technologies/ads?hl=pt-BR).
 - Google. [Excluir, permitir e gerenciar cookies no Chrome](https://support.google.com/chrome/answer/95647?hl=pt-BR).
-- Google. [Como a privacidade de anúncios funciona no Chrome](https://support.google.com/chrome/answer/14005087?hl=pt-BR).
 
 *Texto sob licença CC BY 4.0. Fontes conferidas em 14/11/2026.*
