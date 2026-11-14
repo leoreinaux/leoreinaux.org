@@ -1,11 +1,11 @@
 ---
-title: 'O rastro que a gente não vê'
+title: 'Meu celular está me escutando? O que descobri sobre o rastro que a gente deixa na internet'
 description: Quem sabe o que você faz na internet, como fica sabendo, o que isso muda na sua vida e o que dá para fazer
 summary: 'Abri a tela do Instagram que mostra quais empresas contaram para a Meta o que eu faço fora do app. Apareceram 31. Dias depois, o arquivo completo mostrou outro número: 5.336 anunciantes. Fui entender quem sabe o que a gente faz na internet, como fica sabendo e o que dá para fazer.'
 pubDate: 2026-11-14
 cover:
   src: ./capa.png
-  alt: O rastro que a gente não vê
+  alt: Meu celular está me escutando?
 tags:
   - privacidade
   - dados pessoais
