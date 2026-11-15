@@ -28,6 +28,8 @@ Fora da v1: comentários, versão bilíngue e painel de edição web.
 
 ## Visão geral da arquitetura
 
+O site publica dois tipos de texto: **posts** (textos longos, listados na home e enviados pela newsletter) e **tutoriais** (passo a passo, listados em `/tutoriais` e nunca enviados por e-mail).
+
 O site é estático e fica na CDN da Cloudflare; só newsletter e analytics precisam de servidor, numa VPS pequena. Publicar é um commit: o GitHub Actions gera o site, publica e cria a campanha de e-mail.
 
 &#91;embedded content: arquitetura · site na CDN, newsletter e analytics na VPS\]
@@ -68,14 +70,16 @@ Um único repositório guarda site, conteúdo, scripts e infraestrutura da VPS. 
 ```text
 leoreinaux.org/
 ├── src/
-│   ├── content/posts/
-│   │   └── tecnologia-brasileira/
-│   │       ├── index.md          # texto + frontmatter
-│   │       ├── capa.jpg
-│   │       └── transcricao.md    # opcional
+│   ├── content/
+│   │   ├── posts/
+│   │   │   └── tecnologia-brasileira/
+│   │   │       ├── index.md          # texto + frontmatter
+│   │   │       ├── capa.jpg
+│   │   │       └── transcricao.md    # opcional
+│   │   └── tutoriais/            # mesma estrutura dos posts
 │   ├── components/   # Header, NewsletterForm, VideoEmbed, Toc...
 │   ├── layouts/      # BaseLayout, PostLayout
-│   ├── pages/        # index, sobre, posts/[slug], busca, rss.xml, llms.txt, robots.txt
+│   ├── pages/        # index, sobre, posts/[slug], tutoriais/[slug], busca, rss.xml, llms.txt, robots.txt
 │   └── styles/       # tokens, tipografia, temas claro/escuro
 ├── public/           # favicon
 ├── scripts/          # newsletter.ts, indexnow.ts
@@ -104,17 +108,19 @@ O frontmatter de cada post é validado no build; um campo obrigatório ausente q
 | `draft` | Não | `true` mantém fora do build de produção |
 | `social` | Não | Reservado para a fase 2 (trechos para cada rede) |
 
+**Tutoriais.** Ficam numa coleção própria, em `src/content/tutoriais/<slug>/`, com a URL `/tutoriais/<slug>` e a listagem em `/tutoriais` (item "Tutoriais" no menu). Usam o mesmo frontmatter, o mesmo layout e os mesmos recursos dos posts (vídeo, transcrição, versão Markdown, busca, RSS, `llms.txt`, sitemap e IndexNow), com uma diferença: não têm o campo `newsletter`, porque tutorial nunca vira e-mail. Também não aparecem na lista "Textos" da home.
+
 ## SEO, AEO e GEO
 
 Os três se apoiam na mesma base: HTML estático e semântico, rápido, com autor identificável e dados estruturados. Buscadores, motores de resposta e IAs generativas leem o mesmo HTML; o que muda é o quanto cada um depende de trechos citáveis e de metadados limpos.
 
 **Fundação técnica (SEO)**
 
-- URLs curtas em português, sem data: `/posts/tecnologia-brasileira`
+- URLs curtas em português, sem data: `/posts/tecnologia-brasileira`, `/tutoriais/<slug>`
 - `<html lang="pt-BR">`, `<link rel="canonical">` em todas as páginas e título único por página
 - Sitemap gerado no build (`@astrojs/sitemap`) e feed RSS completo (`@astrojs/rss`)
 - Open Graph e cards sociais: nos posts, a própria capa, recortada no build em um JPEG de 1200×630 (o mesmo que aparece no WhatsApp, LinkedIn e X). As páginas que não são posts usam um card padrão em PNG, com a descrição do site sobre o fundo, desenhado pelo [Satori](https://github.com/vercel/satori) e convertido pelo [resvg-js](https://github.com/thx/resvg-js) (ambos MPL-2.0), com a Source Sans 3 em woff estático (o Satori não lê woff2)
-- Ping via IndexNow a cada deploy, para Bing e outros buscadores indexarem em minutos (`scripts/indexnow.ts`): só os posts publicados ou retirados desde o deploy anterior, mais a home. A chave é pública, fica no `site.config.ts` e é servida em `/indexnow.txt`
+- Ping via IndexNow a cada deploy, para Bing e outros buscadores indexarem em minutos (`scripts/indexnow.ts`): só os posts e tutoriais publicados ou retirados desde o deploy anterior, mais a página que os lista (a home ou `/tutoriais`). A chave é pública, fica no `site.config.ts` e é servida em `/indexnow.txt`
 - Cadastro no Google Search Console e no Bing Webmaster Tools; o índice do Bing alimenta respostas de vários assistentes
 
 **Dados estruturados (JSON-LD)**
@@ -125,7 +131,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 | `WebSite` | Home | Nome, URL, busca interna (`SearchAction` para `/busca?q=`) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
 | `VideoObject` | Posts com vídeo | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
-| `BreadcrumbList` | Posts | Início › título, enquanto não houver uma página que liste os posts |
+| `BreadcrumbList` | Posts e tutoriais | Início › título nos posts; Início › Tutoriais › título nos tutoriais |
 
 **Escrita que vira resposta (AEO)**
 

@@ -1,11 +1,12 @@
 /**
- * Avisa Bing, Yandex e outros buscadores, pelo IndexNow, dos posts que mudaram num deploy.
+ * Avisa Bing, Yandex e outros buscadores, pelo IndexNow, dos posts e tutoriais que mudaram num deploy.
  * Roda no deploy.yml depois da publicação, quando o arquivo da chave (/indexnow.txt) já está no ar.
  *
- * Os posts são os que mudaram em src/content/posts/ entre o commit do último deploy publicado
- * (BASE_SHA, que o deploy.yml busca na API do GitHub Actions) e o atual. Entra o post publicado agora e também o que estava
+ * Os textos são os que mudaram em src/content/posts/ e src/content/tutoriais/ entre o commit do último deploy publicado
+ * (BASE_SHA, que o deploy.yml busca na API do GitHub Actions) e o atual. Entra o texto publicado agora e também o que estava
  * publicado e saiu do ar (removido ou de volta a rascunho), para o buscador ver o 404. Rascunho
- * que nunca foi publicado fica de fora. Se algum post entrou, a home vai junto, porque lista os posts.
+ * que nunca foi publicado fica de fora. Se algum texto entrou, a página que o lista vai junto: a home para os posts
+ * e /tutoriais para os tutoriais.
  *
  * Uso: BASE_SHA=<commit> node scripts/indexnow.ts. INDEXNOW_SIMULAR=1 só mostra o que seria enviado.
  * Uma falha no envio vira aviso, sem quebrar o deploy: o site já foi publicado.
@@ -15,6 +16,7 @@ import { existsSync } from 'node:fs';
 import { site } from '../site.config.ts';
 
 const ENDPOINT = 'https://api.indexnow.org/indexnow';
+const COLECOES = ['posts', 'tutoriais'];
 const base = process.env.BASE_SHA ?? '';
 
 function aviso(mensagem: string): never {
@@ -31,23 +33,33 @@ if (!/^[0-9a-f]{40}$/.test(base) || /^0+$/.test(base)) {
 
 let alterados: string[];
 try {
-  alterados = execFileSync('git', ['diff', '--name-only', base, 'HEAD', '--', 'src/content/posts/'], { encoding: 'utf8' })
+  alterados = execFileSync('git', ['diff', '--name-only', base, 'HEAD', '--', ...COLECOES.map((colecao) => `src/content/${colecao}/`)], {
+    encoding: 'utf8',
+  })
     .split('\n')
     .filter(Boolean);
 } catch {
   aviso(`IndexNow: não foi possível comparar ${base.slice(0, 7)} com o commit atual; nada foi enviado.`);
 }
 
-const slugs = [...new Set(alterados.map((arquivo) => arquivo.split('/')[3]).filter((slug): slug is string => Boolean(slug)))];
-if (slugs.length === 0) {
-  console.log('IndexNow: nenhum post mudou; nada a enviar.');
+/** Caminho de cada texto que mudou, sem repetir: /posts/<slug> ou /tutoriais/<slug>. */
+const caminhos = [
+  ...new Set(
+    alterados.flatMap((arquivo) => {
+      const [, , colecao, slug] = arquivo.split('/');
+      return colecao && slug ? [`/${colecao}/${slug}`] : [];
+    }),
+  ),
+];
+if (caminhos.length === 0) {
+  console.log('IndexNow: nenhum post ou tutorial mudou; nada a enviar.');
   process.exit(0);
 }
 
-/** O post estava publicado no commit anterior: existia e não era rascunho. */
-function publicadoAntes(slug: string): boolean {
+/** O texto estava publicado no commit anterior: existia e não era rascunho. */
+function publicadoAntes(caminho: string): boolean {
   try {
-    const texto = execFileSync('git', ['show', `${base}:src/content/posts/${slug}/index.md`], { encoding: 'utf8', stdio: 'pipe' });
+    const texto = execFileSync('git', ['show', `${base}:src/content${caminho}/index.md`], { encoding: 'utf8', stdio: 'pipe' });
     const frontmatter = texto.split(/^---$/m)[1] ?? '';
     return !/^draft:\s*true\b/m.test(frontmatter);
   } catch {
@@ -55,10 +67,10 @@ function publicadoAntes(slug: string): boolean {
   }
 }
 
-const enviar = slugs.filter((slug) => {
-  const publicado = existsSync(`dist/posts/${slug}.html`);
-  if (publicado) console.log(`- /posts/${slug}`);
-  else if (publicadoAntes(slug)) console.log(`- /posts/${slug} (saiu do ar)`);
+const enviar = caminhos.filter((caminho) => {
+  const publicado = existsSync(`dist${caminho}.html`);
+  if (publicado) console.log(`- ${caminho}`);
+  else if (publicadoAntes(caminho)) console.log(`- ${caminho} (saiu do ar)`);
   else return false;
   return true;
 });
@@ -68,7 +80,9 @@ if (enviar.length === 0) {
 }
 
 const url = (caminho: string) => new URL(caminho, site.url).href;
-const urls = [url('/'), ...enviar.map((slug) => url(`/posts/${slug}`))];
+// A página que lista cada texto: a home para os posts, /tutoriais para os tutoriais.
+const listas = [...new Set(enviar.map((caminho) => (caminho.startsWith('/tutoriais/') ? '/tutoriais' : '/')))];
+const urls = [...listas, ...enviar].map(url);
 
 const corpo = {
   host: new URL(site.url).host,

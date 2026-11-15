@@ -1,0 +1,56 @@
+---
+import { site } from '../../site.config';
+import { formatDate, postUrl, type Post } from '../lib/posts';
+
+interface Props {
+  posts: Post[];
+  /** Nível do título de cada item, para não pular nível depois do título da página ou da seção. */
+  nivel: 2 | 3;
+}
+
+const { posts, nivel } = Astro.props;
+const Titulo = `h${nivel}` as const;
+---
+
+<ul class="lista-posts" role="list">
+  {
+    posts.map((post) => (
+      <li>
+        <article>
+          <Titulo>
+            <a href={postUrl(post)}>{post.data.title}</a>
+          </Titulo>
+          <p class="texto-secundario">
+            <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, site.locale)}</time>
+            {post.data.draft && ' · Rascunho'}
+          </p>
+          <p>{post.data.description}</p>
+        </article>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .lista-posts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lista-posts > li + li {
+    margin-block-start: var(--space-5);
+  }
+
+  .lista-posts :is(h2, h3) {
+    margin-block: 0 var(--space-1);
+  }
+
+  .lista-posts p {
+    margin-block-end: var(--space-2);
+  }
+
+  .lista-posts .texto-secundario {
+    font-family: var(--font-heading);
+  }
+</style>

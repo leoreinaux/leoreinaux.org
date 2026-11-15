@@ -1,4 +1,5 @@
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+import type { Post } from './posts';
 
 /**
  * Vídeo do YouTube dos posts: miniatura, transcrição e duração.
@@ -42,11 +43,11 @@ interface Transcricao {
   rawContent(): string;
 }
 
-const transcricoes = import.meta.glob<Transcricao>('/src/content/posts/*/transcricao.md', { eager: true });
+const transcricoes = import.meta.glob<Transcricao>('/src/content/{posts,tutoriais}/*/transcricao.md', { eager: true });
 
-/** Transcrição do vídeo (transcricao.md na pasta do post), se existir. */
-export function transcricaoDoPost(slug: string): { Content: AstroComponentFactory; texto: string } | undefined {
-  const modulo = transcricoes[`/src/content/posts/${slug}/transcricao.md`];
+/** Transcrição do vídeo (transcricao.md na pasta do post ou do tutorial), se existir. */
+export function transcricaoDoPost(post: Post): { Content: AstroComponentFactory; texto: string } | undefined {
+  const modulo = transcricoes[`/src/content/${post.collection}/${post.id}/transcricao.md`];
   return modulo && { Content: modulo.Content, texto: modulo.rawContent().trim() };
 }
 

@@ -4,8 +4,8 @@ import { imageUrl } from './images';
 import { duracaoLegivel, transcricaoDoPost } from './video';
 import { formatDate, postUrl, type Post } from './posts';
 
-/** Imagens que ficam nas pastas dos posts, indexadas pelo caminho a partir da raiz do projeto. */
-const postImages = import.meta.glob<ImageMetadata>('/src/content/posts/*/**/*.{jpg,jpeg,png,webp,avif,gif}', {
+/** Imagens que ficam nas pastas dos posts e tutoriais, indexadas pelo caminho a partir da raiz do projeto. */
+const postImages = import.meta.glob<ImageMetadata>('/src/content/{posts,tutoriais}/*/**/*.{jpg,jpeg,png,webp,avif,gif}', {
   eager: true,
   import: 'default',
 });
@@ -15,7 +15,7 @@ async function resolveImages(markdown: string, post: Post): Promise<string> {
   const refs = [...markdown.matchAll(/!\[([^\]]*)\]\(\.\/([^)\s]+)\)/g)];
   let result = markdown;
   for (const [match, alt = '', path = ''] of refs) {
-    const src = postImages[`/src/content/posts/${post.id}/${path}`];
+    const src = postImages[`/src/content/${post.collection}/${post.id}/${path}`];
     if (src) result = result.replace(match, `![${alt}](${await imageUrl(src)})`);
   }
   return result;
@@ -32,7 +32,7 @@ function absolutizeLinks(markdown: string): string {
  */
 export async function postToMarkdown(post: Post): Promise<string> {
   const { title, summary, pubDate, updatedDate, cover, video } = post.data;
-  const transcricao = video && transcricaoDoPost(post.id);
+  const transcricao = video && transcricaoDoPost(post);
   const datas = [`Publicado em ${formatDate(pubDate, site.locale)}`];
   if (updatedDate) datas.push(`atualizado em ${formatDate(updatedDate, site.locale)}`);
   const body = absolutizeLinks(await resolveImages(post.body ?? '', post));

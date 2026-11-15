@@ -8,7 +8,7 @@
  * Sai com código 1 se alguma meta cair.
  */
 import { execFileSync, spawn } from 'node:child_process';
-import { appendFileSync, readdirSync } from 'node:fs';
+import { appendFileSync, existsSync, readdirSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import lighthouse, { type RunnerResult } from 'lighthouse';
 import { chromium, type Browser } from 'playwright-core';
@@ -42,15 +42,21 @@ const metas = {
   postBytes: 300 * 1024,
 };
 
-const posts = readdirSync('dist/posts')
-  .filter((arquivo) => arquivo.endsWith('.html'))
-  .map((arquivo) => `/posts/${arquivo.replace(/\.html$/, '')}`);
+/** Páginas de posts e de tutoriais: o mesmo layout, com as mesmas metas de peso. */
+const posts = ['posts', 'tutoriais'].flatMap((colecao) =>
+  existsSync(`dist/${colecao}`)
+    ? readdirSync(`dist/${colecao}`)
+        .filter((arquivo) => arquivo.endsWith('.html'))
+        .map((arquivo) => `/${colecao}/${arquivo.replace(/\.html$/, '')}`)
+    : [],
+);
 
 const paginas: Pagina[] = [
   { caminho: '/' },
   { caminho: '/sobre' },
   { caminho: '/privacidade' },
   { caminho: '/newsletter' },
+  { caminho: '/tutoriais' },
   { caminho: '/busca', semSeo: true },
   { caminho: '/pagina-que-nao-existe', semSeo: true, semLighthouse: true },
   ...posts.map((caminho) => ({ caminho, post: true })),
