@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ListaPosts from '../../components/ListaPosts.astro';
+import { getPublishedTutoriais } from '../../lib/posts';
+
+const tutoriais = await getPublishedTutoriais();
+---
+
+<BaseLayout title="Tutoriais" description="Tutoriais passo a passo, com explicações simples, para você resolver as coisas na prática.">
+  <div class="coluna tutoriais">
+    <h1>Tutoriais</h1>
+    <p>Tutoriais passo a passo, com explicações simples, para você resolver as coisas na prática.</p>
+    {tutoriais.length === 0 ? <p>Ainda não há tutoriais publicados. O primeiro vem em breve.</p> : <ListaPosts posts={tutoriais} nivel={2} />}
+  </div>
+</BaseLayout>
+
+<style>
+  .tutoriais {
+    padding-block-start: var(--space-5);
+  }
+
+  .tutoriais > p {
+    margin-block-end: var(--space-5);
+  }
+</style>

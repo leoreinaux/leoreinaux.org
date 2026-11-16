@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Compartilhar from '../components/Compartilhar.astro';
+import ListaPosts from '../components/ListaPosts.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { site } from '../../site.config';
-import { formatDate, getPublishedPosts, postUrl } from '../lib/posts';
+import { getPublishedPosts } from '../lib/posts';
 import { personNode, websiteNode } from '../lib/jsonld';
 
 const posts = await getPublishedPosts();
@@ -15,55 +16,10 @@ const posts = await getPublishedPosts();
 
     <section aria-labelledby="textos-titulo">
       <h2 id="textos-titulo">Textos</h2>
-      {
-        posts.length === 0 ? (
-          <p>Ainda não há textos publicados. O primeiro vem em breve.</p>
-        ) : (
-          <ul class="lista-posts" role="list">
-            {posts.map((post) => (
-              <li>
-                <article>
-                  <h3>
-                    <a href={postUrl(post)}>{post.data.title}</a>
-                  </h3>
-                  <p class="texto-secundario">
-                    <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, site.locale)}</time>
-                    {post.data.draft && ' · Rascunho'}
-                  </p>
-                  <p>{post.data.description}</p>
-                </article>
-              </li>
-            ))}
-          </ul>
-        )
-      }
+      {posts.length === 0 ? <p>Ainda não há textos publicados. O primeiro vem em breve.</p> : <ListaPosts posts={posts} nivel={3} />}
     </section>
 
     <Compartilhar url={new URL('/', site.url).href} title={site.name} />
     <NewsletterForm />
   </div>
 </BaseLayout>
-
-<style>
-  .lista-posts {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .lista-posts > li + li {
-    margin-block-start: var(--space-5);
-  }
-
-  .lista-posts h3 {
-    margin-block: 0 var(--space-1);
-  }
-
-  .lista-posts p {
-    margin-block-end: var(--space-2);
-  }
-
-  .lista-posts .texto-secundario {
-    font-family: var(--font-heading);
-  }
-</style>

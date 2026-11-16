@@ -3,16 +3,16 @@ import type { APIRoute } from 'astro';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { render } from 'astro:content';
 import { site } from '../../site.config';
-import { getPublishedPosts, postUrl } from '../lib/posts';
+import { getPublishedTextos, postUrl } from '../lib/posts';
 
 /** Troca links e imagens relativos à raiz (/...) por URLs absolutas, que todo leitor de RSS entende. */
 function absolutizeUrls(html: string): string {
   return html.replace(/(href|src)="\/(?!\/)/g, `$1="${site.url}/`);
 }
 
-/** Feed RSS completo: cada item traz o texto inteiro do post. */
+/** Feed RSS completo, com posts e tutoriais: cada item traz o texto inteiro. */
 export const GET: APIRoute = async () => {
-  const posts = await getPublishedPosts();
+  const posts = await getPublishedTextos();
   // Renderiza o componente do post, e não post.rendered.html, para que as imagens do texto
   // passem pelo astro:assets e virem <img> de verdade.
   const container = await AstroContainer.create();

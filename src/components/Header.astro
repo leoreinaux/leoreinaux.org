@@ -4,12 +4,16 @@ import ThemeToggle from './ThemeToggle.astro';
 
 const links = [
   { href: '/', label: 'Textos' },
+  { href: '/tutoriais', label: 'Tutoriais' },
   { href: '/newsletter', label: 'Newsletter' },
   { href: '/sobre', label: 'Sobre' },
   { href: '/busca', label: 'Busca' },
 ];
 const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
-const atual = (href: string) => (href === '/' ? path === '/' || path.startsWith('/posts') : path === href);
+const atual = (href: string) => {
+  if (href === '/') return path === '/' || path.startsWith('/posts/');
+  return path === href || path.startsWith(`${href}/`);
+};
 ---
 
 <header class="cabecalho nao-imprimir">
@@ -94,12 +98,21 @@ const atual = (href: string) => (href === '/' ? path === '/' || path.startsWith(
     text-underline-offset: 0.3em;
   }
 
-  /* Celular: o nome do site e o botão de tema na primeira linha; o menu inteiro na de baixo. */
+  /*
+   * Celular: o nome do site e o botão de tema na primeira linha; o menu na de baixo.
+   * Os links ficam colados (o próprio padding separa as palavras) e, nas telas mais estreitas,
+   * o menu quebra em duas linhas em vez de vazar para o lado.
+   */
   @media (max-width: 30em) {
     nav {
       order: 1;
       flex-basis: 100%;
       margin-inline: calc(-1 * var(--space-2)) 0;
+    }
+
+    ul {
+      flex-wrap: wrap;
+      gap: 0;
     }
   }
 </style>

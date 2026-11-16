@@ -69,7 +69,7 @@ async function videoNode(post: Post, url: string): Promise<JsonLdNode | undefine
   const miniatura = remota
     ? abs((await getImage({ src: remota, inferSize: true, width: 1280, format: 'webp' })).src)
     : await imageUrl(cover.src, 'jpeg', 1280);
-  const transcricao = transcricaoDoPost(post.id);
+  const transcricao = transcricaoDoPost(post);
   return {
     '@type': 'VideoObject',
     '@id': `${url}#video`,
@@ -112,12 +112,13 @@ export async function postNodes(post: Post, ogImage: string): Promise<JsonLdNode
     },
     ...(video ? [video] : []),
     {
-      // Ainda não existe uma página que liste os posts, então o caminho é Início › post.
+      // Os posts são listados na home (Início › post); os tutoriais, em /tutoriais (Início › Tutoriais › tutorial).
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Início', item: abs('/') },
-        { '@type': 'ListItem', position: 2, name: title, item: url },
-      ],
+        { name: 'Início', item: abs('/') },
+        ...(post.collection === 'tutoriais' ? [{ name: 'Tutoriais', item: abs('/tutoriais') }] : []),
+        { name: title, item: url },
+      ].map((item, i) => ({ '@type': 'ListItem', position: i + 1, ...item })),
     },
     await personNode(),
     websiteNode(),

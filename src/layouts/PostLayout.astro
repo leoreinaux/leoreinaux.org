@@ -21,7 +21,7 @@ interface Props {
 
 const { post, headings } = Astro.props;
 const { title, description, summary, pubDate, updatedDate, cover, tags, video } = post.data;
-const transcricao = video && transcricaoDoPost(post.id);
+const transcricao = video && transcricaoDoPost(post);
 const minutos = tempoDeLeitura(post);
 // O card social é a própria capa, recortada em 1200×630.
 const ogUrl = await ogImageUrl(cover.src);
