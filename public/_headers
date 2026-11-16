@@ -2,6 +2,9 @@
 # Referência: https://developers.cloudflare.com/workers/static-assets/headers/
 # A Content-Security-Policy completa sai do Astro numa <meta> de cada página (security.csp em
 # astro.config.ts), com os hashes dos scripts inline. Aqui fica só o que a <meta> não aceita.
+# O domínio está na lista de pré-carregamento do HSTS (hstspreload.org): os navegadores só o
+# acessam por HTTPS, em todos os subdomínios. Não tire o preload nem o includeSubDomains do
+# Strict-Transport-Security nem baixe o max-age de um ano, ou o domínio sai da lista.
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Content-Security-Policy: frame-ancestors 'none'; base-uri 'self'; object-src 'none'
