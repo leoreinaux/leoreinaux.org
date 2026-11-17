@@ -19,7 +19,7 @@ Requisitos de partida:
 | Infraestrutura | Código e ferramentas open source; site em hospedagem estática gratuita; uma VPS pequena só para a newsletter |
 | Edição | Arquivos Markdown no repositório, publicados por commit (editor ou Claude Code) |
 | Idioma | Somente português (pt-BR) |
-| Recursos extras | Busca no site, analytics sem cookies, vídeos com transcrição |
+| Recursos extras | Busca no site, analytics sem cookies, vídeos com transcrição, versão em áudio de cada texto |
 | Newsletter | E-mail com resumo + link para o texto completo no site; até 1 mil inscritos no 1º ano |
 | Licenças | Código em MIT; textos em CC BY 4.0 |
 | Redes sociais | Automação fica para a fase 2, mas a arquitetura já nasce preparada |
@@ -52,6 +52,7 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 | Servidor | VPS + Docker Compose + Caddy | Apache-2.0 (Caddy) | HTTPS automático para os dois serviços (`newsletter.leoreinaux.org` e `analytics.leoreinaux.org`); passo a passo em `infra/README.md` | — |
 | CI/CD | GitHub Actions | Gratuito em repositório público | Build, testes, deploy e disparo da newsletter | Forgejo Actions (Codeberg) |
 | Vídeo | YouTube + embed leve (lite-youtube) | Apache-2.0 (embed) | Alcance do YouTube sem pesar a página | PeerTube |
+| Áudio dos textos | [Piper](https://github.com/OHF-Voice/piper1-gpl) (voz `pt_BR-cadu-medium`) + ffmpeg | GPL-3.0 (Piper, só roda no computador de quem publica); voz treinada com dados CC0 | Voz sintética local, sem serviço pago nem envio do texto a terceiros; MP3 servido pelo próprio site | Gravação própria; Web Speech API do navegador |
 
 **Sobre o Astro.** Em janeiro de 2026 a Cloudflare comprou a empresa que mantém o Astro, que segue [MIT, com governança aberta e suporte a vários hosts](https://www.heise.de/en/news/Web-Development-Cloudflare-Acquires-Astro-Technology-Company-11145912.html?view=print). O risco é baixo: como o site é estático, trocar de host é trocar o comando de deploy.
 
@@ -65,7 +66,7 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 
 ## Estrutura do repositório e modelo de conteúdo
 
-Um único repositório guarda site, conteúdo, scripts e infraestrutura da VPS. Cada post é uma pasta com o texto, as imagens e a transcrição do vídeo, para que tudo de um tema viaje junto.
+Um único repositório guarda site, conteúdo, scripts e infraestrutura da VPS. Cada post é uma pasta com o texto, as imagens, a transcrição do vídeo e o áudio, para que tudo de um tema viaje junto.
 
 ```text
 leoreinaux.org/
@@ -75,14 +76,16 @@ leoreinaux.org/
 │   │   │   └── tecnologia-brasileira/
 │   │   │       ├── index.md          # texto + frontmatter
 │   │   │       ├── capa.jpg
-│   │   │       └── transcricao.md    # opcional
+│   │   │       ├── transcricao.md    # opcional
+│   │   │       ├── audio.mp3         # versão em áudio (npm run audio)
+│   │   │       └── audio.json        # duração, tamanho, voz e impressão digital do texto
 │   │   └── tutoriais/            # mesma estrutura dos posts
 │   ├── components/   # Header, NewsletterForm, VideoEmbed, Toc...
 │   ├── layouts/      # BaseLayout, PostLayout
 │   ├── pages/        # index, sobre, posts/[slug], tutoriais/[slug], busca, rss.xml, llms.txt, robots.txt
 │   └── styles/       # tokens, tipografia, temas claro/escuro
 ├── public/           # favicon
-├── scripts/          # newsletter.ts, indexnow.ts
+├── scripts/          # newsletter.ts, indexnow.ts, audio.ts + narrar.py
 ├── infra/            # docker-compose.yml, Caddyfile, backup.sh
 ├── .github/workflows/  # deploy.yml, qualidade.yml
 ├── site.config.ts    # nome, URL, autor, redes, URL do Listmonk
@@ -131,6 +134,7 @@ Os três se apoiam na mesma base: HTML estático e semântico, rápido, com auto
 | `WebSite` | Home | Nome, URL, busca interna (`SearchAction` para `/busca?q=`) |
 | `BlogPosting` | Cada post | Título, resumo, autor, `datePublished`, `dateModified`, imagem, `license` (CC BY 4.0) |
 | `VideoObject` | Posts com vídeo | Nome, duração, miniatura, `uploadDate`, `embedUrl`, `transcript` |
+| `AudioObject` | Posts e tutoriais com áudio | Nome, duração, `contentUrl`, formato, tamanho, licença |
 | `BreadcrumbList` | Posts e tutoriais | Início › título nos posts; Início › Tutoriais › título nos tutoriais |
 
 **Escrita que vira resposta (AEO)**
@@ -172,6 +176,7 @@ A meta é WCAG 2.2 nível AA em todo o site e leitura confortável de textos lon
 - `alt` obrigatório nas imagens, validado no frontmatter e em lint do Markdown
 - Alvos de toque de pelo menos 44 × 44 px e respeito a `prefers-reduced-motion`
 - Vídeos com legenda e transcrição em texto
+- Versão em áudio no player nativo do navegador (teclado e leitor de tela, sem JavaScript); o próprio texto da página é a transcrição
 
 **Metas de performance (celular intermediário em 4G)**
 
@@ -181,7 +186,7 @@ A meta é WCAG 2.2 nível AA em todo o site e leitura confortável de textos lon
 | CLS (deslocamento de layout) | < 0,05 |
 | INP (resposta a interações) | < 200 ms |
 | JavaScript por página | < 30 KB; a busca carrega só quando aberta; o script do Umami (≈ 2 KB, com `defer`) entra em todas as páginas |
-| Peso total de um post sem vídeo | < 300 KB |
+| Peso total de um post sem vídeo | < 300 KB (o áudio, com `preload="none"`, só baixa no play e fica fora da conta) |
 
 Imagens passam pelo `astro:assets` (AVIF/WebP, tamanhos responsivos, largura e altura fixas). O workflow de qualidade (`scripts/qualidade.ts`) roda o axe-core e o Lighthouse, ambos open source, e bloqueia o deploy se alguma meta cair. O axe-core testa cada página nos temas claro e escuro, no celular e no desktop; o Lighthouse mede a mediana de três execuções no celular em 4G simulado, com o TBT no lugar do INP, que não se mede em laboratório. O Lighthouse é usado direto pela API Node em vez do Lighthouse CI, parado desde junho de 2025 na versão 12 do Lighthouse e com dependências vulneráveis. O build do teste inclui os rascunhos, para que a página de post seja testada desde o início.
 
@@ -229,6 +234,18 @@ O vídeo de 1min30 a 2min30 fica hospedado no YouTube, onde ele já será public
 - **Legendas.** O mesmo Whisper gera o arquivo `.vtt`, enviado ao YouTube como legenda em português.
 - **Dados estruturados.** `VideoObject` no JSON-LD com duração, miniatura, data de upload e a transcrição.
 - **Sem vídeo, sem custo.** Hospedar vídeo 4K por conta própria custaria banda e armazenamento; o YouTube resolve isso de graça e ainda é uma das redes de distribuição. PeerTube fica como alternativa 100% aberta, se um dia fizer sentido.
+
+## Versão em áudio
+
+Cada post e tutorial publicado tem uma versão em áudio, para quem prefere ouvir no trânsito, na caminhada ou tem dificuldade de leitura.
+
+- **Voz sintética local.** O [Piper](https://github.com/OHF-Voice/piper1-gpl), open source, roda no computador de quem publica, sem GPU nem serviço externo: um texto de 15 minutos sai em menos de um minuto. A voz `pt_BR-cadu-medium` foi treinada com dados em domínio público (CC0) e escolhida pelo autor entre as três vozes em pt-BR de qualidade média (faber, cadu e jeff). Serviços pagos (ElevenLabs, Google, Amazon Polly) ficaram de fora pelo custo e por mandarem o texto a terceiros; a voz do navegador (Web Speech API), por exigir JavaScript e soar diferente em cada aparelho.
+- **Publicado por commit, como o resto.** `npm run audio` gera o `audio.mp3` e o `audio.json` na pasta de cada texto que mudou (`scripts/audio.ts`, que chama o `scripts/narrar.py`). O MP3 é mono, 48 kbps, com volume normalizado para fala (−16 LUFS): cerca de 350 KB por minuto. Os arquivos ficam no repositório e são servidos pelo próprio site, com hash no nome; o limite da Cloudflare é de 25 MB por arquivo, ou pouco mais de uma hora de áudio.
+- **O que a voz lê.** Título, autor, resumo e o corpo do texto (`src/lib/narracao.ts`), sem links, chamadas de fonte nem a seção "Fontes"/"Referências", que fica só na versão escrita. Tabelas são lidas linha a linha ("Dia 1. O desafio: …"); blocos de código viram um aviso de que o trecho está na página. Siglas e nomes que a voz pronuncia errado ficam em `audio.pronuncia`, no `site.config.ts`. No fim, a voz diz onde está o texto completo e a licença.
+- **Áudio sempre em dia.** O `audio.json` guarda a impressão digital do texto narrado. O script só gera de novo o que mudou, e o build avisa quando o texto de um post mudou depois do áudio.
+- **Gravação própria.** Para ler um texto com a própria voz, basta trocar o `audio.mp3` e pôr `"gravacao": true` no `audio.json`; o script nunca sobrescreve uma gravação, e a página diz "narrado pelo autor".
+- **Na página.** Um `<audio controls preload="none">` logo abaixo do resumo, com a duração e um link para baixar o MP3. Nada é baixado antes do play, e a origem é o próprio site, então a CSP e a política de privacidade não mudam.
+- **Depois.** Um feed de podcast (RSS com `<enclosure>`) a partir dos mesmos arquivos.
 
 ## Custos estimados
 
@@ -293,6 +310,10 @@ A v1 sai em quatro etapas, cada uma entregável e testável sozinha; a automaç�
 **Depois do lançamento — redes sociais**
 
 O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já servem de matéria-prima. A automação gera rascunhos por rede (LinkedIn, Instagram, X/Threads) a partir do texto principal; o agendamento pode usar uma ferramenta open source ou as APIs das próprias redes.
+
+**Depois do lançamento — podcast**
+
+Os áudios dos textos (`audio.mp3` em cada pasta) já servem de episódios: falta um feed RSS de podcast com `<enclosure>`, capa quadrada e as tags do Apple Podcasts e do Spotify.
 
 ## Decisões em aberto
 
