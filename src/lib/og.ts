@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { crc32, deflateSync } from 'node:zlib';
 import { Resvg } from '@resvg/resvg-js';
 import satori from 'satori';
 import { site } from '../../site.config';
@@ -66,6 +67,71 @@ export async function renderOgImage(title: string): Promise<Buffer> {
   );
   const svg = await satori(card as Parameters<typeof satori>[0], { width: OG_WIDTH, height: OG_HEIGHT, fonts: await fonts });
   return new Resvg(svg).render().asPng();
+}
+
+/** Capa do podcast: quadrada, entre 1400 e 3000 px, como pedem o Apple Podcasts e o Spotify. */
+export const CAPA_DO_PODCAST = 1400;
+
+/** Capa do podcast em PNG: o nome do autor em destaque, legível mesmo pequena na lista dos apps. */
+export async function renderCapaDoPodcast(): Promise<Buffer> {
+  const lado = CAPA_DO_PODCAST;
+  const capa = el(
+    'div',
+    {
+      boxSizing: 'border-box',
+      width: lado,
+      height: lado,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      padding: '140px 120px 120px',
+      backgroundColor: colors.bg,
+      borderTop: `40px solid ${colors.accent}`,
+      fontFamily: 'Source Sans 3',
+    },
+    [
+      el('div', { display: 'flex', flexDirection: 'column' }, [
+        el('div', { display: 'flex', fontSize: 64, fontWeight: 700, color: colors.accent, letterSpacing: 4 }, 'TEXTOS EM ÁUDIO'),
+        el('div', { display: 'flex', marginTop: 40, fontSize: 200, fontWeight: 700, lineHeight: 1, color: colors.text }, site.author.name),
+      ]),
+      el('div', { display: 'flex', fontSize: 72, fontWeight: 700, color: colors.muted }, new URL(site.url).host),
+    ],
+  );
+  const svg = await satori(capa as Parameters<typeof satori>[0], { width: lado, height: lado, fonts: await fonts });
+  const imagem = new Resvg(svg).render();
+  return pngSemTransparencia(imagem.pixels, imagem.width, imagem.height);
+}
+
+/**
+ * PNG em RGB, sem o canal de transparência que o resvg sempre grava: o Apple Podcasts pede capa em RGB.
+ * A capa não tem nada transparente, então o canal alfa é só descartado.
+ */
+function pngSemTransparencia(rgba: Buffer, largura: number, altura: number): Buffer {
+  const linhas = Buffer.alloc(altura * (1 + largura * 3));
+  for (let y = 0; y < altura; y++) {
+    const inicio = y * (1 + largura * 3);
+    // Cada linha começa com o byte do filtro (0, nenhum).
+    for (let x = 0; x < largura; x++) rgba.copy(linhas, inicio + 1 + x * 3, (y * largura + x) * 4, (y * largura + x) * 4 + 3);
+  }
+  const bloco = (tipo: string, dados: Buffer) => {
+    const tamanho = Buffer.alloc(4);
+    tamanho.writeUInt32BE(dados.length);
+    const corpo = Buffer.concat([Buffer.from(tipo, 'ascii'), dados]);
+    const verificacao = Buffer.alloc(4);
+    verificacao.writeUInt32BE(crc32(corpo));
+    return Buffer.concat([tamanho, corpo, verificacao]);
+  };
+  const cabecalho = Buffer.alloc(13);
+  cabecalho.writeUInt32BE(largura, 0);
+  cabecalho.writeUInt32BE(altura, 4);
+  // 8 bits por canal, tipo de cor 2 (RGB), compressão, filtro e entrelaçamento padrão.
+  cabecalho.set([8, 2, 0, 0, 0], 8);
+  return Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    bloco('IHDR', cabecalho),
+    bloco('IDAT', deflateSync(linhas, { level: 9 })),
+    bloco('IEND', Buffer.alloc(0)),
+  ]);
 }
 
 /** Resposta HTTP com o PNG do card. */

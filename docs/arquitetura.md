@@ -60,6 +60,8 @@ Todo o software é open source; os serviços externos (CDN, envio de e-mail, rep
 
 **Workers em vez de Pages.** A própria Cloudflare orienta novos projetos a usar Workers com static assets, onde chegam os recursos novos. Para um site estático o custo é o mesmo: zero.
 
+**Um script só para os MP3.** Os static assets dos Workers ignoram pedidos de trecho (`Range`) e sempre devolvem o arquivo inteiro, sem o `Content-Length`. O Safari e o iPhone precisam da resposta 206 para tocar e avançar o áudio, e o Apple Podcasts exige servidor com suporte a `Range`. Por isso, só os endereços `/_astro/*.mp3` passam por um Worker (`worker/index.ts`, via `run_worker_first` no `wrangler.jsonc`). Ele busca o arquivo nos assets e devolve o trecho pedido, com o tamanho total lido de `/audios.json`, uma lista gerada no build. O resto do site continua saindo direto dos static assets. O plano grátis cobre 100 mil execuções por dia, e só os MP3 contam.
+
 **SES em vez de um plano gratuito.** Os planos grátis não cabem num disparo para 1 mil pessoas: o [Brevo envia 300 por dia](https://help.brevo.com/hc/en-us/articles/208580669) e põe a marca dele no e-mail; o Resend, 100 por dia. No SES, 1 mil inscritos × 4 posts por mês = 4 mil e-mails ≈ US$ 0,64. O antigo free tier do SES acabou para contas novas em julho de 2026.
 
 **VPS.** Ela só hospeda newsletter e analytics, então 2 vCPU e 4 GB bastam. A Hetzner subiu preços duas vezes em 2026 e o [CX23 foi para €5,49](https://privatedevops.com/news/hetzner-june-2026-cloud-price-increase-what-to-do); planos baratos às vezes aparecem indisponíveis. Orçamento: €6 a €8 por mês, em qualquer provedor (Hetzner, Netcup, Contabo).
@@ -85,6 +87,7 @@ leoreinaux.org/
 │   ├── pages/        # index, sobre, posts/[slug], tutoriais/[slug], busca, rss.xml, llms.txt, robots.txt
 │   └── styles/       # tokens, tipografia, temas claro/escuro
 ├── public/           # favicon
+├── worker/           # index.ts: pedidos de trecho (Range) dos MP3
 ├── scripts/          # newsletter.ts, indexnow.ts, audio.ts + narrar.py
 ├── infra/            # docker-compose.yml, Caddyfile, backup.sh
 ├── .github/workflows/  # deploy.yml, qualidade.yml
@@ -245,7 +248,8 @@ Cada post e tutorial publicado tem uma versão em áudio, para quem prefere ouvi
 - **Áudio sempre em dia.** O `audio.json` guarda a impressão digital do texto narrado. O script só gera de novo o que mudou, e o build avisa quando o texto de um post mudou depois do áudio.
 - **Gravação própria.** Para ler um texto com a própria voz, basta trocar o `audio.mp3` e pôr `"gravacao": true` no `audio.json`; o script nunca sobrescreve uma gravação, e a página diz "narrado pelo autor".
 - **Na página.** Um `<audio controls preload="none">` logo abaixo do resumo, com a duração e um link para baixar o MP3. Nada é baixado antes do play, e a origem é o próprio site, então a CSP e a política de privacidade não mudam.
-- **Depois.** Um feed de podcast (RSS com `<enclosure>`) a partir dos mesmos arquivos.
+- **Podcast.** Os posts com áudio saem também em `/podcast.xml`, um RSS com `<enclosure>` e as tags do Apple Podcasts (`itunes:`), que o Spotify e os demais apps também leem: categoria Technology, conteúdo não explícito, duração de cada episódio e a capa quadrada `/podcast.png` (1400×1400, RGB, desenhada no build com Satori). O e-mail de contato é o mesmo da política de privacidade, já público. Os tutoriais ficam de fora, porque código e passo a passo funcionam pior em áudio. O link do post é o identificador do episódio, que não muda quando o áudio é gerado de novo. As plataformas são cadastradas uma vez, à mão, por quem publica.
+- **Limite de tamanho.** Cada post longo soma de 5 a 7 MB ao repositório, e cada áudio gerado de novo fica no histórico do Git. O GitHub recomenda repositórios abaixo de 1 GB; perto de 500 MB, os MP3 passam para o R2 da Cloudflare (10 GB grátis), e o Git guarda só o `audio.json`.
 
 ## Custos estimados
 
@@ -313,7 +317,8 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 
 **Depois do lançamento — podcast**
 
-Os áudios dos textos (`audio.mp3` em cada pasta) já servem de episódios: falta um feed RSS de podcast com `<enclosure>`, capa quadrada e as tags do Apple Podcasts e do Spotify.
+- [x] Feed `/podcast.xml` com o áudio dos posts e capa quadrada
+- [ ] Cadastro no Spotify for Creators e no Apple Podcasts Connect
 
 ## Decisões em aberto
 

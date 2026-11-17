@@ -1,11 +1,16 @@
-// Cloudflare Workers com static assets: só arquivos estáticos, sem script.
+// Cloudflare Workers com static assets: o site é estático, e só os MP3 do áudio passam por um script
+// (worker/index.ts), que atende pedidos de trecho (Range), coisa que os static assets não fazem.
 // Referência: https://developers.cloudflare.com/workers/static-assets/
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "leoreinaux-org",
   "compatibility_date": "2026-10-23",
+  "main": "./worker/index.ts",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    // Só os MP3 chamam o script; todo o resto sai direto dos static assets, sem custo de execução.
+    "run_worker_first": ["/_astro/*.mp3"],
     // Serve /posts/slug a partir de dist/posts/slug.html e redireciona /posts/slug/ e /posts/slug.html.
     "html_handling": "auto-trailing-slash",
     // Endereços inexistentes recebem dist/404.html com status 404.

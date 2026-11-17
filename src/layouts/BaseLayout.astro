@@ -53,6 +53,7 @@ const ogImageUrl = new URL(ogImage.path, site.url).href;
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={site.name} href={new URL('/rss.xml', site.url).href} />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name}: podcast`} href={new URL('/podcast.xml', site.url).href} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="generator" content={Astro.generator} />
     <!-- Pré-carrega só os estilos normais; os itálicos baixam quando usados. -->

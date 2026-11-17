@@ -75,6 +75,8 @@ npm run audio
 
 O script só gera de novo o que mudou. Para conferir antes o que a voz vai ler, use `AUDIO_SIMULAR=1 npm run audio`. Palavras pronunciadas errado vão em `audio.pronuncia`, no `site.config.ts`. Para usar uma gravação sua, troque o `audio.mp3` e ponha `"gravacao": true` no `audio.json`.
 
+Os posts com áudio também saem no feed de podcast, em `/podcast.xml`, com a capa em `/podcast.png`. Para aparecer no Spotify, no Apple Podcasts e nos outros apps, cadastre esse endereço uma vez em cada plataforma (Spotify for Creators, Apple Podcasts Connect). Elas confirmam o cadastro com um código enviado ao e-mail de `podcast.email`, no `site.config.ts`. Os tutoriais não entram no podcast.
+
 ## Como fazer um fork
 
 1. Faça o fork do repositório e clone o seu.
