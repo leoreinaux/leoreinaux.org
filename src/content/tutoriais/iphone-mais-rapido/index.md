@@ -10,7 +10,6 @@ tags:
   - iPhone
   - iOS
   - tecnologia
-draft: true
 ---
 
 Ao fim deste tutorial, seu iPhone vai estar com os ajustes que de fato fazem diferença na velocidade, e você vai saber quais dicas pode ignorar. Leva uns 20 minutos, e nenhum passo apaga fotos, conversas ou apps.
@@ -76,10 +75,10 @@ A referência da Apple é 80% de capacidade máxima. Os modelos até o iPhone 14
 
 O **Modo Pouca Energia** economiza bateria justamente diminuindo o desempenho. Ele é ótimo quando a carga está no fim, mas tem gente que liga e esquece. Quando ele está ativo, o ícone da bateria fica amarelo.
 
-1. Abra **Ajustes > Bateria > Modo de Energia**.
+1. Abra **Ajustes > Bateria > Modo de Alimentação**.
 2. Se não precisar economizar agora, desative o **Modo Pouca Energia**.
 
-Na mesma tela fica a **Energia Adaptável**, que vem ligada no iPhone 17, no 17 Pro, no 17 Pro Max e no iPhone Air, e desligada nos iPhones 15 Pro e 16. Quando ela prevê que a carga não vai durar até a próxima recarga, faz pequenos ajustes de desempenho, como baixar um pouco o brilho da tela ([Apple, em espanhol](https://support.apple.com/es-lamr/123707)). Na maior parte do tempo, você nem percebe; se preferir o desempenho máximo sempre, pode desligá-la.
+Na mesma tela fica o **Consumo Adaptável**, que vem ligado no iPhone 17, no 17 Pro, no 17 Pro Max e no iPhone Air, e desligado nos iPhones 15 Pro e 16. Quando ele prevê que a carga não vai durar até a próxima recarga, faz pequenos ajustes de desempenho, como baixar um pouco o brilho da tela ([Apple, em espanhol](https://support.apple.com/es-lamr/123707)). Na maior parte do tempo, você nem percebe; se preferir o desempenho máximo sempre, pode desligá-lo.
 
 ## Passo 6: diminua os efeitos visuais
 
@@ -94,7 +93,7 @@ Estes ajustes não deixam o processador mais rápido, mas o iPhone passa a *pare
 Quando você segura o dedo num ícone ou num link, o iPhone espera um instante antes de abrir o menu. Dá para encurtar essa espera.
 
 1. Abra **Ajustes > Acessibilidade > Toque > Toque Tátil**.
-2. Escolha **Rápido**.
+2. Entre as três opções (Rápido, Padrão e Lento), escolha **Rápido**.
 
 ## Passo 8: revise a atualização em segundo plano
 
@@ -135,7 +134,7 @@ Se nem assim melhorar, o limite pode ser o próprio aparelho: cada versão nova 
 ## Fontes
 
 - Apple. [Como verificar o armazenamento no iPhone e iPad](https://support.apple.com/pt-br/108429).
-- Apple. [Usar a Energia Adaptável para prolongar a bateria do iPhone](https://support.apple.com/es-lamr/123707) (em espanhol).
+- Apple. [Usar o Consumo Adaptável para prolongar a bateria do iPhone](https://support.apple.com/es-lamr/123707) (em espanhol).
 - Apple. [Customize onscreen motion on iPhone](https://support.apple.com/guide/iphone/customize-onscreen-motion-iph0b691d3ed/ios) (em inglês).
 - AppleInsider (2026). [Why iOS 27 slows down even the new iPhone 18 Pro at first](https://appleinsider.com/articles/26/09/28/why-ios-27-slows-down-even-the-new-iphone-18-pro-at-first).
 - Engadget (2024). [Apple says the iPhone 15's battery has double the promised lifespan](https://www.engadget.com/apple-says-the-iphone-15s-battery-has-double-the-promised-lifespan-213736866.html).
