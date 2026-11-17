@@ -10,7 +10,6 @@ tags:
   - iPhone
   - iOS
   - tecnologia
-draft: true
 ---
 
 Ao fim deste tutorial, seu iPhone vai estar com os ajustes que de fato fazem diferença na velocidade, e você vai saber quais dicas pode ignorar. Leva uns 20 minutos, e nenhum passo apaga fotos, conversas ou apps.
