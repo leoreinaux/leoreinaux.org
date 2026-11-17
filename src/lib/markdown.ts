@@ -1,5 +1,6 @@
 import type { ImageMetadata } from 'astro';
 import { site } from '../../site.config';
+import { audioDoPost } from './audio';
 import { imageUrl } from './images';
 import { duracaoLegivel, transcricaoDoPost } from './video';
 import { formatDate, postUrl, type Post } from './posts';
@@ -33,6 +34,7 @@ function absolutizeLinks(markdown: string): string {
 export async function postToMarkdown(post: Post): Promise<string> {
   const { title, summary, pubDate, updatedDate, cover, video } = post.data;
   const transcricao = video && transcricaoDoPost(post);
+  const audio = audioDoPost(post);
   const datas = [`Publicado em ${formatDate(pubDate, site.locale)}`];
   if (updatedDate) datas.push(`atualizado em ${formatDate(updatedDate, site.locale)}`);
   const body = absolutizeLinks(await resolveImages(post.body ?? '', post));
@@ -47,6 +49,7 @@ export async function postToMarkdown(post: Post): Promise<string> {
     ].join('\n'),
     `> **Resumo:** ${summary}`,
     `![${cover.alt}](${await imageUrl(cover.src)})`,
+    ...(audio ? [`Áudio (${duracaoLegivel(audio.duracao)}): ${new URL(audio.url, site.url).href}`] : []),
     ...(video ? [`Vídeo (${duracaoLegivel(video.duration)}): https://www.youtube.com/watch?v=${video.youtubeId}`] : []),
     ...(transcricao ? [`## Transcrição do vídeo\n\n${transcricao.texto}`] : []),
     body.trim(),

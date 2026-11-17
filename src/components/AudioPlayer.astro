@@ -1,0 +1,53 @@
+---
+import { tamanhoLegivel, type AudioDoPost } from '../lib/audio';
+import { duracaoLegivel } from '../lib/video';
+
+/**
+ * Versão em áudio do texto, com o player nativo do navegador: sem JavaScript, acessível pelo teclado
+ * e pelo leitor de tela. preload="none": nada é baixado até a pessoa apertar o play, para o áudio não
+ * pesar no carregamento da página. O próprio texto da página é a transcrição.
+ */
+interface Props {
+  audio: AudioDoPost;
+  /** Nome do arquivo baixado, sem a extensão (o slug do texto). */
+  nome: string;
+}
+
+const { audio, nome } = Astro.props;
+---
+
+<section class="ouvir" aria-labelledby="ouvir-titulo" data-pagefind-ignore>
+  <h2 id="ouvir-titulo" class="ouvir-titulo">Ouça este texto</h2>
+  <audio controls preload="none" src={audio.url} aria-labelledby="ouvir-titulo">
+    <a href={audio.url} download={`${nome}.mp3`}>Baixe o áudio em MP3</a>
+  </audio>
+  <p class="ouvir-nota texto-secundario">
+    {duracaoLegivel(audio.duracao)} · {audio.gravacao ? 'narrado pelo autor' : 'narração com voz sintética'} ·{' '}
+    <a href={audio.url} download={`${nome}.mp3`}>baixar o MP3 ({tamanhoLegivel(audio.bytes)})</a>
+  </p>
+</section>
+
+<style>
+  .ouvir {
+    margin-block-end: var(--space-4);
+  }
+
+  .ouvir-titulo {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-block: 0 var(--space-2);
+  }
+
+  audio {
+    display: block;
+    width: 100%;
+    min-height: var(--tap-target);
+  }
+
+  .ouvir-nota {
+    margin-block: var(--space-2) 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+  }
+</style>

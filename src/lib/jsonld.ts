@@ -2,6 +2,7 @@ import { getImage } from 'astro:assets';
 import { site } from '../../site.config';
 import { authorPhoto, imageUrl } from './images';
 import { contarPalavras, postUrl, tempoDeLeitura, type Post } from './posts';
+import { audioDoPost } from './audio';
 import { miniaturaDoVideo, transcricaoDoPost } from './video';
 
 /**
@@ -85,10 +86,29 @@ async function videoNode(post: Post, url: string): Promise<JsonLdNode | undefine
   };
 }
 
+/** Versão em áudio do post: o próprio texto é a transcrição. */
+function audioNode(post: Post, url: string): JsonLdNode | undefined {
+  const audio = audioDoPost(post);
+  if (!audio) return undefined;
+  return {
+    '@type': 'AudioObject',
+    '@id': `${url}#audio`,
+    name: post.data.title,
+    description: audio.gravacao ? `Leitura de "${post.data.title}" pelo autor.` : `Leitura de "${post.data.title}" com voz sintética.`,
+    contentUrl: abs(audio.url),
+    encodingFormat: 'audio/mpeg',
+    duration: audio.duracao,
+    contentSize: `${audio.bytes}`,
+    inLanguage: site.lang,
+    license: site.contentLicense.url,
+  };
+}
+
 export async function postNodes(post: Post, ogImage: string): Promise<JsonLdNode[]> {
   const { title, summary, pubDate, updatedDate, cover, tags } = post.data;
   const url = abs(postUrl(post));
   const video = await videoNode(post, url);
+  const audio = audioNode(post, url);
   return [
     {
       '@type': 'BlogPosting',
@@ -109,8 +129,10 @@ export async function postNodes(post: Post, ogImage: string): Promise<JsonLdNode
       timeRequired: `PT${tempoDeLeitura(post)}M`,
       ...(tags && tags.length > 0 ? { keywords: tags } : {}),
       ...(video ? { video: { '@id': video['@id'] } } : {}),
+      ...(audio ? { audio: { '@id': audio['@id'] } } : {}),
     },
     ...(video ? [video] : []),
+    ...(audio ? [audio] : []),
     {
       // Os posts são listados na home (Início › post); os tutoriais, em /tutoriais (Início › Tutoriais › tutorial).
       '@type': 'BreadcrumbList',
