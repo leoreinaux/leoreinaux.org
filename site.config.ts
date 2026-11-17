@@ -82,6 +82,15 @@ export interface SiteConfig {
      */
     pronuncia: Record<string, string>;
   };
+  /** Feed de podcast (/podcast.xml) com o áudio dos posts, para Apple Podcasts, Spotify e outros apps. */
+  podcast: {
+    /** Descrição do programa nos apps (até 4 mil caracteres). */
+    descricao: string;
+    /** E-mail de contato do feed; as plataformas mandam para ele o código de verificação e podem exibi-lo. */
+    email: string;
+    /** Categoria do Apple Podcasts, em inglês, como na lista oficial (por exemplo, Technology). */
+    categoria: string;
+  };
 }
 
 export const site: SiteConfig = {
@@ -139,5 +148,11 @@ export const site: SiteConfig = {
       OUP: 'O U P',
       UBC: 'U B C',
     },
+  },
+  podcast: {
+    descricao:
+      'Os textos de Leandro Reinaux em áudio, lidos por uma voz sintética: tecnologia, privacidade e o efeito das telas na vida da gente, com dados, pesquisas e experiências pessoais. O texto completo, com as fontes, está em leoreinaux.org.',
+    email: 'privacidade@leoreinaux.org',
+    categoria: 'Technology',
   },
 };

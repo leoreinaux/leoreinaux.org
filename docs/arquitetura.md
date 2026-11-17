@@ -245,7 +245,8 @@ Cada post e tutorial publicado tem uma versão em áudio, para quem prefere ouvi
 - **Áudio sempre em dia.** O `audio.json` guarda a impressão digital do texto narrado. O script só gera de novo o que mudou, e o build avisa quando o texto de um post mudou depois do áudio.
 - **Gravação própria.** Para ler um texto com a própria voz, basta trocar o `audio.mp3` e pôr `"gravacao": true` no `audio.json`; o script nunca sobrescreve uma gravação, e a página diz "narrado pelo autor".
 - **Na página.** Um `<audio controls preload="none">` logo abaixo do resumo, com a duração e um link para baixar o MP3. Nada é baixado antes do play, e a origem é o próprio site, então a CSP e a política de privacidade não mudam.
-- **Depois.** Um feed de podcast (RSS com `<enclosure>`) a partir dos mesmos arquivos.
+- **Podcast.** Os posts com áudio saem também em `/podcast.xml`, um RSS com `<enclosure>` e as tags do Apple Podcasts (`itunes:`), que o Spotify e os demais apps também leem: categoria Technology, conteúdo não explícito, duração de cada episódio e a capa quadrada `/podcast.png` (1400×1400, RGB, desenhada no build com Satori). O e-mail de contato é o mesmo da política de privacidade, já público. Os tutoriais ficam de fora, porque código e passo a passo funcionam pior em áudio. O link do post é o identificador do episódio, que não muda quando o áudio é gerado de novo. As plataformas são cadastradas uma vez, à mão, por quem publica.
+- **Limite de tamanho.** Cada post longo soma de 5 a 7 MB ao repositório, e cada áudio gerado de novo fica no histórico do Git. O GitHub recomenda repositórios abaixo de 1 GB; perto de 500 MB, os MP3 passam para o R2 da Cloudflare (10 GB grátis), e o Git guarda só o `audio.json`.
 
 ## Custos estimados
 
@@ -313,7 +314,8 @@ O campo `social` do frontmatter, o `summary`, as imagens de card e o RSS já ser
 
 **Depois do lançamento — podcast**
 
-Os áudios dos textos (`audio.mp3` em cada pasta) já servem de episódios: falta um feed RSS de podcast com `<enclosure>`, capa quadrada e as tags do Apple Podcasts e do Spotify.
+- [x] Feed `/podcast.xml` com o áudio dos posts e capa quadrada
+- [ ] Cadastro no Spotify for Creators e no Apple Podcasts Connect
 
 ## Decisões em aberto
 
