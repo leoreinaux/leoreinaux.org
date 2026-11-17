@@ -26,6 +26,11 @@ export interface SiteConfig {
     jobTitle: string;
     /** Uma ou duas frases; aparece na página Sobre e no fim de cada post. */
     bio: string;
+    /** Empresa ou organização do autor; onde o nome aparecer na bio e no cargo, vira link para o site dela. */
+    worksFor?: {
+      name: string;
+      url: string;
+    };
     /** Parágrafos da página Sobre que explicam por que o site existe. */
     about: string[];
     /** Foto do autor, na página Sobre e no JSON-LD. `src` é o nome de um arquivo em src/assets/. */
@@ -103,6 +108,7 @@ export const site: SiteConfig = {
     name: 'Leandro Reinaux',
     jobTitle: 'Cofundador da Even3',
     bio: 'Bacharel em ciência da computação e cofundador da Even3.',
+    worksFor: { name: 'Even3', url: 'https://even3.com.br' },
     about: [
       'Acredito que conhecimento e experiências, quando compartilhados, agregam muito valor à vida das pessoas.',
       'Criei este site para registrar esses conhecimentos e experiências, para que qualquer pessoa possa acessá-los de forma livre e aberta e compartilhá-los também.',
