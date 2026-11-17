@@ -38,6 +38,7 @@ Outros comandos:
 | `npm run build` | Verifica e gera o site estático em `dist/`, sem os rascunhos |
 | `npm run preview` | Serve o conteúdo de `dist/` localmente |
 | `npm run deploy` | Publica `dist/` na Cloudflare (requer credenciais) |
+| `npm run audio` | Gera a versão em áudio dos textos que mudaram (ver abaixo) |
 
 ## Como escrever um post
 
@@ -47,10 +48,32 @@ Cada post é uma pasta em `src/content/posts/`. O nome da pasta vira a URL: `src
 src/content/posts/meu-texto/
 ├── index.md          # texto + frontmatter
 ├── capa.jpg          # imagem de capa
-└── transcricao.md    # opcional, para posts com vídeo
+├── transcricao.md    # opcional, para posts com vídeo
+├── audio.mp3         # versão em áudio, gerada por npm run audio
+└── audio.json        # duração, tamanho e voz do áudio
 ```
 
 O post de exemplo em [`src/content/posts/exemplo/`](src/content/posts/exemplo/index.md) usa todos os campos. Campos obrigatórios: `title`, `description` (até 160 caracteres), `summary`, `pubDate`, `cover.src`, `cover.alt` e `newsletter`. Se algum faltar, o build falha.
+
+### Versão em áudio
+
+Cada texto publicado tem uma versão em áudio, lida por uma voz sintética do [Piper](https://github.com/OHF-Voice/piper1-gpl), que roda no seu computador, sem serviço externo. Para preparar o ambiente uma vez (Python 3 e ffmpeg instalados):
+
+```bash
+pip install piper-tts
+```
+
+```bash
+python3 -m piper.download_voices pt_BR-faber-medium --data-dir ~/.local/share/piper
+```
+
+Depois de escrever ou mudar um texto, gere o áudio e faça o commit do `audio.mp3` e do `audio.json` junto com o texto:
+
+```bash
+npm run audio
+```
+
+O script só gera de novo o que mudou. Para conferir antes o que a voz vai ler, use `AUDIO_SIMULAR=1 npm run audio`. Palavras pronunciadas errado vão em `audio.pronuncia`, no `site.config.ts`. Para usar uma gravação sua, troque o `audio.mp3` e ponha `"gravacao": true` no `audio.json`.
 
 ## Como fazer um fork
 
