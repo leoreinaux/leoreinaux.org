@@ -64,7 +64,7 @@ pip install piper-tts
 ```
 
 ```bash
-python3 -m piper.download_voices pt_BR-faber-medium --data-dir ~/.local/share/piper
+python3 -m piper.download_voices pt_BR-cadu-medium --data-dir ~/.local/share/piper
 ```
 
 Depois de escrever ou mudar um texto, gere o áudio e faça o commit do `audio.mp3` e do `audio.json` junto com o texto:

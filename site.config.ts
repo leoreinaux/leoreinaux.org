@@ -127,7 +127,7 @@ export const site: SiteConfig = {
   },
   indexNowKey: '43c686058ded6381db262d2657afe178',
   audio: {
-    voz: 'pt_BR-faber-medium',
+    voz: 'pt_BR-cadu-medium',
     pronuncia: {
       'leoreinaux.org': 'Léo Reinô ponto órg',
       Reinaux: 'Reinô',
