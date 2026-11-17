@@ -72,6 +72,16 @@ export interface SiteConfig {
    * /indexnow.txt para os buscadores confirmarem os avisos. Num fork, gere outra.
    */
   indexNowKey: string;
+  /** Versão em áudio dos posts e tutoriais, gerada por `npm run audio` (scripts/audio.ts). */
+  audio: {
+    /** Voz do Piper (nome do modelo, sem .onnx), baixada com `python3 -m piper.download_voices <voz>`. */
+    voz: string;
+    /**
+     * Como a voz deve ler palavras que ela pronuncia errado, por exemplo nomes próprios.
+     * Chave: o texto como está escrito (palavra inteira, maiúsculas e minúsculas contam). Valor: como falar.
+     */
+    pronuncia: Record<string, string>;
+  };
 }
 
 export const site: SiteConfig = {
@@ -116,4 +126,18 @@ export const site: SiteConfig = {
     url: 'https://creativecommons.org/licenses/by/4.0/deed.pt-br',
   },
   indexNowKey: '43c686058ded6381db262d2657afe178',
+  audio: {
+    voz: 'pt_BR-faber-medium',
+    pronuncia: {
+      'leoreinaux.org': 'Léo Reinô ponto órg',
+      Reinaux: 'Reinô',
+      // Siglas que a voz lê como palavra, mas se falam letra por letra (ou o contrário).
+      AASM: 'A A S M',
+      DPO: 'D P O',
+      ECA: 'Éca',
+      ID: 'I D',
+      OUP: 'O U P',
+      UBC: 'U B C',
+    },
+  },
 };
