@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { site } from '../../site.config';
 import { getPublishedPosts, getPublishedTutoriais, postUrl, type Post } from '../lib/posts';
+import { comLinkDaEmpresa } from '../lib/autor';
 import { textResponse } from '../lib/markdown';
 
 /**
@@ -17,7 +18,7 @@ export const GET: APIRoute = async () => {
     `# ${site.name}`,
     `> ${site.description}`,
     [
-      `Escrito por ${site.author.name}. ${site.author.bio}`,
+      `Escrito por ${site.author.name}. ${comLinkDaEmpresa(site.author.bio)}`,
       `Os textos estão sob a licença ${site.contentLicense.name} (${site.contentLicense.url}): podem ser citados e reproduzidos com crédito ao autor e link para o original.`,
     ].join(' '),
     `## Posts\n\n${posts.length > 0 ? lista(posts) : 'Ainda não há posts publicados.'}`,

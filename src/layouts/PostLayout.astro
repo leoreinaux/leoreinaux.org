@@ -6,6 +6,7 @@ import BaseLayout from './BaseLayout.astro';
 import AudioPlayer from '../components/AudioPlayer.astro';
 import Compartilhar from '../components/Compartilhar.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
+import TextoDoAutor from '../components/TextoDoAutor.astro';
 import Toc from '../components/Toc.astro';
 import VideoEmbed from '../components/VideoEmbed.astro';
 import { transcricaoDoPost } from '../lib/video';
@@ -107,7 +108,7 @@ const jsonLd = await postNodes(post, ogUrl);
       <section class="sobre-autor" aria-labelledby="autor-titulo">
         <h2 id="autor-titulo">Sobre o autor</h2>
         <p>
-          <a href="/sobre">{site.author.name}</a>. {site.author.bio}
+          <a href="/sobre">{site.author.name}</a>. <TextoDoAutor texto={site.author.bio} />
         </p>
       </section>
       <p class="licenca texto-secundario">

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TextoDoAutor from '../components/TextoDoAutor.astro';
 import { site } from '../../site.config';
 import { externo } from '../lib/links';
 import { Picture } from 'astro:assets';
@@ -26,7 +27,7 @@ const photo = authorPhoto();
       )
     }
     <p><strong>{site.author.name}</strong></p>
-    <p>{site.author.bio}</p>
+    <p><TextoDoAutor texto={site.author.bio} /></p>
 
     <h2>Por que este site</h2>
     {site.author.about.map((paragrafo) => <p>{paragrafo}</p>)}

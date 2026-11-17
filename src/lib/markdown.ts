@@ -1,5 +1,6 @@
 import type { ImageMetadata } from 'astro';
 import { site } from '../../site.config';
+import { comLinkDaEmpresa } from './autor';
 import { audioDoPost } from './audio';
 import { imageUrl } from './images';
 import { duracaoLegivel, transcricaoDoPost } from './video';
@@ -42,7 +43,7 @@ export async function postToMarkdown(post: Post): Promise<string> {
   return [
     `# ${title}`,
     [
-      `- Autor: ${site.author.name}, ${site.author.jobTitle}`,
+      `- Autor: ${site.author.name}, ${comLinkDaEmpresa(site.author.jobTitle)}`,
       `- ${datas.join(', ')}`,
       `- Original: ${new URL(postUrl(post), site.url).href}`,
       `- Licença: [${site.contentLicense.name}](${site.contentLicense.url}), pode ser reproduzido com crédito`,

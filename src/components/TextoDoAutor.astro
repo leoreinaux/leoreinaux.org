@@ -1,0 +1,13 @@
+---
+import { trechosComEmpresa } from '../lib/autor';
+import { externo } from '../lib/links';
+
+interface Props {
+  /** Bio ou cargo do autor; o nome da empresa (`site.author.worksFor`) vira link para o site dela. */
+  texto: string;
+}
+
+const trechos = trechosComEmpresa(Astro.props.texto);
+---
+
+{trechos.map(({ texto, url }) => (url ? <a href={url} {...externo()}>{texto}</a> : texto))}

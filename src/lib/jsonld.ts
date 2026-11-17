@@ -28,6 +28,9 @@ export async function personNode(): Promise<JsonLdNode> {
     name: site.author.name,
     jobTitle: site.author.jobTitle,
     description: site.author.bio,
+    ...(site.author.worksFor
+      ? { worksFor: { '@type': 'Organization', name: site.author.worksFor.name, url: site.author.worksFor.url } }
+      : {}),
     url: abs('/sobre'),
     sameAs: site.social.map(({ url }) => url),
     ...(photo ? { image: await imageUrl(photo.src) } : {}),
